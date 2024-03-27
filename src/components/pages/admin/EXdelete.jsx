@@ -1,3 +1,4 @@
+import baseURL from '../../../baseURL'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
@@ -7,7 +8,7 @@ export default function EXdelete() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetch('/api/ex/read')
+    fetch(`${baseURL}/api/ex/read`)
       .then((response) => response.json())
       .then((docs) => {
         if (docs.length > 0) {

@@ -1,3 +1,4 @@
+import baseURL from '../../../baseURL'
 import {
   Button,
   Paper,
@@ -55,7 +56,7 @@ export default function Login() {
       }
 
       await axios
-        .post('/api/login', userData)
+        .post(`${baseURL}/api/login`, userData)
         .then((result) => {
           // console.log(result.data)
           toast.success(
@@ -92,7 +93,7 @@ export default function Login() {
     // console.log(response)
 
     await axios
-      .post('/api/login-facebook', response)
+      .post(`${baseURL}/api/login-facebook`, response)
       .then((result) => {
         // console.log(result.data)
         toast.success(result.data.payload.user.name + ' login successfully')

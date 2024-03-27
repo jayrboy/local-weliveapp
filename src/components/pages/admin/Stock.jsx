@@ -1,3 +1,4 @@
+import baseURL from '../../../baseURL'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -10,7 +11,7 @@ const ProductList = () => {
   let params = new URLSearchParams(qStr)
 
   useEffect(() => {
-    fetch('/api/db/search?' + params)
+    fetch(`${baseURL}/api/db/search?` + params)
       .then((response) => response.json())
       .then((result) => {
         showData(result)

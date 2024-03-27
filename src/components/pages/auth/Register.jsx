@@ -1,3 +1,4 @@
+import baseURL from '../../../baseURL'
 import {
   Button,
   Paper,
@@ -45,7 +46,7 @@ export default function Register() {
         password: formData.get('password'),
       }
 
-      await axios.post('/api/register', userData).then((result) => {
+      await axios.post(`${baseURL}/api/register`, userData).then((result) => {
         // console.log(result.data)
         if (result.data === 'User Already Exists!') {
           toast.warning(result.data)

@@ -1,3 +1,4 @@
+import baseURL from '../../../baseURL'
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -10,7 +11,7 @@ export default function DBOrder() {
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
-    fetch('/api/db/order', {
+    fetch(`${baseURL}/api/db/order`, {
       method: 'POST',
       body: JSON.stringify(formEnt),
       headers: { 'Content-Type': 'application/json' },

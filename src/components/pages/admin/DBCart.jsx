@@ -1,3 +1,5 @@
+import baseURL from '../../../baseURL'
+
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -7,7 +9,7 @@ export default function DBCart() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetch('/api/db/read')
+    fetch(`${baseURL}/api/db/read`)
       .then((response) => response.json())
       .then((docs) => {
         if (docs.length > 0) {
@@ -41,7 +43,7 @@ export default function DBCart() {
                 </>
               )
               let p = new Intl.NumberFormat().format(doc.price)
-             
+
               return (
                 <tr key={doc._id}>
                   <td className="text-center">{doc.itemid}</td>
@@ -75,7 +77,7 @@ export default function DBCart() {
       return
     }
 
-    fetch('/api/db/cart', {
+    fetch(`${baseURL}/api/db/cart`, {
       method: 'POST',
       body: JSON.stringify(fe),
       headers: { 'Content-Type': 'application/json' },
@@ -102,7 +104,7 @@ export default function DBCart() {
       <div id="data">{data}</div>
       <br />
       <div className="d-flex justify-content-center mx-auto">
-        <a href="http://localhost:5173/" className="btn btn-light btn-sm">
+        <a href={baseURL} className="btn btn-light btn-sm">
           หน้าหลัก
         </a>
       </div>

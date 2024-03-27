@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import baseURL from './baseURL'
 
 import { CssBaseline } from '@mui/material'
 
@@ -56,7 +57,7 @@ function App() {
     const axiosFetch = (authToken) =>
       axios
         .post(
-          '/api/current-user',
+          `${baseURL}/api/current-user`,
           {},
           {
             headers: { authToken },

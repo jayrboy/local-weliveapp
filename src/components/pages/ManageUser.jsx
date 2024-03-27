@@ -1,3 +1,4 @@
+import baseURL from '../../baseURL'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
@@ -30,7 +31,7 @@ const ManageUser = () => {
 
   const loadData = async (authToken) => {
     await axios
-      .get('/api/users', {
+      .get(`${baseURL}/api/users`, {
         headers: { authToken },
       })
       .then((result) => {
@@ -42,7 +43,7 @@ const ManageUser = () => {
 
   const changeRole = async (authToken, data) => {
     await axios.post(
-      '/api/user/change-role',
+      `${baseURL}/api/user/change-role`,
       { data },
       {
         headers: { authToken },

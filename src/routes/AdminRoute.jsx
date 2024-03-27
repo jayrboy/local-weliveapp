@@ -1,3 +1,4 @@
+import baseURL from '../baseURL'
 import { Box } from '@mui/material'
 import SideBar from '../layout/SideBar'
 import HeaderBar from '../layout/HeaderBar'
@@ -30,7 +31,7 @@ const AdminRoute = ({ children }) => {
   const axiosFetch = async (authToken) =>
     await axios
       .post(
-        '/api/current-admin',
+        `${baseURL}/api/current-admin`,
         {},
         {
           headers: { authToken },

@@ -1,3 +1,4 @@
+import baseURL from '../../../baseURL'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaBoxOpen } from 'react-icons/fa'
@@ -10,7 +11,7 @@ export default function DBCFCode() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetch('/api/db/read')
+    fetch(`${baseURL}/api/db/read`)
       .then((response) => response.json())
       .then((docs) => {
         if (docs.length > 0) {

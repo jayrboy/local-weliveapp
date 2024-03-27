@@ -1,4 +1,5 @@
 /* eslint-disable padded-blocks */
+import baseURL from '../../../baseURL'
 import { Link } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 
@@ -14,7 +15,7 @@ export default function DBUpdate() {
   const date_added = useRef()
 
   useEffect(() => {
-    fetch('/api/db/read') //อ่านข้อมูลมาแสดงผล
+    fetch(`${baseURL}/api/db/read`) //อ่านข้อมูลมาแสดงผล
       .then((res) => res.json())
       .then((result) => {
         if (result.length > 0) {

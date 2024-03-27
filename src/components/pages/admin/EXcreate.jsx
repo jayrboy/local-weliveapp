@@ -1,3 +1,4 @@
+import baseURL from '../../../baseURL'
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
@@ -11,7 +12,7 @@ export default function EXcreate() {
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
-    fetch('/api/ex/create', {
+    fetch(`${baseURL}/api/ex/create`, {
       method: 'POST',
       body: JSON.stringify(formEnt),
       headers: { 'Content-Type': 'application/json' },

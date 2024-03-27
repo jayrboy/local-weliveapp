@@ -1,4 +1,5 @@
 /* eslint-disable padded-blocks */
+import baseURL from '../../../baseURL'
 import { Link } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
@@ -13,7 +14,7 @@ export default function EXupdate() {
   const date_start = useRef()
 
   useEffect(() => {
-    fetch('/api/ex/read') //อ่านข้อมูลมาแสดงผล
+    fetch(`${baseURL}/api/ex/read`) //อ่านข้อมูลมาแสดงผล
       .then((res) => res.json())
       .then((result) => {
         if (result.length > 0) {
