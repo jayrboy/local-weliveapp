@@ -197,10 +197,10 @@ export default function Login() {
             {/* Facebook Login : autoLoad={true} login auto)*/}
 
             <FacebookLogin
-              appId="268883909602018"
-              // version="19.0"
-              // xfbml={true}
-              // cookie={true}
+              appId="1375567326455411"
+              version="19.0"
+              xfbml={true}
+              cookie={true}
               autoLoad={false}
               fields="name,email,picture"
               scope="public_profile"

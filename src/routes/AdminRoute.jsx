@@ -15,40 +15,36 @@ const AdminRoute = ({ children }) => {
   // console.log('AdminRoute', user)
   // console.log('AdminRoute', user.token)
 
-  const [loading, setLoading] = useState(false)
-
   const { isOpen } = useSelector((state) => state.livevideomodal)
   let [firstLoad, setFirstLoad] = useState(false)
 
   useEffect(() => {
     if (user.token) {
-      console.log(user)
+      // console.log(user)
+      const axiosFetch = (authToken) => {
+        axios
+          .post(
+            `${baseURL}/api/current-admin`,
+            {},
+            {
+              headers: { authToken },
+            }
+          )
+          .then((result) => console.log(result))
+          .catch((err) => alert(err))
+      }
       axiosFetch(user.token)
     }
   }, [user])
   // console.log(user.user.role)
 
-  const axiosFetch = async (authToken) =>
-    await axios
-      .post(
-        `${baseURL}/api/current-admin`,
-        {},
-        {
-          headers: { authToken },
-        }
-      )
-      .then((result) => {
-        // console.log(result)
-        setLoading(true)
-      })
-      .catch((err) => {
-        console.log(err)
-        setLoading(false)
-      })
+  if (!user.token) {
+    return <NotFound text="Admin No Permission" />
+  }
 
-  return loading ? (
-    <firstLoadContext.Provider value={[firstLoad, setFirstLoad]}>
-      <div className="app">
+  return (
+    <div className="app">
+      <firstLoadContext.Provider value={[firstLoad, setFirstLoad]}>
         <SideBar />
         <main className="content">
           {isOpen && <LiveVideoModal />}
@@ -57,10 +53,8 @@ const AdminRoute = ({ children }) => {
             <Box>{children}</Box>
           </div>
         </main>
-      </div>
-    </firstLoadContext.Provider>
-  ) : (
-    <NotFound text="Admin No Permission" />
+      </firstLoadContext.Provider>
+    </div>
   )
 }
 export default AdminRoute
