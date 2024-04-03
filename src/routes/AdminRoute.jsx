@@ -38,10 +38,6 @@ const AdminRoute = ({ children }) => {
   }, [user])
   // console.log(user.user.role)
 
-  if (!user.token) {
-    return <NotFound text="Admin No Permission" />
-  }
-
   return (
     <div className="app">
       <firstLoadContext.Provider value={[firstLoad, setFirstLoad]}>
@@ -50,7 +46,17 @@ const AdminRoute = ({ children }) => {
           {isOpen && <LiveVideoModal />}
           <HeaderBar />
           <div className="content_body">
-            <Box>{children}</Box>
+            <Box>
+              {user.token ? (
+                children
+              ) : (
+                <div className="d-flex justify-content-center p-5">
+                  <div className="spinner-border text-secondary" role="status">
+                    <span className="visually-hidden">Loading..</span>
+                  </div>
+                </div>
+              )}
+            </Box>
           </div>
         </main>
       </firstLoadContext.Provider>

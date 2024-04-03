@@ -7,13 +7,19 @@ const UserRoute = ({ children }) => {
   const { user } = useSelector((state) => state.user)
   console.log(user)
 
-  return user.token ? (
+  return (
     <>
       <ResponsiveAppBar />
-      {children}
+      {user.token ? (
+        children
+      ) : (
+        <div className="d-flex justify-content-center p-5">
+          <div className="spinner-border text-secondary" role="status">
+            <span className="visually-hidden">Loading..</span>
+          </div>
+        </div>
+      )}
     </>
-  ) : (
-    <NotFound text="User Not Permission" />
   )
   // return children
 }
