@@ -49,38 +49,53 @@ function App() {
   // TODO:
   const dispatch = useDispatch()
 
-  const userToken = localStorage.getItem('token')
+  const [loading, setLoading] = useState(true)
 
-  if (userToken === null) {
-    console.log('Token not found')
-  } else {
-    const axiosFetch = (authToken) =>
-      axios
-        .post(
-          `${baseURL}/api/current-user`,
-          {},
-          {
-            headers: { authToken },
-          }
-        )
-        .then((result) => {
-          // console.log(result)
-          dispatch(
-            login({
-              username: result.data.username,
-              role: result.data.role,
-              name: result.data.name,
-              email: result.data.email,
-              picture: result.data.picture,
-              token: authToken,
-            })
+  useEffect(() => {
+    const userToken = localStorage.getItem('token')
+    if (userToken) {
+      const axiosFetch = (authToken) =>
+        axios
+          .post(
+            `${baseURL}/api/current-user`,
+            {},
+            {
+              headers: { authToken },
+            }
           )
-        })
-        .catch((err) => alert(err))
+          .then((result) => {
+            dispatch(
+              login({
+                username: result.data.username,
+                role: result.data.role,
+                name: result.data.name,
+                email: result.data.email,
+                picture: result.data.picture,
+                token: authToken,
+              })
+            )
+            setLoading(false)
+          })
+          .catch((err) => {
+            alert(err)
+            setLoading(false)
+          })
 
-    axiosFetch(userToken)
+      axiosFetch(userToken)
+    } else {
+      setLoading(false)
+    }
+  }, [dispatch])
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center p-5">
+        <div className="spinner-border text-secondary" role="status">
+          <span className="visually-hidden">Loading..</span>
+        </div>
+      </div>
+    )
   }
-  //  console.log({ token: userToken })
 
   return (
     <React.Fragment>

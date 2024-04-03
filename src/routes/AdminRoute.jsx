@@ -2,7 +2,7 @@ import baseURL from '../baseURL'
 import { Box } from '@mui/material'
 import SideBar from '../layout/SideBar'
 import HeaderBar from '../layout/HeaderBar'
-import { useEffect, useState, createContext } from 'react'
+import { useEffect, useState, createContext, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
 import NotFound from '../components/pages/NotFound'
@@ -12,55 +12,53 @@ export const firstLoadContext = createContext()
 
 const AdminRoute = ({ children }) => {
   const { user } = useSelector((state) => state.user)
-  // console.log('AdminRoute', user)
-  // console.log('AdminRoute', user.token)
-
   const { isOpen } = useSelector((state) => state.livevideomodal)
+
   let [firstLoad, setFirstLoad] = useState(false)
+
+  const axiosFetch = useCallback(
+    async (authToken) => {
+      try {
+        console.log(user)
+        await axios.post(
+          `${baseURL}/api/current-admin`,
+          {},
+          {
+            headers: { authToken },
+          }
+        )
+      } catch (error) {
+        console.error(error)
+        setFirstLoad(false)
+      }
+    },
+    [user]
+  )
 
   useEffect(() => {
     if (user.token) {
-      // console.log(user)
-      const axiosFetch = (authToken) => {
-        axios
-          .post(
-            `${baseURL}/api/current-admin`,
-            {},
-            {
-              headers: { authToken },
-            }
-          )
-          .then((result) => console.log(result))
-          .catch((err) => alert(err))
-      }
       axiosFetch(user.token)
     }
-  }, [user])
-  // console.log(user.user.role)
+  }, [user, axiosFetch])
 
-  return (
-    <div className="app">
+  if (user.token) {
+    return (
       <firstLoadContext.Provider value={[firstLoad, setFirstLoad]}>
-        <SideBar />
-        <main className="content">
-          {isOpen && <LiveVideoModal />}
-          <HeaderBar />
-          <div className="content_body">
-            <Box>
-              {user.token ? (
-                children
-              ) : (
-                <div className="d-flex justify-content-center p-5">
-                  <div className="spinner-border text-secondary" role="status">
-                    <span className="visually-hidden">Loading..</span>
-                  </div>
-                </div>
-              )}
-            </Box>
-          </div>
-        </main>
+        <div className="app">
+          <SideBar />
+          <main className="content">
+            {isOpen && <LiveVideoModal />}
+            <HeaderBar />
+            <div className="content_body">
+              <Box>{children}</Box>
+            </div>
+          </main>
+        </div>
       </firstLoadContext.Provider>
-    </div>
-  )
+    )
+  } else {
+    return <NotFound text="Admin Not Permission" />
+  }
 }
+
 export default AdminRoute

@@ -89,10 +89,10 @@ export default function Login() {
   }
 
   //TODO: Login Facebook
-  function responseFacebook(response) {
+  async function responseFacebook(response) {
     // console.log(response)
 
-    axios
+    await axios
       .post(`${baseURL}/api/login-facebook`, response)
       .then((result) => {
         // console.log(result.data)
@@ -197,7 +197,10 @@ export default function Login() {
             {/* Facebook Login : autoLoad={true} login auto)*/}
 
             <FacebookLogin
-              appId="1375567326455411"
+              appId="268883909602018"
+              // version="19.0"
+              // xfbml={true}
+              // cookie={true}
               autoLoad={false}
               fields="name,email,picture"
               scope="public_profile"
