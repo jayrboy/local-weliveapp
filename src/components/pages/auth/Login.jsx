@@ -1,11 +1,10 @@
 import baseURL from '../../../baseURL'
+import { useState, useRef, useEffect } from 'react'
+
 import {
   Button,
   Paper,
   CssBaseline,
-  TextField,
-  FormControlLabel,
-  Checkbox,
   Box,
   Grid,
   Typography,
@@ -39,53 +38,67 @@ function Copyright(props) {
   )
 }
 
-export default function Login() {
+const Login = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  //TODO: Login Main App
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    const formEnt = Object.fromEntries(formData.entries())
+  let [username, setUsername] = useState('')
+  let [password, setPassword] = useState('')
+  const form = useRef()
+  const checkbox = useRef()
 
-    if (formEnt.username && formEnt.password) {
-      const userData = {
-        username: formData.get('username'),
-        password: formData.get('password'),
-      }
+  //TODO: ตรวจสอบว่าได้จัดเก็บ username และ password ในแบบ cookies ไว้หรือไม่
+  useEffect(() => {
+    fetch(`${baseURL}/api/cookie/get`)
+      .then((res) => res.json())
+      .then((result) => {
+        checkbox.current.checked = result.save
+        setUsername(result.username)
+        setPassword(result.password)
+      })
+      .catch((err) => alert(err))
+  }, [])
 
-      await axios
-        .post(`${baseURL}/api/login`, userData)
-        .then((result) => {
-          // console.log(result.data)
-          toast.success(
-            result.data.payload.user.username + ' login successfully'
-          )
-          dispatch(
-            login({
-              username: result.data.payload.user.username,
-              role: result.data.payload.user.role,
-              picture: result.data.payload.user.picture,
-              token: result.data.token,
-            })
-          )
-          localStorage.setItem('token', result.data.token)
-
-          //TODO: remove comment, this redirect shouldn't need to be re-render from path login.
-          roleRedirect(result.data.payload.user.role)
-        })
-        .catch((err) => toast.error(err.response.data))
-    }
-  }
-
-  const roleRedirect = (role) => {
+  function roleRedirect(role) {
     // console.log(role)
     if (role === 'admin') {
       navigate('/admin/home')
     } else {
       navigate('/user/home')
     }
+  }
+
+  //TODO: Login Main App
+  function handleSubmit(event) {
+    event.preventDefault()
+    const formData = new FormData(form.current)
+    const formEnt = Object.fromEntries(formData.entries())
+
+    axios({
+      method: 'POST',
+      url: `${baseURL}/api/login`,
+      data: formEnt,
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((result) => {
+        console.log(result.data)
+        toast.success(result.data.payload.user.username + ' login successfully')
+        dispatch(
+          login({
+            username: result.data.payload.user.username,
+            role: result.data.payload.user.role,
+            picture: result.data.payload.user.picture,
+            token: result.data.token,
+          })
+        )
+        localStorage.setItem('token', result.data.token)
+
+        //TODO: remove comment, this redirect shouldn't need to be re-render from path login.
+        roleRedirect(result.data.payload.user.role)
+      })
+      .catch((err) => {
+        toast.error(err.response.data)
+      })
   }
 
   //TODO: Login Facebook
@@ -114,12 +127,7 @@ export default function Login() {
   }
 
   return (
-    <Grid
-      container
-      component="main"
-      item
-      sx={{ height: '100vh', justifyContent: 'center' }}
-    >
+    <Grid container component="main" item sx={{ justifyContent: 'center' }}>
       <CssBaseline />
       <Grid
         item
@@ -129,8 +137,7 @@ export default function Login() {
         component={Paper}
         elevation={6}
         sx={{
-          my: 4,
-          mx: 1,
+          mt: 2,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -162,45 +169,47 @@ export default function Login() {
             noValidate
             onSubmit={handleSubmit}
             sx={{ mt: 2, width: '300px' }}
+            ref={form}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
+            <label className="form-label">Username</label>
+            <input
+              className="form-control form-control-lg mb-2"
+              type="text"
               id="username"
-              label="Username"
               name="username"
               autoComplete="username"
+              defaultValue={username}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
+            <label className="form-label">Password</label>
+            <input
+              className="form-control form-control-lg"
               name="password"
-              label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
+              defaultValue={password}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            <div className="mt-3 form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="save"
+                ref={checkbox}
+              />
+              <label className="form-check-label">&nbsp;Remember me</label>
+            </div>
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 4, mb: 2 }}
             >
               Login
             </Button>
             {/* Facebook Login : autoLoad={true} login auto)*/}
 
             <FacebookLogin
-              appId="268883909602018"
-              // version="19.0"
-              // xfbml={true}
-              // cookie={true}
+              appId="1375567326455411"
               autoLoad={false}
               fields="name,email,picture"
               scope="public_profile"
@@ -219,7 +228,6 @@ export default function Login() {
               )}
             />
           </Box>
-          {/* Footer */}
           <Grid container>
             <Grid item xs>
               <Link to="#" className="text-decoration-none">
@@ -232,9 +240,11 @@ export default function Login() {
               </Link>
             </Grid>
           </Grid>
-          <Copyright sx={{ mt: 5 }} />
         </Box>
+        {/* Footer */}
+        <Copyright sx={{ mb: 3 }} />
       </Grid>
     </Grid>
   )
 }
+export default Login

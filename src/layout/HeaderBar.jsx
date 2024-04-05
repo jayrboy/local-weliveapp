@@ -1,13 +1,11 @@
 import logo from '../assets/logo-we.png'
-
 import { useState, useContext } from 'react'
-import { Link } from 'react-router-dom'
 
 import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import { RiLiveFill } from 'react-icons/ri'
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../redux/userSlice'
 
@@ -69,26 +67,24 @@ export default function HeaderBar() {
           <PersonOutlinedIcon />
         </IconButton>
 
-        <IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={onClickLogout}>Logout</MenuItem>
-          </Menu>
-        </IconButton>
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          <MenuItem onClick={onClickLogout}>Logout</MenuItem>
+        </Menu>
       </Box>
     </Box>
   )

@@ -3,7 +3,6 @@ import {
   Button,
   Paper,
   CssBaseline,
-  TextField,
   Box,
   Grid,
   Typography,
@@ -61,12 +60,7 @@ export default function Register() {
   }
 
   return (
-    <Grid
-      container
-      component="main"
-      item
-      sx={{ height: '100vh', justifyContent: 'center' }}
-    >
+    <Grid container component="main" item sx={{ justifyContent: 'center' }}>
       <CssBaseline />
       <Grid
         item
@@ -76,8 +70,7 @@ export default function Register() {
         component={Paper}
         elevation={6}
         sx={{
-          my: 4,
-          mx: 1,
+          mt: 2,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -110,38 +103,37 @@ export default function Register() {
             onSubmit={handleSubmit}
             sx={{ mt: 2, width: '300px' }}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
+            <label className="form-label">Username</label>
+            <input
+              className="form-control form-control-lg mb-2"
+              type="text"
               id="username"
-              label="Username"
               name="username"
               autoComplete="username"
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
+            <label className="form-label">Password</label>
+            <input
+              className="form-control form-control-lg mb-5"
               name="password"
-              label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
             />
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
+            <Button type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
               Register
             </Button>
+            <Button
+              onClick={() => navigate('/login')}
+              fullWidth
+              variant="outlined"
+            >
+              Back
+            </Button>
           </Box>
-          {/* Footer */}
-          <Copyright sx={{ mt: 5 }} />
         </Box>
+        {/* Footer */}
+        <Copyright sx={{ mb: 3 }} />
       </Grid>
     </Grid>
   )
