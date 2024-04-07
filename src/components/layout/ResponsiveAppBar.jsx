@@ -27,28 +27,6 @@ const pages = [
     icon: '',
     to: '/',
   },
-  {
-    title: 'ผลิตภัณฑ์ของเรา',
-    icon: '',
-    to: '/service',
-  },
-  {
-    title: 'เกี่ยวกับเรา',
-    icon: '',
-    to: '/about',
-  },
-]
-const authUser = [
-  {
-    title: 'สินค้าในตะกร้า',
-    icon: '',
-    to: '/user/order',
-  },
-  {
-    title: 'คำสั่งซื้อ',
-    icon: '',
-    to: '/user/invoice',
-  },
 ]
 
 const linkAuth = [
@@ -161,22 +139,13 @@ const ResponsiveAppBar = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page, index) => (
-                <MenuItem key={index} onClick={handleCloseNavMenu}>
-                  <Link to={page.to} style={{ textDecoration: 'none' }}>
-                    <Typography textAlign="center">{page.title}</Typography>
-                  </Link>
-                </MenuItem>
-              ))}
-              {/* Menu Mobile User Auth */}
-              {user.length != 0 &&
-                authUser.map((page, index) => (
-                  <MenuItem key={index} onClick={handleCloseNavMenu}>
-                    <Link to={page.to} style={{ textDecoration: 'none' }}>
-                      <Typography textAlign="center">{page.title}</Typography>
-                    </Link>
-                  </MenuItem>
-                ))}
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/" style={{ textDecoration: 'none' }}>
+                  <Typography textAlign="center">
+                    {user.length === 0 ? 'หน้าแรก' : 'รายการคำสั่งซื้อ'}
+                  </Typography>
+                </Link>
+              </MenuItem>
 
               {user.length === 0 &&
                 linkAuth.map((page, index) => (
@@ -216,32 +185,14 @@ const ResponsiveAppBar = () => {
 
           {/* Menu Left Full */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page, index) => (
-              <React.Fragment key={index}>
-                <Link to={page.to}>
-                  <Button
-                    onClick={handleCloseNavMenu}
-                    sx={{ my: 2, color: 'black', mr: 5 }}
-                  >
-                    {page.title}
-                  </Button>
-                </Link>
-              </React.Fragment>
-            ))}
-            {/* Menu Desktop User Auth */}
-            {user.length != 0 &&
-              authUser.map((page, index) => (
-                <React.Fragment key={index}>
-                  <Link to={page.to}>
-                    <Button
-                      onClick={handleCloseNavMenu}
-                      sx={{ my: 2, color: 'black', mr: 5 }}
-                    >
-                      {page.title}
-                    </Button>
-                  </Link>
-                </React.Fragment>
-              ))}
+            <Link to="/">
+              <Button
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'black', mr: 5 }}
+              >
+                {user.length === 0 ? 'หน้าแรก' : 'รายการคำสั่งซื้อ'}
+              </Button>
+            </Link>
           </Box>
           {/* /Menu Left Full */}
 

@@ -32,8 +32,6 @@ import ADCheckout from './components/pages/admin/ADcheckout'
 import ResponsiveAppBar from './components/layout/ResponsiveAppBar'
 import USorder from './components/pages/user/USorder'
 import USinvoice from './components/pages/user/USinvoice'
-import Service from './components/pages/user/Service'
-import About from './components/pages/user/About'
 
 import { useDispatch } from 'react-redux'
 import { login } from './redux/userSlice'
@@ -122,24 +120,6 @@ function App() {
         />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route
-          path="/service"
-          element={
-            <>
-              <ResponsiveAppBar />
-              <Service />
-            </>
-          }
-        />
-        <Route
-          path="/about"
-          element={
-            <>
-              <ResponsiveAppBar />
-              <About />
-            </>
-          }
-        />
 
         {/* User */}
         <Route

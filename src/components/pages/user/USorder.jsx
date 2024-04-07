@@ -59,15 +59,6 @@ export default function USorder() {
           </button>
         </div>
       </div>
-
-      <div className=" align-items-center text-center mt-3">
-        <Link
-          to="/user/home"
-          className="btn btn-sm btn-outline-light text-dark border-3 border-primary text-center  "
-        >
-          กลับหน้าหลัก
-        </Link>
-      </div>
     </>
   )
 }
