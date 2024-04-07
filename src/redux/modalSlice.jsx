@@ -3,8 +3,8 @@ const initialState = {
   isOpen: false,
 }
 
-const liveVideoModalSlice = createSlice({
-  name: 'livevideomodal',
+const modalSlice = createSlice({
+  name: 'modal',
   initialState,
   reducers: {
     openModal: (state) => {
@@ -16,5 +16,5 @@ const liveVideoModalSlice = createSlice({
   },
 })
 
-export const { openModal, closeModal } = liveVideoModalSlice.actions
-export default liveVideoModalSlice.reducer
+export const { openModal, closeModal } = modalSlice.actions
+export default modalSlice.reducer

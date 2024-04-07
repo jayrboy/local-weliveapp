@@ -1,3 +1,5 @@
+import { nanoid } from 'nanoid'
+
 /* 
   ข้อมูลเรียงลำดับแบบ Reverse Chronological
   ตามเวลา เก่าสุดอยู่บน ใหม่สุดอยู่ล่าง

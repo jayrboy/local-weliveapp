@@ -1,5 +1,4 @@
-/* eslint-disable padded-blocks */
-import baseURL from '../../../baseURL'
+import { baseURL } from '../../../App'
 import { Link } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 

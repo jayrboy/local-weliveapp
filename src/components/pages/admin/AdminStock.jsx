@@ -1,25 +1,39 @@
-import baseURL from '../../../baseURL'
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { baseURL } from '../../../App'
+import React, { useState, useEffect } from 'react'
+import { Link, useLocation, useParams } from 'react-router-dom'
 
-const ProductList = () => {
+const Stock = () => {
   let [data, setData] = useState('')
   let [page, setPage] = useState([])
+  let [loading, setLoading] = useState(false)
 
   //อ่านคีย์เวิร์ดจาก URL
   let qStr = window.location.search
   let params = new URLSearchParams(qStr)
+  const location = useLocation()
+  let { q } = useParams()
 
   useEffect(() => {
+    setLoading(true)
     fetch(`${baseURL}/api/db/search?` + params)
       .then((response) => response.json())
       .then((result) => {
         showData(result)
         paginate(result)
+        setLoading(false)
       })
       .catch((err) => alert(err))
-    // eslint-disable-next-line
-  }, [])
+  }, [location])
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center p-5">
+        <div className="spinner-border text-secondary" role="status">
+          <span className="visually-hidden">Loading..</span>
+        </div>
+      </div>
+    )
+  }
 
   const showData = (result) => {
     const numDocs = result.totalDocs
@@ -28,25 +42,26 @@ const ProductList = () => {
     }
 
     let r = (
-      <>
+      <React.Fragment>
         <div className="m-2 row-cols-auto">
           <h3 className="text-start">
-            <Link to="/admin/home" className="  text-decoration-none">
+            <Link to="/admin/home" className="text-decoration-none">
               WE LIVE |
-            </Link>{' '}
+            </Link>
             <span className="text-success"> คลังสินค้า </span>
           </h3>
         </div>
         <div className="container">
           <div className="row">
             <div className="col-sm-6 mb-2 d-flex">
-              <form action="/db/search" method="get" className="d-flex">
+              <form action="/admin/stock" method="get" className="d-flex">
                 <div className="d-inline-block">
                   <input
                     type="text"
                     name="q"
                     placeholder="พิมพ์คำที่จะค้นหา"
-                    defaultValue={params.get('q')}
+                    // defaultValue={params.get('q')}
+                    defaultValue={q}
                     className="form-control form-control-sm"
                   />
                 </div>
@@ -119,7 +134,7 @@ const ProductList = () => {
             )}
           </span>
         </div>
-      </>
+      </React.Fragment>
     )
 
     setData(r)
@@ -133,7 +148,7 @@ const ProductList = () => {
 
     let links = []
     let q = params.get('q') || ''
-    let url = `/db/search?q=${q}&page=`
+    let url = `/admin/stock?q=${q}&page=`
 
     //เนื่องจากจำนวนข้อมูลตัวอย่างมีไม่มาก
     //จึงให้แสดงหมายเลขในช่วง -/+ 2 จากเพจปัจจุบัน
@@ -150,8 +165,10 @@ const ProductList = () => {
     //ให้แสดงลิงก์ '|<' เพื่อสำหรับคลิกย้อนกลับไป
     if (start > 1) {
       links.push(
-        <li className="page-item">
-          <a to={url + 1}>{'|<'}</a>
+        <li className="page-item" key="first-page">
+          <Link to={`${url}1`} className="page-link">
+            {'|<'}
+          </Link>
         </li>
       )
     }
@@ -159,16 +176,16 @@ const ProductList = () => {
     for (let i = start; i <= end; i++) {
       if (i === result.page) {
         links.push(
-          <li className="page-item">
-            <a className="page-link active">{i}</a>
+          <li className="page-item" key={i}>
+            <span className="page-link active">{i}</span>
           </li>
         )
       } else {
         links.push(
-          <li className="page-item">
-            <a href={url + i} className="page-link">
+          <li className="page-item" key={i}>
+            <Link to={`${url}${i}`} className="page-link">
               {i}
-            </a>
+            </Link>
           </li>
         )
       }
@@ -178,10 +195,10 @@ const ProductList = () => {
     //ให้แสดงลิงก์ '>|' เพื่อสำหรับคลิกย้อนไปยังเพจเหล่านั้น
     if (end < result.totalPages) {
       links.push(
-        <li className="page-item">
-          <a href={url + result.totalPages} className="page-link">
+        <li className="page-item" key="last-page">
+          <Link to={`${url}${result.totalPages}`} className="page-link">
             {'>|'}
-          </a>
+          </Link>
         </li>
       )
     }
@@ -195,12 +212,12 @@ const ProductList = () => {
       <br />
       <div>
         <ul className="pagination">
-          {page.map((p) => (
-            <>{p}</>
+          {page.map((p, i) => (
+            <React.Fragment key={i + 1}>{p}</React.Fragment>
           ))}
         </ul>
       </div>
     </div>
   )
 }
-export default ProductList
+export default Stock

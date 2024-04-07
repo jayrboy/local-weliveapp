@@ -1,4 +1,4 @@
-import baseURL from '../../../baseURL'
+import { baseURL } from '../../App'
 import {
   Button,
   Paper,

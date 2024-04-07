@@ -1,4 +1,4 @@
-import baseURL from '../../../baseURL'
+import { baseURL } from '../../../App'
 
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'

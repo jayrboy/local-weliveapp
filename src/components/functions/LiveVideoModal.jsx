@@ -1,11 +1,13 @@
 import { useContext } from 'react'
-import { useDispatch } from 'react-redux'
-import { closeModal } from '../redux/liveVideoModalSlice'
-import { firstLoadContext } from '../routes/AdminRoute'
-import { toast } from 'react-toastify'
-import { RiLiveFill } from 'react-icons/ri'
 
-import GetComments from '../functions/comments'
+import { RiLiveFill } from 'react-icons/ri'
+import { toast } from 'react-toastify'
+
+import { useDispatch } from 'react-redux'
+import { closeModal } from '../../redux/modalSlice'
+
+import { firstLoadContext } from '../../routes/AdminRoute'
+import GetComments from './GetComments'
 
 const LiveVideoModal = () => {
   const dispatch = useDispatch()

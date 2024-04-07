@@ -7,7 +7,7 @@ export default function ADSeacrh() {
         <h3 className="text-start">
           <Link to="/admin/home" className="  text-decoration-none">
             WE LIVE |
-          </Link>{' '}
+          </Link>
           <span className="text-success"> ค้นหาลูกค้า </span>
         </h3>
       </div>

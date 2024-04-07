@@ -1,13 +1,25 @@
-import baseURL from '../../../baseURL'
+import { baseURL } from '../../../App'
 import { useRef } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-export default function DBCreate() {
+import { toast } from 'react-toastify'
+
+function DBCreate() {
   const form = useRef()
   const navigate = useNavigate()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
+
+  const err = {
+    fontSize: 'smaller',
+    color: 'red',
+  }
 
   const onSubmitForm = (event) => {
-    event.preventDefault()
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
@@ -19,10 +31,10 @@ export default function DBCreate() {
       .then((res) => res.text())
       .then((result) => {
         if (result === 'true') {
+          toast.success('ข้อมูลถูกจัดเก็บแล้ว')
           form.current.reset()
-          alert('ข้อมูลถูกจัดเก็บแล้ว')
         } else {
-          alert('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
+          toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
         }
         navigate('/db/create')
       })
@@ -40,93 +52,100 @@ export default function DBCreate() {
         </h3>
       </div>
       <div
-        className="card mt-5 mx-auto p-4 rounded"
+        className="card mx-auto p-4 rounded mt-3"
         style={{ width: '400px', background: '#fff' }}
       >
-        <form onSubmit={onSubmitForm} ref={form}>
+        <form onSubmit={handleSubmit(onSubmitForm)} ref={form}>
           <label className="form-label">รหัส CF</label>
           <input
             type="text"
-            placeholder=" ' A01 ' "
             name="itemid"
             className="form-control form-control-sm"
-            required
+            {...register('itemid', { required: true, maxLength: 30 })}
           />
-          <br />
-          <label className="form-label">ชื่อสินค้า</label>
+          {errors.name && (
+            <div style={err}>กรุณาระบุรหัสสินค้า ตัวอย่าง &quot;A01&quot;</div>
+          )}
+          <label className="form-label mt-2">ชื่อสินค้า</label>
           <input
             type="text"
             name="name"
-            placeholder="' หนังสือ '"
             className="form-control form-control-sm"
-            required
+            {...register('name', { required: true, maxLength: 30 })}
           />
-          <br />
-
-          <label className="form-label">ราคา</label>
+          {errors.name && (
+            <div style={err}>
+              กรุณาระบุชื่อสินค้า ตัวอย่าง &quot;หนังสือ&quot;
+            </div>
+          )}
+          <label className="form-label mt-2">ราคา</label>
           <input
             type="number"
             name="price"
-            placeholder="' 250 '"
             min="0"
             className="form-control form-control-sm"
-            required
+            {...register('price', {
+              validate: (value) => parseFloat(value) > 0,
+            })}
           />
-
-          <br />
-
-          <label className="form-label">ราคาต้นทุน</label>
+          {errors.price && <div style={err}>กำหนดราคาสินค้า ตัวอย่าง: 400</div>}
+          <label className="form-label mt-2">ราคาต้นทุน</label>
           <input
             type="number"
             name="cost"
             min="0"
-            placeholder="' 200 '"
             className="form-control form-control-sm"
-            required
+            {...register('cost', {
+              validate: (value) => parseFloat(value) > 0,
+            })}
           />
-          <br />
-
-          <label className="form-label">จำนวนสินค้า</label>
+          {errors.price && <div style={err}>กำหนดราคาต้นทุน ตัวอย่าง: 200</div>}
+          <label className="form-label mt-2">จำนวนสินค้า</label>
           <input
             type="number"
             name="stock"
-            placeholder="' 10 '"
             min="0"
             className="form-control form-control-sm"
-            required
+            {...register('stock', {
+              validate: (value) => parseFloat(value) > 0,
+            })}
           />
-          <br />
-
-          <label className="form-label">จำนวนสินค้าที่อนุญาติให้ล้นสต็อก</label>
+          {errors.price && <div style={err}>กำหนดจำนวนสินค้า ตัวอย่าง: 10</div>}
+          <label className="form-label mt-2">
+            จำนวนสินค้าที่อนุญาติให้ล้นสต็อก
+          </label>
           <input
             type="number"
             name="over_stock"
-            placeholder="' 5 '"
             min="0"
             className="form-control form-control-sm"
+            {...register('stock', {
+              validate: (value) => parseFloat(value) > 0,
+            })}
           />
-          <br />
-
-          <label className="form-label">วันที่เพิ่มสินค้า</label>
+          {errors.price && (
+            <div style={err}>
+              กำหนดจำนวน limit จำนวนที่นำมาตัดในสต็อก ตัวอย่าง: 10
+            </div>
+          )}
+          <label className="form-label mt-2">วันที่เพิ่มสินค้า</label>
           <input
             type="Date"
             name="date_added"
-            className="form-control form-control-sm"
-            required
+            className="form-control form-control-sm mb-3"
           />
-          <br />
-
-          <div className="d-flex justify-content-center">
+          <div className="d-flex justify-content-center ">
             <button className="btn btn-success btn-sm">ตกลง</button>
           </div>
         </form>
       </div>
       <br />
       <div className="d-flex justify-content-center">
-        <a href="/admin/home" className="btn btn-light btn-sm">
+        <a href="/admin/home" className="btn btn-light btn-sm mb-5">
           กลับหน้าหลัก
         </a>
       </div>
     </>
   )
 }
+export default DBCreate

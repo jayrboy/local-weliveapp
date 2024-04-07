@@ -1,4 +1,4 @@
-import logo from '../assets/logo-we.png'
+import logo from '../../assets/logo-we.png'
 import { useState, useContext } from 'react'
 
 import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material'
@@ -7,10 +7,10 @@ import { RiLiveFill } from 'react-icons/ri'
 
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { logout } from '../redux/userSlice'
+import { logout } from '../../redux/userSlice'
 
-import { openModal } from '../redux/liveVideoModalSlice'
-import { firstLoadContext } from '../routes/AdminRoute'
+import { openModal } from '../../redux/modalSlice'
+import { firstLoadContext } from '../../routes/AdminRoute'
 
 export default function HeaderBar() {
   const dispatch = useDispatch()

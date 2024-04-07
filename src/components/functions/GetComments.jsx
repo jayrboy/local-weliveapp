@@ -53,7 +53,7 @@ function latestComment(oldComment, newComment) {
   })
 }
 
-//TODO: Main Function
+//TODO: Main
 const GetComments = () => {
   useEffect(() => {
     let firstLoad = true

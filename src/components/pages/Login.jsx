@@ -1,4 +1,4 @@
-import baseURL from '../../../baseURL'
+import { baseURL } from '../../App'
 import { useState, useRef, useEffect } from 'react'
 
 import {
@@ -13,7 +13,7 @@ import {
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { login } from '../../../redux/userSlice'
+import { login } from '../../redux/userSlice'
 
 import { FacebookLogin } from 'facebook-login-react'
 import { FaFacebook } from 'react-icons/fa'
@@ -81,7 +81,7 @@ const Login = () => {
       headers: { 'Content-Type': 'application/json' },
     })
       .then((result) => {
-        console.log(result.data)
+        // console.log(result.data)
         toast.success(result.data.payload.user.username + ' login successfully')
         dispatch(
           login({

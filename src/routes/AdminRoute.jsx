@@ -1,25 +1,25 @@
-import baseURL from '../baseURL'
+import { baseURL } from '../App'
 import { Box } from '@mui/material'
-import SideBar from '../layout/SideBar'
-import HeaderBar from '../layout/HeaderBar'
+import SideBar from '../components/layout/SideBar'
+import HeaderBar from '../components/layout/HeaderBar'
 import { useEffect, useState, createContext, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
 import NotFound from '../components/pages/NotFound'
-import LiveVideoModal from '../layout/LiveVideoModal'
+import LiveVideoModal from '../components/functions/LiveVideoModal'
 
 export const firstLoadContext = createContext()
 
 const AdminRoute = ({ children }) => {
   const { user } = useSelector((state) => state.user)
-  const { isOpen } = useSelector((state) => state.livevideomodal)
+  const { isOpen } = useSelector((state) => state.modal)
 
   let [firstLoad, setFirstLoad] = useState(false)
 
   const axiosFetch = useCallback(
     async (authToken) => {
       try {
-        console.log(user)
+        // console.log(user)
         await axios.post(
           `${baseURL}/api/current-admin`,
           {},
@@ -28,7 +28,7 @@ const AdminRoute = ({ children }) => {
           }
         )
       } catch (error) {
-        console.error(error)
+        console.log(error)
         setFirstLoad(false)
       }
     },

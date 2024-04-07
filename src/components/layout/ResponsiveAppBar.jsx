@@ -1,4 +1,4 @@
-import logo from '../assets/logo.png'
+import logo from '../../assets/logo.png'
 import React, { useState } from 'react'
 
 import AppBar from '@mui/material/AppBar'
@@ -19,7 +19,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import LoginIcon from '@mui/icons-material/Login'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { logout } from '../redux/userSlice'
+import { logout } from '../../redux/userSlice'
 
 const pages = [
   {
