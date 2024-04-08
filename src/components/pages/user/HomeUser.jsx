@@ -23,7 +23,6 @@ export default function HomeUser() {
         </>
       ) : (
         <>
-          <USorder />
           <USinvoice />
         </>
       )}
