@@ -38,23 +38,20 @@ export default function DBUpdate() {
     let r = (
       <>
         <form onSubmit={onSubmitForm} ref={form}>
-          <table className="table mt-3 table-striped ">
-            <thead className="table-success border-bottom border-bottom-5">
+          <table className="table table-striped mt-3 text-center">
+            <thead className="table-light">
               <tr>
-                <th className="text-center">แก้ไข</th>
-                <th className="text-center">รหัสสินค้า</th>
-                <th className="text-center">ชื่อสินค้า</th>
-                <th className="text-center">ราคา</th>
-                <th className="text-center">ราคาต้นทุน</th>
-                <th className="text-center">จำนวนสินค้า</th>
-                <th className="text-center">สินค้าเกินจำนวน</th>
-                <th className="text-center">วันที่เพิ่มสินค้า</th>
-                <td className="text-center"></td>
-                <td className="text-center"></td>
-                <td className="text-center"></td>
+                <th>แก้ไข</th>
+                <th>รหัสสินค้า</th>
+                <th>ชื่อสินค้า</th>
+                <th>ราคา</th>
+                <th>ราคาต้นทุน</th>
+                <th>จำนวนสินค้า</th>
+                <th>ขายเกินจำนวน</th>
+                <th>วันที่เพิ่มสินค้า</th>
               </tr>
             </thead>
-            <tbody className="table-group-divider">
+            <tbody>
               {result.map((doc) => {
                 let dt = new Date(Date.parse(doc.date_added))
                 let df = (
@@ -67,8 +64,8 @@ export default function DBUpdate() {
                 return (
                   <tr key={doc._id}>
                     {/* เมื่อคลิก radio บนรายการใด เราก็แนบ document ของรายการนั้น
-                      ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
-                  */}
+                        ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
+                    */}
                     <td>
                       <input
                         type="radio"
@@ -77,17 +74,13 @@ export default function DBUpdate() {
                         onClick={() => onClickRadio(doc)}
                       />
                     </td>
-
-                    <td className="text-center">{doc.itemid}</td>
-                    <td className="text-center">{doc.name}</td>
-                    <td className="text-center">{p}</td>
-                    <td className="text-center">{c}</td>
-                    <td className="text-center">{doc.stock}</td>
-                    <td className="text-center">{doc.over_stock}</td>
-                    <td className="text-center">{df}</td>
-                    <td className="text-center"></td>
-                    <td className="text-center"></td>
-                    <td className="text-center"></td>
+                    <td>{doc.itemid}</td>
+                    <td>{doc.name}</td>
+                    <td>{p}</td>
+                    <td>{c}</td>
+                    <td>{doc.stock}</td>
+                    <td>{doc.over_stock}</td>
+                    <td>{df}</td>
                   </tr>
                 )
               })}
@@ -95,7 +88,9 @@ export default function DBUpdate() {
               {/* สร้างฟอร์มไว้ที่แถวสุดท้าย */}
               <tr>
                 <td>
-                  <button className="btn btn-warning btn-sm">แก้ไข</button>
+                  <button className="btn btn-outline-warning btn-sm">
+                    แก้ไข
+                  </button>
                 </td>
                 <td>
                   <input
@@ -159,14 +154,14 @@ export default function DBUpdate() {
                     ref={date_added}
                   />
                 </td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
             </tbody>
           </table>
-          <div>
-            เลือกรายการที่จะแก้ไข แล้วใส่ข้อมูลใหม่ลงไป จากนั้นคลิกปุ่ม แก้ไข
+
+          <div className="ms-3">
+            <small>
+              เลือกรายการที่จะแก้ไข แล้วใส่ข้อมูลใหม่ลงไป จากนั้นคลิกปุ่ม แก้ไข
+            </small>
           </div>
         </form>
       </>
@@ -225,9 +220,11 @@ export default function DBUpdate() {
   }
 
   return (
-    <div style={{ margin: '20px' }}>
-      <HeaderProduct title="เพิ่มสินค้า" />
-      <FeatureProduct />
+    <>
+      <div className="row" style={{ margin: '20px' }}>
+        <HeaderProduct title="แก้ไขสินค้า" />
+        <FeatureProduct />
+      </div>
       {loading ? (
         <div className="d-flex justify-content-center p-5">
           <div className="spinner-border text-secondary" role="status">
@@ -235,7 +232,7 @@ export default function DBUpdate() {
           </div>
         </div>
       ) : (
-        <div id="data">{data}</div>
+        <div>{data}</div>
       )}
       <br />
       <div className="d-flex justify-content-center mx-auto">
@@ -243,6 +240,6 @@ export default function DBUpdate() {
           กลับไปหน้าสินค้า
         </Link>
       </div>
-    </div>
+    </>
   )
 }

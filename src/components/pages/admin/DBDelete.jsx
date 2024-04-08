@@ -33,20 +33,20 @@ export default function DBDelete() {
     let r = (
       <>
         <form onSubmit={onSubmitForm} ref={form}>
-          <table className="table table-striped mt-3">
-            <thead className=" table table-success">
+          <table className="table table-striped mt-3 text-center">
+            <thead className="table-light">
               <tr>
-                <th className="text-center">ลบ</th>
-                <th className="text-center">รหัสสินค้า</th>
-                <th className="text-center">ชื่อสินค้า</th>
-                <th className="text-center">ราคา</th>
-                <th className="text-center">ราคาต้นทุน</th>
-                <th className="text-center">จำนวนสินค้า</th>
-                <th className="text-center">สินค้าเกินจำนวน</th>
-                <th className="text-center">วันที่เพิ่มสินค้า</th>
+                <th>ลบ</th>
+                <th>รหัสสินค้า</th>
+                <th>ชื่อสินค้า</th>
+                <th>ราคา</th>
+                <th>ราคาต้นทุน</th>
+                <th>จำนวนสินค้า</th>
+                <th>สินค้าเกินจำนวน</th>
+                <th>วันที่เพิ่มสินค้า</th>
               </tr>
             </thead>
-            <tbody className="table-group-divider">
+            <tbody>
               {result.map((doc) => {
                 let dt = new Date(Date.parse(doc.date_added))
                 let df = (
@@ -58,23 +58,25 @@ export default function DBDelete() {
                 let c = new Intl.NumberFormat().format(doc.cost)
                 return (
                   <tr key={doc._id}>
-                    <td className="text-center">
+                    <td>
                       <input type="radio" name="_id" value={doc._id} />
                     </td>
-                    <td className="text-center">{doc.itemid}</td>
-                    <td className="text-center">{doc.name}</td>
-                    <td className="text-center">{p}</td>
-                    <td className="text-center">{c}</td>
-                    <td className="text-center">{doc.stock}</td>
-                    <td className="text-center">{doc.over_stock}</td>
-                    <td className="text-center">{df}</td>
+                    <td>{doc.itemid}</td>
+                    <td>{doc.name}</td>
+                    <td>{p}</td>
+                    <td>{c}</td>
+                    <td>{doc.stock}</td>
+                    <td>{doc.over_stock}</td>
+                    <td>{df}</td>
                   </tr>
                 )
               })}
             </tbody>
           </table>
           <br />
-          <button className="btn btn-danger btn-sm">ลบรายการที่เลือก</button>
+          <div className="ms-3">
+            <button className="btn btn-danger btn-sm">ลบรายการที่เลือก</button>
+          </div>
         </form>
       </>
     )
@@ -119,9 +121,11 @@ export default function DBDelete() {
   }
 
   return (
-    <div style={{ margin: '20px' }}>
-      <HeaderProduct title="ลบสินค้า" />
-      <FeatureProduct />
+    <>
+      <div className="row" style={{ margin: '20px' }}>
+        <HeaderProduct title="ลบสินค้า" />
+        <FeatureProduct />
+      </div>
       {loading ? (
         <div className="d-flex justify-content-center p-5">
           <div className="spinner-border text-secondary" role="status">
@@ -137,6 +141,6 @@ export default function DBDelete() {
           กลับไปหน้าสินค้า
         </Link>
       </div>
-    </div>
+    </>
   )
 }

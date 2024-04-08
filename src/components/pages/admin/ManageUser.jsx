@@ -15,9 +15,20 @@ import {
   TableRow,
   Paper,
 } from '@mui/material'
+import { styled } from '@mui/material/styles'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import EditIcon from '@mui/icons-material/Edit'
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))
 
 const ManageUser = () => {
   const role = ['admin', 'user']
@@ -80,7 +91,7 @@ const ManageUser = () => {
           <TableBody>
             {data
               ? data.map((item, index) => (
-                  <TableRow
+                  <StyledTableRow
                     key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
@@ -111,7 +122,7 @@ const ManageUser = () => {
                         <EditIcon />
                       </Link>
                     </TableCell> */}
-                  </TableRow>
+                  </StyledTableRow>
                 ))
               : null}
           </TableBody>

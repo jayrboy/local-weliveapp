@@ -6,6 +6,8 @@ import RemoveShoppingCartOutlinedIcon from '@mui/icons-material/RemoveShoppingCa
 import AddBusinessOutlinedIcon from '@mui/icons-material/AddBusinessOutlined'
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined'
 import ViewListIcon from '@mui/icons-material/ViewList'
+import SearchIcon from '@mui/icons-material/Search'
+import DBCreate from './DBCreate'
 
 export const HeaderProduct = ({ title }) => {
   return (
@@ -19,32 +21,43 @@ export const HeaderProduct = ({ title }) => {
 }
 
 export const FeatureProduct = () => {
+  let [openCreate, setOpenCreate] = useState(false)
+
   return (
-    <div className="col-sm-6 d-flex justify-content-start">
-      <Link to="/db/create">
-        <button className="btn btn-primary btn-sm">
+    <>
+      <div className="col-sm-6 d-flex justify-content-start mt-2">
+        <Link to="/admin/stock">
+          <button className="btn btn-success btn-sm">
+            <ViewListIcon />
+          </button>
+        </Link>
+        &nbsp;
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={() => setOpenCreate(true)}
+          style={{ height: '34px' }}
+        >
           <AddBusinessOutlinedIcon />
         </button>
-      </Link>
-      &nbsp;
-      <Link to="/admin/stock">
-        <button className="btn btn-success btn-sm">
-          <ViewListIcon />
-        </button>
-      </Link>
-      &nbsp;
-      <Link to="/db/update">
-        <button className="btn btn-warning btn-sm">
-          <EditNoteOutlinedIcon />
-        </button>
-      </Link>
-      &nbsp;
-      <Link to="/db/delete">
-        <button className="btn btn-danger btn-sm">
-          <RemoveShoppingCartOutlinedIcon />
-        </button>
-      </Link>
-    </div>
+        &nbsp;
+        <Link to="/db/update">
+          <button className="btn btn-warning btn-sm">
+            <EditNoteOutlinedIcon />
+          </button>
+        </Link>
+        &nbsp;
+        <Link to="/db/delete">
+          <button className="btn btn-danger btn-sm">
+            <RemoveShoppingCartOutlinedIcon />
+          </button>
+        </Link>
+      </div>
+      {openCreate ? (
+        <DBCreate openCreate={openCreate} setOpenCreate={setOpenCreate} />
+      ) : (
+        ''
+      )}
+    </>
   )
 }
 
@@ -83,48 +96,47 @@ const Stock = () => {
 
     let r = (
       <React.Fragment>
-        <div className="table-responsive">
-          <table className="table table-striped caption-top mt-3">
-            <thead className="table-success">
-              <tr style={numDocs === 0 ? hidden : null}>
-                <th>#</th>
-                <th>CF CODE</th>
-                <th>ชื่อสินค้า</th>
-                <th>ราคา</th>
-                <th>ราคาต้นทุน</th>
-                <th>จำนวนสินค้า</th>
-                <th>สินค้าเกินจำนวน</th>
-                <th>วันที่เพิ่มสินค้า</th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.docs.map((doc, i) => {
-                //จัดรูปแบบวันเดือนปี ที่สามารถเข้าใจได้
-                let dt = new Date(Date.parse(doc.date_added))
-                let df = (
-                  <>
-                    {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                  </>
-                )
-                let p = new Intl.NumberFormat().format(doc.price)
-                let c = new Intl.NumberFormat().format(doc.cost)
+        <table className="table table-striped mt-3 text-center">
+          <thead className="table-light">
+            <tr style={numDocs === 0 ? hidden : null}>
+              <th>#</th>
+              <th>CF CODE</th>
+              <th>ชื่อสินค้า</th>
+              <th>ราคา</th>
+              <th>ราคาต้นทุน</th>
+              <th>จำนวนสินค้า</th>
+              <th>ขายเกินจำนวน</th>
+              <th>วันที่เพิ่มสินค้า</th>
+            </tr>
+          </thead>
+          <tbody>
+            {result.docs.map((doc, i) => {
+              //จัดรูปแบบวันเดือนปี ที่สามารถเข้าใจได้
+              let dt = new Date(Date.parse(doc.date_added))
+              let df = (
+                <>
+                  {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                </>
+              )
+              let p = new Intl.NumberFormat().format(doc.price)
+              let c = new Intl.NumberFormat().format(doc.cost)
 
-                return (
-                  <tr key={doc._id}>
-                    <td className="text-center">{i + 1}</td>
-                    <td className="text-center">{doc.itemid}</td>
-                    <td className="text-center">{doc.name}</td>
-                    <td className="text-center">{p}</td>
-                    <td className="text-center">{c}</td>
-                    <td className="text-center">{doc.stock}</td>
-                    <td className="text-center">{doc.over_stock}</td>
-                    <td className="text-center">{df}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
+              return (
+                <tr key={doc._id}>
+                  <td>{i + 1}</td>
+                  <td>{doc.itemid}</td>
+                  <td>{doc.name}</td>
+                  <td>{p}</td>
+                  <td>{c}</td>
+                  <td>{doc.stock}</td>
+                  <td>{doc.over_stock}</td>
+                  <td>{df}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+
         <span className="ms-3">
           {numDocs === 0 ? (
             <>ไม่พบข้อมูล</>
@@ -205,24 +217,26 @@ const Stock = () => {
   }
 
   return (
-    <div style={{ margin: '20px' }}>
-      <HeaderProduct title="สินค้า" />
-      <div className="row">
+    <>
+      <div className="row" style={{ margin: '20px' }}>
+        <HeaderProduct title="สินค้า" />
         <FeatureProduct />
-        <div className="col-sm-6 mb-2 d-flex">
+        <div className="col-sm-6 mt-2 d-flex">
           <form action="/admin/stock" method="get" className="d-flex">
             <div className="d-inline-block">
               <input
                 type="text"
                 name="q"
-                placeholder="พิมพ์คำที่จะค้นหา"
+                placeholder="พิมพ์ชื่อสินค้าที่จะค้นหา"
                 // defaultValue={params.get('q')}
                 defaultValue={q}
-                className="form-control form-control-sm"
+                className="form-control form-control"
               />
             </div>
-            &nbsp;
-            <button className="btn btn-sm btn-primary">ค้นหา</button>
+            &nbsp;&nbsp;
+            <button className="btn btn-sm btn-primary">
+              <SearchIcon />
+            </button>
           </form>
         </div>
       </div>
@@ -237,13 +251,13 @@ const Stock = () => {
       )}
       <br />
       <div className="d-flex justify-content-center">
-        <ul className="pagination">
+        <ul className="pagination pagination-sm">
           {page.map((p, i) => (
             <React.Fragment key={i + 1}>{p}</React.Fragment>
           ))}
         </ul>
       </div>
-    </div>
+    </>
   )
 }
 export default Stock
