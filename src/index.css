@@ -5,7 +5,7 @@ body,
 #root,
 .app,
 .content {
-  height: 100%;
+  height: 100vh;
   width: 100%;
   font-family: 'Source Sans Pro', sans-serif;
   background-color: #f7fff7;
@@ -13,7 +13,7 @@ body,
 .content_body {
   background-color: #f0f0f0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   overflow: auto;
 }
 .app {

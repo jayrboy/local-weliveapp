@@ -1,40 +1,36 @@
-import { styled } from '@mui/material/styles'
-import Paper from '@mui/material/Paper'
 import { productList } from '../../../data'
+
+import { styled } from '@mui/material/styles'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
+import TableCell, { tableCellClasses } from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import FormGroup from '@mui/material/FormGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
-import {
-  TableColumnReordering,
-  TableFixedColumns,
-} from '@devexpress/dx-react-grid'
+import Paper from '@mui/material/Paper'
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
 }))
 
 export default function USinvoice() {
   return (
-    <div className=" position-relative mt-5 ">
-      <h3 className=" m-3">
-        <span>We Live</span>
-        <span className=" text-success ms-2">| รายการสินค้า</span>
+    <div className="container position-relative mt-3 mx-auto">
+      <h3 className="mb-5 m-3">
+        <span>We Live App</span>
+        <span className=" text-success ms-2">| รายการสั่งซื้อ</span>
       </h3>
-      <div className="card">
-        <div className=" text-center">
+      <div className="card shadow">
+        <div className="text-center">
           <br />
           <span> Order :</span>
-          <span className=" text-danger">#12160</span> <br />
+          <span className=" text-danger">#{'12160'}</span> <br />
           <span> เลขที่บัญชี....</span>
           <br />
           เลขที่บัญชี
@@ -61,18 +57,19 @@ export default function USinvoice() {
           <br />
         </div>
       </div>
-      <div className=" mt-3">
-        <div className=" card">
-          <div className=" m-3">
+      <div className="mt-4">
+        <div className="card shadow">
+          <div className="m-4">
             <span>Order</span>
-            <span className=" text-danger ms-3">#12160</span>
-            <span className="ms-3">Facebook Name : ..............</span>
+            <span className=" text-danger ms-3">#{'12160'}</span>
+            <span className="ms-3">Facebook Name : {'..............'}</span>
             <br />
             <span>วันที่ทำรายการ :</span>
-            <span className="ms-3">.................</span>
+            <span className="ms-3">{'..............'}</span>
           </div>
+
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table aria-label="customized table">
               <TableHead>
                 <TableRow>
                   <TableCell className="text-success text-center">#</TableCell>
@@ -96,9 +93,11 @@ export default function USinvoice() {
               <TableBody>
                 {productList.map((product, i) => {
                   return (
-                    <TableRow
+                    <StyledTableRow
                       key={product.id}
-                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                      sx={{
+                        '&:last-child td, &:last-child th': { border: 0 },
+                      }}
                     >
                       <TableCell className="text-center">{i + 1}</TableCell>
                       <TableCell className="text-center">
@@ -116,7 +115,7 @@ export default function USinvoice() {
                       <TableCell className="text-center">
                         {product.from.proSum}
                       </TableCell>
-                    </TableRow>
+                    </StyledTableRow>
                   )
                 })}
                 {/* Additional row for discount, shipping cost, and total */}
@@ -149,98 +148,98 @@ export default function USinvoice() {
             </Table>
           </TableContainer>
 
-          <div className=" m-3 ms-5 border-3 border-top border-bottom border-success">
-            <form>
-              <div className=" container float-start ">
-                <div className="row mt-3">
-                  <label>
-                    {' '}
-                    วันที่ทำรายการ
-                    <br />
-                    <input type="date" className="w-25" />
-                    <input type="time" className="w-25 ms-3" />
-                  </label>
+          <div className="container mt-3 mx-auto shadow">
+            <form className="m-3">
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label>วันที่ทำรายการ</label>
+                    <input type="date" className="form-control" />
+                  </div>
                 </div>
-                <div className="row mt-3">
-                  <label>
-                    จำนวนเงินที่ทำรายการ
-                    <br />
-                    <input type=" number" className=" text-body" />
-                  </label>
-
-                  <label className=" mt-3">
-                    อัพโหลดภาพสลิปการโอนเงิน
-                    <br />
-                    <input
-                      type="file"
-                      className=" img-thumbnail bg-success-subtle"
-                    ></input>
-                  </label>
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label></label>
+                    <input type="time" className="form-control" />
+                  </div>
                 </div>
-                <div className=" row mt-3">
-                  <label>
-                    ชื่อ
-                    <br />
+                <div className="col-md-12">
+                  <div className="mb-3">
+                    <label>จำนวนเงินที่ทำรายการ</label>
+                    <input type="number" className="form-control" />
+                  </div>
+                </div>
+                <div className="col-md-12">
+                  <div className="mb-3">
+                    <label>อัพโหลดภาพสลิปการโอนเงิน</label>
+                    <input type="file" className="form-control" />
+                  </div>
+                </div>
+                <div className="col-md-12">
+                  <div className="mb-3">
+                    <label>ชื่อ</label>
                     <input
-                      type=" text "
+                      type="text"
+                      className="form-control"
                       placeholder="ใส่ชื่อผู้โอน"
-                      className=" w-100"
                     />
-                  </label>
+                  </div>
                 </div>
-                <div className=" row mt-3">
-                  <label>
-                    ที่อยู่
-                    <br />
+                <div className="col-md-12">
+                  <div className="mb-3">
+                    <label>ที่อยู่</label>
                     <textarea
-                      type=" text "
+                      rows="3"
+                      type="text"
+                      className="form-control"
                       placeholder="กรอกที่อยู่ของลูกค้า ระบุให้ชัดเจน"
-                      className="w-100"
                     />
-                  </label>
-                </div>
-
-                <div className=" row mt-3 w-100">
-                  <div className="col">
-                    <label>
-                      ตำบล/แขวง
-                      <br />
-                      <input className="w-auto" type=" text " />
-                    </label>
-                  </div>
-                  <div className="col">
-                    <label>
-                      อำเภอ/เขต
-                      <br />
-                      <input className="w-auto" type=" text " />
-                    </label>
                   </div>
                 </div>
-                <div className=" row mt-3 w-100">
-                  <div className="col">
-                    <label>
-                      จังหวัด
-                      <br />
-                      <input className="w-auto" type=" text " />
-                    </label>
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label>ตำบล/แขวง</label>
+                    <input type="text" className="form-control" />
                   </div>
-                  <div className="col">
-                    <label>
-                      รหัสไปรษณีย์
-                      <br />
-                      <input className="w-auto" type=" text " />
-                    </label>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label>อำเภอ/เขต</label>
+                    <input type="text" className="form-control" />
                   </div>
-
-                  <div className=" row mt-3">
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label>จังหวัด</label>
+                    <input type="text" className="form-control" />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label>รหัสไปรษณีย์</label>
+                    <input type="text" className="form-control" />
+                  </div>
+                </div>
+                <div className="col-md-12">
+                  <div className="mb-3">
+                    <label>โทรศัพท์</label>
+                    <input type="text" className="form-control" />
+                  </div>
+                </div>
+                <div className="col-md-12">
+                  <div className="mb-3">
+                    <input type="checkbox" name="save" /> &nbsp;
                     <label>
-                      โทรศัพท์
-                      <br />
-                      <input type=" text " className=" w-100" />
+                      ยอมรับ <a href="">นโยบายความเป็นส่วนตัว</a>
                     </label>
                   </div>
                 </div>
-                <button className="btn btn-primary mt-3 mb-3 " type="submit">
+              </div>
+              <div className="text-center">
+                <button
+                  className="btn btn-sm btn-primary mt-3 mb-3 "
+                  type="submit"
+                >
                   บันทึก
                 </button>
               </div>
@@ -248,6 +247,8 @@ export default function USinvoice() {
           </div>
         </div>
       </div>
+      <br />
+      <br />
     </div>
   )
 }
