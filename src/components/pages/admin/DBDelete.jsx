@@ -2,37 +2,38 @@ import { baseURL } from '../../../App'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
+import { HeaderProduct, FeatureProduct } from './AdminStock'
+
 export default function DBDelete() {
   let [data, setData] = useState('')
   const form = useRef()
   const navigate = useNavigate()
+  let [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    setLoading(true)
     fetch(`${baseURL}/api/db/read`)
       .then((response) => response.json())
       .then((docs) => {
         if (docs.length > 0) {
           showData(docs)
+          setLoading(false)
         } else {
           setData(<>ไม่มีรายการข้อมูล</>)
         }
       })
-      .catch((err) => alert(err))
+      .catch((err) => {
+        alert(err)
+        setLoading(true)
+      })
     // eslint-disable-next-line
   }, [])
 
   const showData = (result) => {
     let r = (
       <>
-        <h3 className="text-start">
-          <Link to="/admin/home" className="  text-decoration-none">
-            WE LIVE |
-          </Link>{' '}
-          <span className="text-success"> คลังสินค้า </span>
-        </h3>
-
         <form onSubmit={onSubmitForm} ref={form}>
-          <table className="table table-striped">
+          <table className="table table-striped mt-3">
             <thead className=" table table-success">
               <tr>
                 <th className="text-center">ลบ</th>
@@ -119,7 +120,17 @@ export default function DBDelete() {
 
   return (
     <div style={{ margin: '20px' }}>
-      <div id="data">{data}</div>
+      <HeaderProduct title="ลบสินค้า" />
+      <FeatureProduct />
+      {loading ? (
+        <div className="d-flex justify-content-center p-5">
+          <div className="spinner-border text-secondary" role="status">
+            <span className="visually-hidden">Loading..</span>
+          </div>
+        </div>
+      ) : (
+        <div id="data">{data}</div>
+      )}
       <br />
       <div className="d-flex justify-content-center mx-auto">
         <Link to="/admin/stock" className="btn btn-light btn-sm">

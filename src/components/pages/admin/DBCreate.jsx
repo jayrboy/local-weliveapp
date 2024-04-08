@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { HeaderProduct } from './AdminStock'
 
 function DBCreate() {
   const form = useRef()
@@ -42,15 +43,8 @@ function DBCreate() {
   }
 
   return (
-    <>
-      <div className="m-2 row-cols-auto">
-        <h3 className="text-start">
-          <Link to="/admin/home" className="  text-decoration-none">
-            WE LIVE |
-          </Link>{' '}
-          <span className="text-success"> เพิ่มสินค้าใหม่ </span>
-        </h3>
-      </div>
+    <div style={{ margin: '20px' }}>
+      <HeaderProduct title="เพิ่มสินค้าใหม่" />
       <div
         className="card mx-auto p-4 rounded mt-3"
         style={{ width: '400px', background: '#fff' }}
@@ -145,7 +139,7 @@ function DBCreate() {
           กลับไปหน้าสินค้า
         </Link>
       </div>
-    </>
+    </div>
   )
 }
 export default DBCreate

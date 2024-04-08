@@ -10,7 +10,7 @@ function AdminHome() {
   const features = [
     {
       id: 1,
-      title: 'คลังสินค้า',
+      title: 'สินค้า',
       link: '/admin/stock',
       icon: <FaRegMap size={75} color="#555555 " />,
     },

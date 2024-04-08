@@ -2,6 +2,8 @@ import { baseURL } from '../../../App'
 import { Link } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 
+import { HeaderProduct, FeatureProduct } from './AdminStock'
+
 export default function DBUpdate() {
   let [data, setData] = useState('')
   const form = useRef()
@@ -12,32 +14,29 @@ export default function DBUpdate() {
   const stock = useRef()
   const over_stock = useRef()
   const date_added = useRef()
+  let [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    setLoading(true)
     fetch(`${baseURL}/api/db/read`) //อ่านข้อมูลมาแสดงผล
       .then((res) => res.json())
       .then((result) => {
         if (result.length > 0) {
           showData(result)
+          setLoading(false)
         } else {
           setData(<>ไม่มีรายการข้อมูล</>)
         }
       })
-      .catch((e) => alert(e))
+      .catch((e) => {
+        alert(e)
+        setLoading(true)
+      })
   }, [])
 
   const showData = (result) => {
     let r = (
       <>
-        <div className="m-2 row-cols-auto">
-          <h3 className="text-start">
-            <Link to="/admin/home" className="  text-decoration-none">
-              WE LIVE |
-            </Link>{' '}
-            <span className="text-success"> แก้ไขสินค้า </span>
-          </h3>
-        </div>
-
         <form onSubmit={onSubmitForm} ref={form}>
           <table className="table mt-3 table-striped ">
             <thead className="table-success border-bottom border-bottom-5">
@@ -100,6 +99,7 @@ export default function DBUpdate() {
                 </td>
                 <td>
                   <input
+                    className="form-control form-control-sm"
                     type="text"
                     name="itemid"
                     placeholder="รหัสสินค้า "
@@ -108,6 +108,7 @@ export default function DBUpdate() {
                 </td>
                 <td>
                   <input
+                    className="form-control form-control-sm"
                     type="text"
                     name="name"
                     placeholder="ชื่อสินค้า"
@@ -116,6 +117,7 @@ export default function DBUpdate() {
                 </td>
                 <td>
                   <input
+                    className="form-control form-control-sm"
                     type="number"
                     name="price"
                     placeholder="ราคาสินค้า"
@@ -124,6 +126,7 @@ export default function DBUpdate() {
                 </td>
                 <td>
                   <input
+                    className="form-control form-control-sm"
                     type="number"
                     name="cost"
                     placeholder="ราคาต้นทุน"
@@ -132,6 +135,7 @@ export default function DBUpdate() {
                 </td>
                 <td>
                   <input
+                    className="form-control form-control-sm"
                     type="number"
                     name="stock"
                     placeholder="จำนวนสินค้า"
@@ -140,6 +144,7 @@ export default function DBUpdate() {
                 </td>
                 <td>
                   <input
+                    className="form-control form-control-sm"
                     type="number"
                     name="over_stock"
                     placeholder="จำนวนสินค้าล้นสต็อก"
@@ -147,7 +152,12 @@ export default function DBUpdate() {
                   />
                 </td>
                 <td>
-                  <input type="date" name="date_added" ref={date_added} />
+                  <input
+                    className="form-control form-control-sm"
+                    type="date"
+                    name="date_added"
+                    ref={date_added}
+                  />
                 </td>
                 <td></td>
                 <td></td>
@@ -216,7 +226,17 @@ export default function DBUpdate() {
 
   return (
     <div style={{ margin: '20px' }}>
-      <div id="data">{data}</div>
+      <HeaderProduct title="เพิ่มสินค้า" />
+      <FeatureProduct />
+      {loading ? (
+        <div className="d-flex justify-content-center p-5">
+          <div className="spinner-border text-secondary" role="status">
+            <span className="visually-hidden">Loading..</span>
+          </div>
+        </div>
+      ) : (
+        <div id="data">{data}</div>
+      )}
       <br />
       <div className="d-flex justify-content-center mx-auto">
         <Link to="/admin/stock" className="btn btn-light btn-sm">
