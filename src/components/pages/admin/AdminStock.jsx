@@ -2,10 +2,13 @@ import { baseURL } from '../../../App'
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 
+import RemoveShoppingCartOutlinedIcon from '@mui/icons-material/RemoveShoppingCartOutlined'
+import AddBusinessOutlinedIcon from '@mui/icons-material/AddBusinessOutlined'
+import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined'
+
 const Stock = () => {
   let [data, setData] = useState('')
   let [page, setPage] = useState([])
-  let [loading, setLoading] = useState(false)
 
   //อ่านคีย์เวิร์ดจาก URL
   let qStr = window.location.search
@@ -14,26 +17,14 @@ const Stock = () => {
   let { q } = useParams()
 
   useEffect(() => {
-    setLoading(true)
     fetch(`${baseURL}/api/db/search?` + params)
       .then((response) => response.json())
       .then((result) => {
         showData(result)
         paginate(result)
-        setLoading(false)
       })
       .catch((err) => alert(err))
   }, [location])
-
-  if (loading) {
-    return (
-      <div className="d-flex justify-content-center p-5">
-        <div className="spinner-border text-secondary" role="status">
-          <span className="visually-hidden">Loading..</span>
-        </div>
-      </div>
-    )
-  }
 
   const showData = (result) => {
     const numDocs = result.totalDocs
@@ -71,19 +62,24 @@ const Stock = () => {
             </div>
             <div className="col-sm-6">
               <Link to="/db/create">
-                <button className="btn btn-primary btn-sm">Add</button>
+                <button className="btn btn-primary btn-sm">
+                  <AddBusinessOutlinedIcon />
+                </button>
               </Link>
               &nbsp;
               <Link to="/db/update">
-                <button className="btn btn-warning btn-sm">EDIT</button>
+                <button className="btn btn-warning btn-sm">
+                  <EditNoteOutlinedIcon />
+                </button>
               </Link>
               &nbsp;
               <Link to="/db/delete">
-                <button className="btn btn-danger btn-sm">Delete</button>
+                <button className="btn btn-danger btn-sm">
+                  <RemoveShoppingCartOutlinedIcon />
+                </button>
               </Link>
             </div>
           </div>
-
           <div className="table-responsive">
             <table className="table table-striped caption-top mt-3">
               <thead className="table-success">

@@ -122,9 +122,9 @@ export default function DBDelete() {
       <div id="data">{data}</div>
       <br />
       <div className="d-flex justify-content-center mx-auto">
-        <a href="/admin/home" className="btn btn-light btn-sm">
-          หน้าหลัก
-        </a>
+        <Link to="/admin/stock" className="btn btn-light btn-sm">
+          กลับไปหน้าสินค้า
+        </Link>
       </div>
     </div>
   )

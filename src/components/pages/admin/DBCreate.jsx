@@ -141,9 +141,9 @@ function DBCreate() {
       </div>
       <br />
       <div className="d-flex justify-content-center">
-        <a href="/admin/home" className="btn btn-light btn-sm mb-5">
-          กลับหน้าหลัก
-        </a>
+        <Link to="/admin/stock" className="btn btn-light btn-sm mb-5">
+          กลับไปหน้าสินค้า
+        </Link>
       </div>
     </>
   )

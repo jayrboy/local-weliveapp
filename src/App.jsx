@@ -22,7 +22,6 @@ import DBCart from './components/pages/admin/DBCart'
 import DBOrder from './components/pages/admin/DBOrder'
 import DBCFCode from './components/pages/admin/DBCFCode'
 import ADinvoice from './components/pages/admin/ADinvoice'
-import ADexpress from './components/pages/admin/EXcreate'
 import ADSales from './components/pages/admin/ADSales'
 import ADSeacrh from './components/pages/admin/ADSearch'
 import SearchbyOrder from './components/pages/admin/SearchbyOrder'
@@ -245,6 +244,7 @@ function App() {
             </AdminRoute>
           }
         />
+
         <Route
           path="/admin/search"
           element={
