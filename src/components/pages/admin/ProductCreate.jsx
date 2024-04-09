@@ -1,13 +1,15 @@
 import { baseURL } from '../../../App'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-function DBCreate() {
+import CloseIcon from '@mui/icons-material/Close'
+
+function ProductCreate() {
   const form = useRef()
   const navigate = useNavigate()
+
   const {
     register,
     handleSubmit,
@@ -31,31 +33,33 @@ function DBCreate() {
       .then((res) => res.text())
       .then((result) => {
         if (result === 'true') {
-          toast.success('ข้อมูลถูกจัดเก็บแล้ว')
           form.current.reset()
+          toast.success('ข้อมูลถูกจัดเก็บแล้ว')
+          navigate('/admin/stock/manage')
         } else {
           toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
         }
-        navigate('/db/create')
       })
-      .catch((e) => alert(e))
+      .catch((e) => toast.error(e))
   }
 
   return (
-    <>
-      <div className="m-2 row-cols-auto">
-        <h3 className="text-start">
-          <Link to="/admin/home" className="  text-decoration-none">
-            WE LIVE |
-          </Link>{' '}
-          <span className="text-success"> เพิ่มสินค้าใหม่ </span>
-        </h3>
-      </div>
+    <div className="modal-create">
       <div
-        className="card mx-auto p-4 rounded mt-3"
+        className="card shadow mx-auto rounded mt-5"
         style={{ width: '400px', background: '#fff' }}
       >
-        <form onSubmit={handleSubmit(onSubmitForm)} ref={form}>
+        <span className="card-header d-flex justify-content-between align-items-center p-3">
+          <h4 className="mb-0">เพิ่มสินค้า</h4>
+          <button
+            className="btn btn-sm"
+            onClick={() => navigate('/admin/stock/manage')}
+          >
+            <CloseIcon sx={{ color: 'red' }} />
+          </button>
+        </span>
+
+        <form onSubmit={handleSubmit(onSubmitForm)} ref={form} className="p-4">
           <label className="form-label">รหัส CF</label>
           <input
             type="text"
@@ -119,8 +123,8 @@ function DBCreate() {
             name="over_stock"
             min="0"
             className="form-control form-control-sm"
-            {...register('stock', {
-              validate: (value) => parseFloat(value) > 0,
+            {...register('over_stock', {
+              validate: (value) => parseFloat(value) >= 0,
             })}
           />
           {errors.price && (
@@ -135,17 +139,20 @@ function DBCreate() {
             className="form-control form-control-sm mb-3"
           />
           <div className="d-flex justify-content-center ">
-            <button className="btn btn-success btn-sm">ตกลง</button>
+            <button className="btn btn-outline-primary btn-sm">
+              เพิ่มสินค้า
+            </button>
+            &nbsp;&nbsp;&nbsp;
+            <button
+              className="btn btn-sm"
+              onClick={() => navigate('/admin/stock/manage')}
+            >
+              ยกเลิก
+            </button>
           </div>
         </form>
       </div>
-      <br />
-      <div className="d-flex justify-content-center">
-        <a href="/admin/home" className="btn btn-light btn-sm mb-5">
-          กลับหน้าหลัก
-        </a>
-      </div>
-    </>
+    </div>
   )
 }
-export default DBCreate
+export default ProductCreate

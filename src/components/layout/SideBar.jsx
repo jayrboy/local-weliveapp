@@ -12,9 +12,6 @@ import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined'
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined'
 import TableViewIcon from '@mui/icons-material/TableView'
 import DataObjectOutlinedIcon from '@mui/icons-material/DataObjectOutlined'
-import RemoveShoppingCartOutlinedIcon from '@mui/icons-material/RemoveShoppingCartOutlined'
-import AddBusinessOutlinedIcon from '@mui/icons-material/AddBusinessOutlined'
-import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined'
 
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import SettingsSuggestOutlinedIcon from '@mui/icons-material/SettingsSuggestOutlined'
@@ -86,35 +83,14 @@ const SideBar = () => {
                   icon={<TableViewIcon />}
                   onClick={() => navigate('/admin/stock')}
                 >
-                  คลังสินค้า
-                </MenuItem>
-
-                <MenuItem
-                  icon={<AddBusinessOutlinedIcon />}
-                  onClick={() => navigate('/db/create')}
-                >
-                  เพิ่มสินค้า
-                </MenuItem>
-
-                <MenuItem
-                  icon={<EditNoteOutlinedIcon />}
-                  onClick={() => navigate('/db/update')}
-                >
-                  แก้ไขสินค้า
-                </MenuItem>
-
-                <MenuItem
-                  icon={<RemoveShoppingCartOutlinedIcon />}
-                  onClick={() => navigate('/db/delete')}
-                >
-                  ลบสินค้า
+                  สินค้า
                 </MenuItem>
 
                 <MenuItem
                   icon={<DataObjectOutlinedIcon />}
                   onClick={() => navigate('/admin/cf-code')}
                 >
-                  จัดการ CF CODE
+                  รายการขายสินค้า
                 </MenuItem>
               </SubMenu>
 
@@ -143,6 +119,7 @@ const SideBar = () => {
                 >
                   <span className=" ">เช็คเอาท์</span>
                 </MenuItem>
+
                 <MenuItem
                   icon={<PaidOutlinedIcon />}
                   onClick={() => navigate('/admin/sales')}

@@ -14,15 +14,12 @@ import NotFound from './components/pages/NotFound'
 import HomeUser from './components/pages/user/HomeUser'
 import HomeAdmin from './components/pages/admin/AdminHome'
 
-import AdminStock from './components/pages/admin/AdminStock'
-import DBCreate from './components/pages/admin/DBCreate'
-import DBUpdate from './components/pages/admin/DBUpdate'
-import DBDelete from './components/pages/admin/DBDelete'
+import ProductStock from './components/pages/admin/ProductStock'
+import ProductManage from './components/pages/admin/ProductManage'
 import DBCart from './components/pages/admin/DBCart'
 import DBOrder from './components/pages/admin/DBOrder'
 import DBCFCode from './components/pages/admin/DBCFCode'
 import ADinvoice from './components/pages/admin/ADinvoice'
-import ADexpress from './components/pages/admin/EXcreate'
 import ADSales from './components/pages/admin/ADSales'
 import ADSeacrh from './components/pages/admin/ADSearch'
 import SearchbyOrder from './components/pages/admin/SearchbyOrder'
@@ -42,6 +39,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import EXcreate from './components/pages/admin/EXcreate'
 import EXupdate from './components/pages/admin/EXupdate'
 import EXdelete from './components/pages/admin/EXdelete'
+import EditProduct from './components/pages/admin/ProductEdit'
+import ProductCreate from './components/pages/admin/ProductCreate'
 
 export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 
@@ -176,31 +175,31 @@ function App() {
           path="/admin/stock"
           element={
             <AdminRoute>
-              <AdminStock />
+              <ProductStock />
             </AdminRoute>
           }
         />
         <Route
-          path="/db/create"
+          path="/admin/stock/manage"
           element={
             <AdminRoute>
-              <DBCreate />
+              <ProductManage />
             </AdminRoute>
           }
         />
         <Route
-          path="/db/update"
+          path="/product/create"
           element={
             <AdminRoute>
-              <DBUpdate />
+              <ProductCreate />
             </AdminRoute>
           }
         />
         <Route
-          path="/db/delete"
+          path="/product/edit/:id"
           element={
             <AdminRoute>
-              <DBDelete />
+              <EditProduct />
             </AdminRoute>
           }
         />
@@ -245,6 +244,7 @@ function App() {
             </AdminRoute>
           }
         />
+
         <Route
           path="/admin/search"
           element={
