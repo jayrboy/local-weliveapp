@@ -1,6 +1,7 @@
 import { baseURL } from '../../../App'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 import { HeaderProduct, FeatureProduct } from './AdminStock'
 
@@ -23,7 +24,7 @@ export default function DBDelete() {
         }
       })
       .catch((err) => {
-        alert(err)
+        toast.error(err)
         setLoading(true)
       })
     // eslint-disable-next-line
@@ -33,7 +34,12 @@ export default function DBDelete() {
     let r = (
       <>
         <form onSubmit={onSubmitForm} ref={form}>
-          <table className="table table-striped mt-3 text-center">
+          <table className="table table-sm table-striped mt-3 text-center table-bordered border-light">
+            <caption className="ms-3">
+              <button className="btn btn-danger btn-sm">
+                ลบรายการที่เลือก
+              </button>
+            </caption>
             <thead className="table-light">
               <tr>
                 <th>ลบ</th>
@@ -74,9 +80,6 @@ export default function DBDelete() {
             </tbody>
           </table>
           <br />
-          <div className="ms-3">
-            <button className="btn btn-danger btn-sm">ลบรายการที่เลือก</button>
-          </div>
         </form>
       </>
     )
@@ -94,11 +97,11 @@ export default function DBDelete() {
     const fe = Object.fromEntries(fd.entries())
 
     if (Object.keys(fe).length === 0) {
-      alert('ต้องเลือกรายการที่จะลบ')
+      toast.warning('ต้องเลือกรายการที่จะลบ')
       return
     }
 
-    fetch('/api/db/delete', {
+    fetch(`${baseURL}/api/db/delete`, {
       method: 'POST',
       body: JSON.stringify(fe),
       headers: { 'Content-Type': 'application/json' },
@@ -106,18 +109,18 @@ export default function DBDelete() {
       .then((response) => response.json())
       .then((result) => {
         if (result.error) {
-          alert(result.error)
+          toast.error(result.error)
         } else {
           if (result.length === 0) {
             setData('ไม่มีรายการข้อมูล')
           } else {
             showData(result)
           }
-          alert('ข้อมูลถูกลบแล้ว')
+          toast.success('ข้อมูลถูกลบแล้ว')
         }
         navigate('/db/delete')
       })
-      .catch((err) => alert(err))
+      .catch((err) => toast.error(err))
   }
 
   return (
@@ -135,7 +138,6 @@ export default function DBDelete() {
       ) : (
         <div id="data">{data}</div>
       )}
-      <br />
       <div className="d-flex justify-content-center mx-auto">
         <Link to="/admin/stock" className="btn btn-light btn-sm">
           กลับไปหน้าสินค้า

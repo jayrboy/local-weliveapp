@@ -40,13 +40,13 @@ function DBCreate(props) {
         }
         setOpenCreate(false)
       })
-      .catch((e) => alert(e))
+      .catch((e) => toast.error(e))
   }
 
   return (
     <div className="modal-create">
       <div
-        className="card shadow mx-auto rounded mt-3"
+        className="card shadow mx-auto rounded mt-5"
         style={{ width: '400px', background: '#fff' }}
       >
         <span className="card-header d-flex justify-content-between align-items-center p-3">

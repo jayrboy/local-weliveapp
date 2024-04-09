@@ -1,6 +1,7 @@
 import { baseURL } from '../../../App'
 import { Link } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
+import { toast } from 'react-toastify'
 
 import { HeaderProduct, FeatureProduct } from './AdminStock'
 
@@ -29,7 +30,7 @@ export default function DBUpdate() {
         }
       })
       .catch((e) => {
-        alert(e)
+        toast.error(e)
         setLoading(true)
       })
   }, [])
@@ -38,7 +39,13 @@ export default function DBUpdate() {
     let r = (
       <>
         <form onSubmit={onSubmitForm} ref={form}>
-          <table className="table table-striped mt-3 text-center">
+          <table className="table table-sm table-striped mt-3 text-center table-bordered border-light">
+            <caption className="ms-3">
+              <small>
+                เลือกรายการที่จะแก้ไข แล้วใส่ข้อมูลใหม่ลงไป จากนั้นคลิกปุ่ม
+                แก้ไข
+              </small>
+            </caption>
             <thead className="table-light">
               <tr>
                 <th>แก้ไข</th>
@@ -97,7 +104,7 @@ export default function DBUpdate() {
                     className="form-control form-control-sm"
                     type="text"
                     name="itemid"
-                    placeholder="รหัสสินค้า "
+                    placeholder="รหัสสินค้า"
                     ref={itemid}
                   />
                 </td>
@@ -157,12 +164,6 @@ export default function DBUpdate() {
               </tr>
             </tbody>
           </table>
-
-          <div className="ms-3">
-            <small>
-              เลือกรายการที่จะแก้ไข แล้วใส่ข้อมูลใหม่ลงไป จากนั้นคลิกปุ่ม แก้ไข
-            </small>
-          </div>
         </form>
       </>
     )
@@ -178,7 +179,7 @@ export default function DBUpdate() {
     const fd = new FormData(form.current)
     const fe = Object.fromEntries(fd.entries())
 
-    fetch('/api/db/update', {
+    fetch(`${baseURL}/api/db/update`, {
       method: 'POST',
       body: JSON.stringify(fe),
       headers: { 'Content-Type': 'application/json' },
@@ -186,16 +187,16 @@ export default function DBUpdate() {
       .then((res) => res.json())
       .then((result) => {
         if (result.error) {
-          alert(result.error)
+          toast.error(result.error)
         } else {
           //หลังการแก้ไข ฝั่งเซิร์ฟเวอร์จะอ่านข้อมูลใหม่
           //แล้วส่งกลับมา เราก็นำมาแสดงผลอีกครั้ง
           showData(result)
           form.current.reset()
-          alert('ข้อมูลถูกแก้ไขแล้ว')
+          toast.success('ข้อมูลถูกแก้ไขแล้ว')
         }
       })
-      .catch((err) => alert(err))
+      .catch((err) => toast.error(err))
   }
 
   //เมื่อ radio บนรายการใดถูกคลิก (ในที่นี้เลือกใช้ click แทน change)
@@ -234,7 +235,6 @@ export default function DBUpdate() {
       ) : (
         <div>{data}</div>
       )}
-      <br />
       <div className="d-flex justify-content-center mx-auto">
         <Link to="/admin/stock" className="btn btn-light btn-sm">
           กลับไปหน้าสินค้า
