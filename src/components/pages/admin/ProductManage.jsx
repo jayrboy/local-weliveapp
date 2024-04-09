@@ -3,9 +3,11 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import { HeaderProduct, FeatureProduct } from './AdminStock'
+import { HeaderProduct, FeatureProduct } from './ProductStock'
+import { FaEdit } from 'react-icons/fa'
+import { MdDelete } from 'react-icons/md'
 
-export default function DBDelete() {
+export default function ProductUpdate() {
   let [data, setData] = useState('')
   const form = useRef()
   const navigate = useNavigate()
@@ -30,19 +32,39 @@ export default function DBDelete() {
     // eslint-disable-next-line
   }, [])
 
+  const onEditClick = (e) => {
+    e.preventDefault()
+
+    const selectedInput = document.querySelector('input[name="_id"]:checked')
+
+    if (selectedInput) {
+      const selectedId = selectedInput.value
+      navigate(`/product/edit/${selectedId}`)
+    } else {
+      toast.warning('กรุณาเลือกรายการที่ต้องการแก้ไข')
+    }
+  }
+
   const showData = (result) => {
     let r = (
       <>
         <form onSubmit={onSubmitForm} ref={form}>
-          <table className="table table-sm table-striped mt-3 text-center table-bordered border-light">
+          <table className="table table-sm table-striped mt-3 text-center table-bordered border-light caption-top">
             <caption className="ms-3">
-              <button className="btn btn-danger btn-sm">
-                ลบรายการที่เลือก
+              <button
+                onClick={onEditClick}
+                className="btn btn-outline-warning btn-sm"
+              >
+                <FaEdit /> เลือก/แก้ไข
+              </button>
+              &nbsp;&nbsp;
+              <button className="btn btn-outline-danger btn-sm">
+                <MdDelete /> เลือก/ลบ
               </button>
             </caption>
             <thead className="table-light">
               <tr>
-                <th>ลบ</th>
+                <th>#</th>
                 <th>รหัสสินค้า</th>
                 <th>ชื่อสินค้า</th>
                 <th>ราคา</th>
@@ -50,6 +72,9 @@ export default function DBDelete() {
                 <th>จำนวนสินค้า</th>
                 <th>สินค้าเกินจำนวน</th>
                 <th>วันที่เพิ่มสินค้า</th>
+                <th>จำนวน CF</th>
+                <th>จ่ายแล้ว</th>
+                <th>สินค้าคงเหลือ</th>
               </tr>
             </thead>
             <tbody>
@@ -65,7 +90,12 @@ export default function DBDelete() {
                 return (
                   <tr key={doc._id}>
                     <td>
-                      <input type="radio" name="_id" value={doc._id} />
+                      <input
+                        type="radio"
+                        name="_id"
+                        value={doc._id}
+                        className="form-check-input"
+                      />
                     </td>
                     <td>{doc.itemid}</td>
                     <td>{doc.name}</td>
@@ -74,6 +104,9 @@ export default function DBDelete() {
                     <td>{doc.stock}</td>
                     <td>{doc.over_stock}</td>
                     <td>{df}</td>
+                    <td>{5}</td>
+                    <td>{1}</td>
+                    <td>{doc.stock}</td>
                   </tr>
                 )
               })}
@@ -89,15 +122,12 @@ export default function DBDelete() {
 
   const onSubmitForm = (event) => {
     event.preventDefault()
-    if (!window.confirm('ยืนยันการลบรายการนี้')) {
-      return
-    }
 
     const fd = new FormData(form.current)
     const fe = Object.fromEntries(fd.entries())
 
     if (Object.keys(fe).length === 0) {
-      toast.warning('ต้องเลือกรายการที่จะลบ')
+      toast.warning('กรุณาเลือกรายการที่ต้องการลบ')
       return
     }
 
@@ -118,7 +148,7 @@ export default function DBDelete() {
           }
           toast.success('ข้อมูลถูกลบแล้ว')
         }
-        navigate('/db/delete')
+        navigate('/admin/stock/manage')
       })
       .catch((err) => toast.error(err))
   }
@@ -126,7 +156,7 @@ export default function DBDelete() {
   return (
     <>
       <div className="row" style={{ margin: '20px' }}>
-        <HeaderProduct title="ลบสินค้า" />
+        <HeaderProduct title="จัดการสินค้า" />
         <FeatureProduct />
       </div>
       {loading ? (

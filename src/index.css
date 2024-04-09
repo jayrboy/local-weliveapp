@@ -109,16 +109,22 @@ IconButton,
 }
 
 .modal-create {
-  margin: 0;
-  padding: 0;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
-  background: rgba(0, 0, 0, 0.7);
   max-height: none;
-  height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10; /* ให้มีค่า z-index สูงกว่าเนื้อหาหลักของเว็บ */
+}
+
+.modal-edit {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: none;
   flex-direction: column;
   align-items: center;
   z-index: 10; /* ให้มีค่า z-index สูงกว่าเนื้อหาหลักของเว็บ */

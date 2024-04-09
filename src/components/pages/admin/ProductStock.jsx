@@ -1,6 +1,6 @@
 import { baseURL } from '../../../App'
 import React, { useState, useEffect } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import RemoveShoppingCartOutlinedIcon from '@mui/icons-material/RemoveShoppingCartOutlined'
@@ -8,10 +8,7 @@ import AddBusinessOutlinedIcon from '@mui/icons-material/AddBusinessOutlined'
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined'
 import ViewListIcon from '@mui/icons-material/ViewList'
 import SearchIcon from '@mui/icons-material/Search'
-import DBCreate from './DBCreate'
-
-import { useSelector, useDispatch } from 'react-redux'
-import { getProducts } from '../../../redux/productSlice'
+import ProductCreate from './ProductCreate'
 
 export const HeaderProduct = ({ title }) => {
   return (
@@ -25,7 +22,7 @@ export const HeaderProduct = ({ title }) => {
 }
 
 export const FeatureProduct = () => {
-  let [openCreate, setOpenCreate] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <>
@@ -38,41 +35,27 @@ export const FeatureProduct = () => {
         &nbsp;
         <button
           className="btn btn-primary btn-sm"
-          onClick={() => setOpenCreate(true)}
+          onClick={() => navigate('/product/create')}
           style={{ height: '34px' }}
         >
           <AddBusinessOutlinedIcon />
         </button>
         &nbsp;
-        <Link to="/db/update">
+        <Link to="/admin/stock/manage">
           <button className="btn btn-warning btn-sm">
             <EditNoteOutlinedIcon />
           </button>
         </Link>
-        &nbsp;
-        <Link to="/db/delete">
-          <button className="btn btn-danger btn-sm">
-            <RemoveShoppingCartOutlinedIcon />
-          </button>
-        </Link>
       </div>
-      {openCreate ? (
-        <DBCreate openCreate={openCreate} setOpenCreate={setOpenCreate} />
-      ) : (
-        ''
-      )}
     </>
   )
 }
 
 //TODO: Product
 const Stock = () => {
-  let { products } = useSelector((store) => store.product)
-
   let [data, setData] = useState('')
   let [page, setPage] = useState([])
   let [loading, setLoading] = useState(false)
-  const dispatch = useDispatch()
 
   //อ่านคีย์เวิร์ดจาก URL
   let qStr = window.location.search
@@ -85,7 +68,6 @@ const Stock = () => {
     fetch(`${baseURL}/api/db/search?` + params)
       .then((response) => response.json())
       .then((result) => {
-        dispatch(getProducts())
         showData(result)
         paginate(result)
         setLoading(false)
@@ -117,9 +99,10 @@ const Stock = () => {
               <th>CF CODE</th>
               <th>ชื่อสินค้า</th>
               <th>ราคา</th>
-              <th>จำนวน</th>
               <th>ราคาต้นทุน</th>
-              <th>ราคาสินค้าทั้งหมด</th>
+              <th>จำนวน</th>
+              <th>ราคาทั้งหมด</th>
+              <th>ขายเกินจำนวน</th>
               <th>วันที่เพิ่มสินค้า</th>
               <th>จำนวน CF</th>
               <th>จ่ายแล้ว</th>
@@ -137,20 +120,20 @@ const Stock = () => {
               )
               let p = new Intl.NumberFormat().format(doc.price)
               let c = new Intl.NumberFormat().format(doc.cost)
-              let q = new Intl.NumberFormat().format(doc.stock)
 
               return (
                 <tr key={doc._id}>
                   <td>{doc.itemid}</td>
                   <td>{doc.name}</td>
                   <td>{p}</td>
-                  <td>{q}</td>
                   <td>{c}</td>
-                  <td>{p * q}</td>
+                  <td>{doc.stock}</td>
+                  <td>{doc.stock}</td>
+                  <td>{doc.over_stock}</td>
                   <td>{df}</td>
-                  <td>{0}</td>
-                  <td>{0}</td>
-                  <td>{q - 0}</td>
+                  <td>{5}</td>
+                  <td>{1}</td>
+                  <td>{doc.stock}</td>
                 </tr>
               )
             })}

@@ -1,15 +1,15 @@
 import { baseURL } from '../../../App'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
 
-function DBCreate(props) {
-  let { openCreate, setOpenCreate } = props
+function ProductCreate() {
   const form = useRef()
   const navigate = useNavigate()
+
   const {
     register,
     handleSubmit,
@@ -35,10 +35,10 @@ function DBCreate(props) {
         if (result === 'true') {
           form.current.reset()
           toast.success('ข้อมูลถูกจัดเก็บแล้ว')
+          navigate('/admin/stock/manage')
         } else {
           toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
         }
-        setOpenCreate(false)
       })
       .catch((e) => toast.error(e))
   }
@@ -51,7 +51,10 @@ function DBCreate(props) {
       >
         <span className="card-header d-flex justify-content-between align-items-center p-3">
           <h4 className="mb-0">เพิ่มสินค้า</h4>
-          <button className="btn btn-sm" onClick={() => setOpenCreate(false)}>
+          <button
+            className="btn btn-sm"
+            onClick={() => navigate('/admin/stock/manage')}
+          >
             <CloseIcon sx={{ color: 'red' }} />
           </button>
         </span>
@@ -120,8 +123,8 @@ function DBCreate(props) {
             name="over_stock"
             min="0"
             className="form-control form-control-sm"
-            {...register('stock', {
-              validate: (value) => parseFloat(value) > 0,
+            {...register('over_stock', {
+              validate: (value) => parseFloat(value) >= 0,
             })}
           />
           {errors.price && (
@@ -140,7 +143,10 @@ function DBCreate(props) {
               เพิ่มสินค้า
             </button>
             &nbsp;&nbsp;&nbsp;
-            <button className="btn btn-sm" onClick={() => setOpenCreate(false)}>
+            <button
+              className="btn btn-sm"
+              onClick={() => navigate('/admin/stock/manage')}
+            >
               ยกเลิก
             </button>
           </div>
@@ -149,4 +155,4 @@ function DBCreate(props) {
     </div>
   )
 }
-export default DBCreate
+export default ProductCreate
