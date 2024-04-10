@@ -1,66 +1,29 @@
 import { baseURL } from '../../../App'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import RemoveShoppingCartOutlinedIcon from '@mui/icons-material/RemoveShoppingCartOutlined'
-import AddBusinessOutlinedIcon from '@mui/icons-material/AddBusinessOutlined'
-import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined'
-import ViewListIcon from '@mui/icons-material/ViewList'
-import SearchIcon from '@mui/icons-material/Search'
-
-export const HeaderProduct = ({ title }) => {
-  return (
-    <h3 className="text-start">
-      <Link to="/admin/home" className="text-decoration-none">
-        WE LIVE |
-      </Link>
-      <span className="text-success">&nbsp;{title}</span>
-    </h3>
-  )
-}
-
-export const FeatureProduct = () => {
-  const navigate = useNavigate()
-
-  return (
-    <>
-      <div className="col-sm-6 d-flex justify-content-start mt-2">
-        <Link to="/admin/stock">
-          <button className="btn btn-success btn-sm">
-            <ViewListIcon />
-          </button>
-        </Link>
-        &nbsp;
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => navigate('/product/create')}
-          style={{ height: '34px' }}
-        >
-          <AddBusinessOutlinedIcon />
-        </button>
-        &nbsp;
-        <Link to="/admin/stock/manage">
-          <button className="btn btn-warning btn-sm">
-            <EditNoteOutlinedIcon />
-          </button>
-        </Link>
-      </div>
-    </>
-  )
-}
+import {
+  MdPostAdd,
+  MdEdit,
+  MdDeleteForever,
+  MdGrid3X3,
+  MdOutlineSearch,
+} from 'react-icons/md'
 
 //TODO: Product
 const Stock = () => {
   let [data, setData] = useState('')
   let [page, setPage] = useState([])
   let [loading, setLoading] = useState(false)
+  const form = useRef()
 
   //อ่านคีย์เวิร์ดจาก URL
   let qStr = window.location.search
   let params = new URLSearchParams(qStr)
   const location = useLocation()
-  let { q } = useParams()
+  const { q } = useParams()
+  const navigate = useNavigate()
 
   useEffect(() => {
     setLoading(true)
@@ -85,59 +48,73 @@ const Stock = () => {
 
     let r = (
       <React.Fragment>
-        <table className="table table-sm table-striped mt-3 text-center table-bordered border-light">
-          <caption className="ms-3">
-            {numDocs === 0 ? (
-              <>ไม่พบข้อมูล</>
-            ) : (
-              <small>พบข้อมูลทั้งหมด {result.totalDocs} รายการ</small>
-            )}
-          </caption>
-          <thead className="table-light">
-            <tr style={numDocs === 0 ? hidden : null}>
-              <th>CF CODE</th>
-              <th>ชื่อสินค้า</th>
-              <th>ราคา</th>
-              <th>ราคาต้นทุน</th>
-              <th>จำนวน</th>
-              <th>ราคาทั้งหมด</th>
-              <th>ขายเกินจำนวน</th>
-              <th>วันที่เพิ่มสินค้า</th>
-              <th>จำนวน CF</th>
-              <th>จ่ายแล้ว</th>
-              <th>สินค้าคงเหลือ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.docs.map((doc) => {
-              //จัดรูปแบบวันเดือนปี ที่สามารถเข้าใจได้
-              let dt = new Date(Date.parse(doc.date_added))
-              let df = (
-                <>
-                  {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                </>
-              )
-              let p = new Intl.NumberFormat().format(doc.price)
-              let c = new Intl.NumberFormat().format(doc.cost)
+        <form onSubmit={onSubmitForm} ref={form}>
+          <table className="table table-sm table-striped text-center table-bordered border-light">
+            <caption className="ms-3">
+              {' '}
+              {numDocs === 0 ? (
+                <>ไม่พบข้อมูล</>
+              ) : (
+                <small>พบข้อมูลทั้งหมด {result.totalDocs} รายการ</small>
+              )}
+            </caption>
+            <thead className="table-light">
+              <tr style={numDocs === 0 ? hidden : null}>
+                <th>
+                  <MdGrid3X3 />
+                </th>
+                <th>รหัสสินค้า</th>
+                <th>ชื่อสินค้า</th>
+                <th>ราคา</th>
+                <th>ราคาต้นทุน</th>
+                <th>จำนวน</th>
+                <th>ราคาทั้งหมด</th>
+                <th>ขายเกินจำนวน</th>
+                <th>วันที่เพิ่มสินค้า</th>
+                <th>จำนวน CF</th>
+                <th>จ่ายแล้ว</th>
+                <th>สินค้าคงเหลือ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.docs.map((doc) => {
+                //จัดรูปแบบวันเดือนปี ที่สามารถเข้าใจได้
+                let dt = new Date(Date.parse(doc.date_added))
+                let df = (
+                  <>
+                    {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                  </>
+                )
+                let p = new Intl.NumberFormat().format(doc.price)
+                let c = new Intl.NumberFormat().format(doc.cost)
 
-              return (
-                <tr key={doc._id}>
-                  <td>{doc.itemid}</td>
-                  <td>{doc.name}</td>
-                  <td>{p}</td>
-                  <td>{c}</td>
-                  <td>{doc.stock}</td>
-                  <td>{doc.stock}</td>
-                  <td>{doc.over_stock}</td>
-                  <td>{df}</td>
-                  <td>{5}</td>
-                  <td>{1}</td>
-                  <td>{doc.stock}</td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+                return (
+                  <tr key={doc._id}>
+                    <td>
+                      <input
+                        type="radio"
+                        name="_id"
+                        value={doc._id}
+                        className="form-check-input"
+                      />
+                    </td>
+                    <td>{doc.itemid}</td>
+                    <td>{doc.name}</td>
+                    <td>{p}</td>
+                    <td>{c}</td>
+                    <td>{doc.stock}</td>
+                    <td>{doc.stock}</td>
+                    <td>{doc.over_stock}</td>
+                    <td>{df}</td>
+                    <td>{5}</td>
+                    <td>{1}</td>
+                    <td>{doc.stock}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </form>
       </React.Fragment>
     )
 
@@ -210,12 +187,59 @@ const Stock = () => {
     setPage(links)
   }
 
+  const onSubmitForm = (event) => {
+    event.preventDefault()
+
+    const fd = new FormData(form.current)
+    const fe = Object.fromEntries(fd.entries())
+
+    if (Object.keys(fe).length === 0) {
+      toast.warning('กรุณาเลือกรายการที่ต้องการลบ')
+      return
+    }
+
+    fetch(`${baseURL}/api/db/delete`, {
+      method: 'POST',
+      body: JSON.stringify(fe),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.length === 0) {
+          setData('ไม่มีรายการข้อมูล')
+        }
+        toast.success('ข้อมูลถูกลบแล้ว')
+        navigate('/admin/stock')
+      })
+      .catch((err) => toast.error(err))
+  }
+
+  const onEditClick = (e) => {
+    e.preventDefault()
+
+    const selectedInput = document.querySelector('input[name="_id"]:checked')
+
+    if (selectedInput) {
+      const selectedId = selectedInput.value
+      navigate(`/product/edit/${selectedId}`)
+    } else {
+      toast.warning('กรุณาเลือกรายการที่ต้องการแก้ไข')
+    }
+  }
+
   return (
     <>
-      <div className="row" style={{ margin: '20px' }}>
-        <HeaderProduct title="สินค้า" />
-        <FeatureProduct />
-        <div className="col-sm-6 mt-2 d-flex">
+      <div className="row m-3">
+        <div className="col-lg-4">
+          <h3 className="text-start">
+            <Link to="/admin/home" className="text-decoration-none">
+              WE LIVE |
+            </Link>
+            <span className="text-success">&nbsp; สินค้า</span>
+          </h3>
+        </div>
+
+        <div className="col-lg-4 mt-3">
           <form action="/admin/stock" method="get" className="d-flex">
             <div className="d-inline-block">
               <input
@@ -224,16 +248,44 @@ const Stock = () => {
                 placeholder="พิมพ์ชื่อสินค้าที่จะค้นหา"
                 // defaultValue={params.get('q')}
                 defaultValue={q}
-                className="form-control form-control"
+                className="form-control form-control-sm"
               />
             </div>
             &nbsp;&nbsp;
-            <button className="btn btn-sm btn-primary">
-              <SearchIcon />
+            <button className="btn btn-sm btn-outline-info">
+              <MdOutlineSearch />
+              ค้นหา
             </button>
           </form>
         </div>
+
+        <div className="col-lg-4 mt-3">
+          <button
+            className="btn btn-outline-primary btn-sm"
+            onClick={() => navigate('/product/create')}
+          >
+            <MdPostAdd />
+            เพิ่ม
+          </button>
+          &nbsp;&nbsp;
+          <button
+            onClick={onEditClick}
+            className="btn btn-outline-warning btn-sm"
+          >
+            <MdEdit />
+            แก้ไข
+          </button>
+          &nbsp;&nbsp;
+          <button
+            className="btn btn-outline-danger btn-sm"
+            onClick={onSubmitForm}
+          >
+            <MdDeleteForever />
+            ลบ
+          </button>
+        </div>
       </div>
+
       {loading ? (
         <div className="d-flex justify-content-center p-5">
           <div className="spinner-border text-secondary" role="status">

@@ -15,7 +15,6 @@ import HomeUser from './components/pages/user/UserHome'
 import HomeAdmin from './components/pages/admin/AdminHome'
 
 import ProductStock from './components/pages/admin/ProductStock'
-import ProductManage from './components/pages/admin/ProductManage'
 import DBCart from './components/pages/admin/DBCart'
 import DBOrder from './components/pages/admin/DBOrder'
 import DBCFCode from './components/pages/admin/DBCFCode'
@@ -107,19 +106,19 @@ function App() {
             <NotFound text="The page you are looking for does not exist." />
           }
         />
-        <Route
-          path="/"
-          element={
-            <>
-              <ResponsiveAppBar />
-              <HomeUser />
-            </>
-          }
-        />
+        <Route path="/" element={[<ResponsiveAppBar />, <HomeUser />]} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
         {/* Customer */}
+        <Route
+          path="/user/home"
+          element={
+            <UserRoute>
+              <HomeUser />
+            </UserRoute>
+          }
+        />
         <Route path="/order/:id" element={<UserOrder />} />
 
         {/* Admin */}
@@ -152,14 +151,6 @@ function App() {
           element={
             <AdminRoute>
               <ProductStock />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/stock/manage"
-          element={
-            <AdminRoute>
-              <ProductManage />
             </AdminRoute>
           }
         />

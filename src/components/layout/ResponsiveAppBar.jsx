@@ -38,11 +38,11 @@ const linkAuth = [
 ]
 
 const settings = [
-  {
-    title: 'Profile',
-    icon: '',
-    to: '/profile',
-  },
+  // {
+  //   title: 'Profile',
+  //   icon: '',
+  //   to: '/profile',
+  // },
   {
     title: 'Logout',
     icon: '',
@@ -102,12 +102,11 @@ const ResponsiveAppBar = () => {
               textDecoration: 'none',
             }}
           >
-            <IconButton>
-              <Avatar alt="logo" src={logo} />
-            </IconButton>
+            <Avatar alt="logo" src={logo} />
+       
           </Typography>
-          {/* /LOGO */}
 
+          {/* /LOGO */}
           {/* Mobile Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -141,9 +140,7 @@ const ResponsiveAppBar = () => {
             >
               <MenuItem onClick={handleCloseNavMenu}>
                 <Link to="/" style={{ textDecoration: 'none' }}>
-                  <Typography textAlign="center">
-                    {user.length === 0 ? 'หน้าแรก' : 'รายการคำสั่งซื้อ'}
-                  </Typography>
+                  <Typography textAlign="center">หน้าแรก</Typography>
                 </Link>
               </MenuItem>
 
@@ -158,7 +155,6 @@ const ResponsiveAppBar = () => {
             </Menu>
           </Box>
           {/* /Mobile Menu */}
-
           {/* LOGO Mobile */}
           {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
           <Typography
@@ -177,12 +173,11 @@ const ResponsiveAppBar = () => {
               textDecoration: 'none',
             }}
           >
-            <IconButton>
+            {/* <IconButton>
               <Avatar alt="logo" src={logo} />
-            </IconButton>
+            </IconButton> */}
           </Typography>
           {/* /LOGO Mobile */}
-
           {/* Menu Left Full */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Link to="/">
@@ -195,7 +190,6 @@ const ResponsiveAppBar = () => {
             </Link>
           </Box>
           {/* /Menu Left Full */}
-
           {/* Menu Right Full */}
           <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
             {user.length === 0 &&
@@ -221,51 +215,60 @@ const ResponsiveAppBar = () => {
 
           {/* User Menu */}
           {user.length != 0 && (
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar
-                    alt="profile_picture"
-                    src={user.picture[0].data.url}
-                  />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+            <>
+              <Typography
+                sx={{
+                  color: 'gray',
                 }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
               >
-                {settings.map((setting, index) => (
-                  <MenuItem
-                    key={index}
-                    onClick={
-                      setting.title == 'Logout'
-                        ? onClickLogout
-                        : handleCloseUserMenu
-                    }
-                  >
-                    <Link to={setting.to} style={{ textDecoration: 'none' }}>
-                      <Typography textAlign="center">
-                        {setting.title}
-                      </Typography>
-                    </Link>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
+                Welcome, {user.username}
+              </Typography>
+              &nbsp;&nbsp;
+              <Box sx={{ flexGrow: 0 }}>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar
+                      alt="profile_picture"
+                      src={user.picture[0].data.url}
+                    />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: '45px' }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting, index) => (
+                    <MenuItem
+                      key={index}
+                      onClick={
+                        setting.title == 'Logout'
+                          ? onClickLogout
+                          : handleCloseUserMenu
+                      }
+                    >
+                      <Link to={setting.to} style={{ textDecoration: 'none' }}>
+                        <Typography textAlign="center">
+                          {setting.title}
+                        </Typography>
+                      </Link>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+            </>
           )}
-
           {/* /User Menu */}
         </Toolbar>
       </Container>

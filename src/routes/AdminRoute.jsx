@@ -17,20 +17,21 @@ const AdminRoute = ({ children }) => {
   let [firstLoad, setFirstLoad] = useState(false)
 
   const axiosFetch = useCallback(
-    async (authToken) => {
-      try {
-        // console.log(user)
-        await axios.post(
+    (authToken) => {
+      // console.log(user)
+      axios
+        .post(
           `${baseURL}/api/current-admin`,
           {},
           {
             headers: { authToken },
           }
         )
-      } catch (error) {
-        console.log(error)
-        setFirstLoad(false)
-      }
+        .then((response) => console.log(response.data)) // ดูข้อมูลที่ส่งกลับมาจาก API
+        .catch((error) => {
+          console.log(error)
+          setFirstLoad(false)
+        })
     },
     [user]
   )

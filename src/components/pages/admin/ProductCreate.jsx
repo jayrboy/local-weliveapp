@@ -35,7 +35,7 @@ function ProductCreate() {
         if (result === 'true') {
           form.current.reset()
           toast.success('ข้อมูลถูกจัดเก็บแล้ว')
-          navigate('/admin/stock/manage')
+          navigate('/admin/stock')
         } else {
           toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
         }
@@ -53,7 +53,7 @@ function ProductCreate() {
           <h4 className="mb-0">เพิ่มสินค้า</h4>
           <button
             className="btn btn-sm"
-            onClick={() => navigate('/admin/stock/manage')}
+            onClick={() => navigate('/admin/stock')}
           >
             <CloseIcon sx={{ color: 'red' }} />
           </button>
@@ -145,7 +145,7 @@ function ProductCreate() {
             &nbsp;&nbsp;&nbsp;
             <button
               className="btn btn-sm"
-              onClick={() => navigate('/admin/stock/manage')}
+              onClick={() => navigate('/admin/stock')}
             >
               ยกเลิก
             </button>

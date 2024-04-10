@@ -82,7 +82,7 @@ export default function HeaderBar() {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
           <MenuItem onClick={onClickLogout}>Logout</MenuItem>
         </Menu>
       </Box>

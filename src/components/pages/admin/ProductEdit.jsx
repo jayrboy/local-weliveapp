@@ -61,7 +61,7 @@ function ProductEdit() {
           toast.error(result.error)
         } else {
           toast.success('ข้อมูลถูกแก้ไขแล้ว')
-          navigate('/admin/stock/manage')
+          navigate('/admin/stock')
         }
       })
       .catch((e) => toast.error(e))
@@ -77,7 +77,7 @@ function ProductEdit() {
           <h4 className="mb-0">แก้ไขสินค้า</h4>
           <button
             className="btn btn-sm"
-            onClick={() => navigate('/admin/stock/manage')}
+            onClick={() => navigate('/admin/stock')}
           >
             <CloseIcon sx={{ color: 'red' }} />
           </button>
@@ -150,7 +150,7 @@ function ProductEdit() {
             &nbsp;&nbsp;&nbsp;
             <button
               className="btn btn-sm"
-              onClick={() => navigate('/admin/stock/manage')}
+              onClick={() => navigate('/admin/stock')}
             >
               ยกเลิก
             </button>
