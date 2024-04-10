@@ -190,7 +190,7 @@ const ResponsiveAppBar = () => {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'black', mr: 5 }}
               >
-                {user.length === 0 ? 'หน้าแรก' : 'รายการคำสั่งซื้อ'}
+                หน้าแรก
               </Button>
             </Link>
           </Box>

@@ -8,12 +8,11 @@ import AddBusinessOutlinedIcon from '@mui/icons-material/AddBusinessOutlined'
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined'
 import ViewListIcon from '@mui/icons-material/ViewList'
 import SearchIcon from '@mui/icons-material/Search'
-import ProductCreate from './ProductCreate'
 
 export const HeaderProduct = ({ title }) => {
   return (
     <h3 className="text-start">
-      <Link to="/admin/home" className="  text-decoration-none">
+      <Link to="/admin/home" className="text-decoration-none">
         WE LIVE |
       </Link>
       <span className="text-success">&nbsp;{title}</span>
@@ -242,7 +241,7 @@ const Stock = () => {
           </div>
         </div>
       ) : (
-        <div>{data}</div>
+        <>{data}</>
       )}
       <div className="d-flex justify-content-center">
         <ul className="pagination pagination-sm">

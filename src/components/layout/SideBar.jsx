@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar'
 import { Box, IconButton, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 // icon
 import CallMissedOutgoingIcon from '@mui/icons-material/CallMissedOutgoing'
@@ -23,6 +24,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 
 const SideBar = () => {
+  const { user } = useSelector((state) => state.user)
   const [isCollapsed, setisCollapsed] = useState(true)
   const [toggled, setToggled] = useState(false)
   const [broken, setBroken] = useState(false)
@@ -129,20 +131,24 @@ const SideBar = () => {
               </SubMenu>
 
               {/* Mange Admin & User */}
-              <SubMenu label="Admin" icon={<AdminPanelSettingsIcon />}>
-                <MenuItem
-                  icon={<PeopleOutlinedIcon />}
-                  onClick={() => navigate('/admin/manage')}
-                >
-                  Users
-                </MenuItem>
-                {/* <MenuItem
+              {user.role === 'admin' ? (
+                <SubMenu label="Admin" icon={<AdminPanelSettingsIcon />}>
+                  <MenuItem
+                    icon={<PeopleOutlinedIcon />}
+                    onClick={() => navigate('/admin/manage')}
+                  >
+                    Users
+                  </MenuItem>
+                  {/* <MenuItem
                   icon={<AdminPanelSettingsIcon />}
                   onClick={() => navigate('#')}
                 >
                   Admin
                 </MenuItem> */}
-              </SubMenu>
+                </SubMenu>
+              ) : (
+                <></>
+              )}
             </Menu>
 
             <div

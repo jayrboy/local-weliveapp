@@ -1,5 +1,5 @@
+import React, { useState, useRef, useEffect } from 'react'
 import { baseURL } from '../../../App'
-import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
@@ -8,16 +8,22 @@ import { FaEdit } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 
 export default function ProductUpdate() {
-  let [data, setData] = useState('')
-  const form = useRef()
   const navigate = useNavigate()
+  let [data, setData] = useState('')
   let [loading, setLoading] = useState(false)
 
+  const form = useRef()
+
+  let [page, setPage] = useState([])
+  let qStr = window.location.search
+  let params = new URLSearchParams(qStr)
+
   useEffect(() => {
-    setLoading(true)
     fetch(`${baseURL}/api/db/read`)
       .then((response) => response.json())
       .then((docs) => {
+        setLoading(true)
+        console.log(docs)
         if (docs.length > 0) {
           showData(docs)
           setLoading(false)
@@ -153,6 +159,72 @@ export default function ProductUpdate() {
       .catch((err) => toast.error(err))
   }
 
+  const paginate = (result) => {
+    if (result.totalPages === 1) {
+      setPage([])
+      return
+    }
+
+    let links = []
+    let q = params.get('q') || ''
+    let url = `/admin/stock?q=${q}&page=`
+
+    //เนื่องจากจำนวนข้อมูลตัวอย่างมีไม่มาก
+    //จึงให้แสดงหมายเลขในช่วง -/+ 2 จากเพจปัจจุบัน
+
+    //ให้แสดง 2 หมายเลขก่อนเพจปัจจุบัน แต่ต้องไม่ต่ำกว่า 1
+    let start = result.page - 2
+    start = start < 1 ? 1 : start
+
+    //ถัดจากเพจปัจจุบัน ให้แสดงอีก 2 หมายเลข (ต้องไม่เกินจำนวนเพจทั้งหมด)
+    let end = result.page + 2
+    end = end < result.totalPages ? end : result.totalPages
+
+    //ถ้าช่วงหมายเลขเพจที่แสดง ยังสามารถเลื่อนกลับไปยังหมายเลขที่ตำ่กว่านี้ได้
+    //ให้แสดงลิงก์ '|<' เพื่อสำหรับคลิกย้อนกลับไป
+    if (start > 1) {
+      links.push(
+        <li className="page-item" key="first-page">
+          <Link to={`${url}1`} className="page-link">
+            {'|<'}
+          </Link>
+        </li>
+      )
+    }
+
+    for (let i = start; i <= end; i++) {
+      if (i === result.page) {
+        links.push(
+          <li className="page-item" key={i}>
+            <span className="page-link active">{i}</span>
+          </li>
+        )
+      } else {
+        links.push(
+          <li className="page-item" key={i}>
+            <Link to={`${url}${i}`} className="page-link">
+              {i}
+            </Link>
+          </li>
+        )
+      }
+    }
+
+    //ถ้าช่วงหมายเลขเพจที่แสดง ยังสามารถเลื่อนไปยังหมายเลขที่สูงกว่านี้ได้
+    //ให้แสดงลิงก์ '>|' เพื่อสำหรับคลิกย้อนไปยังเพจเหล่านั้น
+    if (end < result.totalPages) {
+      links.push(
+        <li className="page-item" key="last-page">
+          <Link to={`${url}${result.totalPages}`} className="page-link">
+            {'>|'}
+          </Link>
+        </li>
+      )
+    }
+
+    setPage(links)
+  }
+
   return (
     <>
       <div className="row" style={{ margin: '20px' }}>
@@ -166,12 +238,14 @@ export default function ProductUpdate() {
           </div>
         </div>
       ) : (
-        <div id="data">{data}</div>
+        <>{data}</>
       )}
-      <div className="d-flex justify-content-center mx-auto">
-        <Link to="/admin/stock" className="btn btn-light btn-sm">
-          กลับไปหน้าสินค้า
-        </Link>
+      <div className="d-flex justify-content-center">
+        <ul className="pagination pagination-sm">
+          {page.map((p, i) => (
+            <React.Fragment key={i + 1}>{p}</React.Fragment>
+          ))}
+        </ul>
       </div>
     </>
   )

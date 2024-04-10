@@ -11,7 +11,7 @@ import AdminRoute from './routes/AdminRoute'
 import UserRoute from './routes/UserRoute'
 import NotFound from './components/pages/NotFound'
 
-import HomeUser from './components/pages/user/HomeUser'
+import HomeUser from './components/pages/user/UserHome'
 import HomeAdmin from './components/pages/admin/AdminHome'
 
 import ProductStock from './components/pages/admin/ProductStock'
@@ -27,8 +27,7 @@ import ManageUser from './components/pages/admin/ManageUser'
 import ADCheckout from './components/pages/admin/ADcheckout'
 
 import ResponsiveAppBar from './components/layout/ResponsiveAppBar'
-import USorder from './components/pages/user/USorder'
-import USinvoice from './components/pages/user/USinvoice'
+import UserOrder from './components/pages/user/UserOrderID'
 
 import { useDispatch } from 'react-redux'
 import { login } from './redux/userSlice'
@@ -120,31 +119,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        {/* User */}
-        <Route
-          path="/user/home"
-          element={
-            <UserRoute>
-              <HomeUser />
-            </UserRoute>
-          }
-        />
-        <Route
-          path="/user/order"
-          element={
-            <UserRoute>
-              <USorder />
-            </UserRoute>
-          }
-        />
-        <Route
-          path="/user/invoice"
-          element={
-            <UserRoute>
-              <USinvoice />
-            </UserRoute>
-          }
-        />
+        {/* Customer */}
+        <Route path="/order/:id" element={<UserOrder />} />
 
         {/* Admin */}
         <Route
