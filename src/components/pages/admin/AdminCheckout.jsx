@@ -10,9 +10,8 @@ export default function AdminCheckout() {
           <h3 className="text-start">
             <Link to="/admin/home" className="text-decoration-none">
               WE LIVE |
-              
             </Link>{' '}
-            <span className="text-success"> เช็คยอดขาย</span>
+            <span className="text-success"> Checkout</span>
           </h3>
         </div>
       </div>
@@ -77,6 +76,12 @@ export default function AdminCheckout() {
           })}
         </tbody>
       </table>
+      <br />
+      <div className="d-flex justify-content-center mx-auto">
+        <Link to="/admin/home" className="btn btn-light btn-sm">
+          หน้าหลัก
+        </Link>
+      </div>
     </>
   )
 }

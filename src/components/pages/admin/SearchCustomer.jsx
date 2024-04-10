@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { MdOutlineSearch } from 'react-icons/md'
 
-export default function AdminSearch() {
+export default function SearchCustomer() {
   return (
     <>
       <div className="row m-3">
@@ -76,7 +76,7 @@ export default function AdminSearch() {
         </thead>
         <tbody>
           <tr>
-            <td>1</td>
+            <td>{1}</td>
             <td>Jasdakorn Ake</td>
             <td>เจษฎากร คุ้มเดช</td>
             <td>12/345 ม.1</td>
@@ -86,13 +86,22 @@ export default function AdminSearch() {
             <td>061-xxxx-xxx</td>
             <td>ส่งแล้ว</td>
             <td>
-              <Link className="btn btn-sm btn-warning" to="/admin/editcustomer">
+              <Link
+                className="btn btn-sm btn-warning"
+                to={'/customer/edit/' + 1}
+              >
                 edit
               </Link>
             </td>
           </tr>
         </tbody>
       </table>
+      <br />
+      <div className="d-flex justify-content-center mx-auto">
+        <Link to="/admin/home" className="btn btn-light btn-sm">
+          หน้าหลัก
+        </Link>
+      </div>
     </>
   )
 }

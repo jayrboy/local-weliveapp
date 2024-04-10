@@ -68,6 +68,12 @@ export default function AdminSale() {
           })}
         </tbody>
       </table>
+      <br />
+      <div className="d-flex justify-content-center mx-auto">
+        <Link to="/admin/home" className="btn btn-light btn-sm">
+          หน้าหลัก
+        </Link>
+      </div>
     </>
   )
 }

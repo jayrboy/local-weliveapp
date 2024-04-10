@@ -100,7 +100,7 @@ const SideBar = () => {
               <SubMenu label="ร้านค้า" icon={<StorefrontIcon />}>
                 <MenuItem
                   icon={<PersonSearchOutlinedIcon />}
-                  onClick={() => navigate('/admin/search')}
+                  onClick={() => navigate('/search/customer')}
                 >
                   ค้นหาลูกค้า
                 </MenuItem>
@@ -180,8 +180,15 @@ const SideBar = () => {
             <Menu>
               {/* <MenuItem icon={<CalendarTodayOutlinedIcon />}>Calendar</MenuItem> */}
               {/* <MenuItem icon={<ReceiptOutlinedIcon />}>Documentation</MenuItem> */}
-              <MenuItem icon={<EqualizerIcon />}>สรุปยอด</MenuItem>
-              <MenuItem icon={<InfoIcon />}>วิธีการใช้งาน</MenuItem>
+              <MenuItem
+                icon={<EqualizerIcon />}
+                onClick={() => navigate('/analysis')}
+              >
+                รายงานสรุปยอด
+              </MenuItem>
+              <MenuItem icon={<InfoIcon />} onClick={() => navigate('/info')}>
+                วิธีการใช้งาน
+              </MenuItem>
             </Menu>
           </div>
         </div>

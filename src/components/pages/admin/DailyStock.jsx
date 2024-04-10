@@ -150,11 +150,17 @@ export default function DailyStock() {
             <Link to="/admin/home" className="  text-decoration-none">
               WE LIVE |
             </Link>{' '}
-            <span className="text-success"> Daily Stock</span>
+            <span className="text-success"> รายการไลฟ์สด</span>
           </h3>
         </div>
       </div>
       {data}
+      <br />
+      <div className="d-flex justify-content-center mx-auto">
+        <Link to="/admin/home" className="btn btn-light btn-sm">
+          หน้าหลัก
+        </Link>
+      </div>
     </>
   )
 }

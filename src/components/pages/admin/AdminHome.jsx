@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { MdOutlineTableView } from 'react-icons/md'
 import { FaSearchDollar, FaList } from 'react-icons/fa'
 import { TbArrowElbowRight } from 'react-icons/tb'
+import { VscGraph } from 'react-icons/vsc'
+import { TbMessageCode } from 'react-icons/tb'
 
 function AdminHome() {
   const features = [
@@ -27,9 +29,21 @@ function AdminHome() {
     },
     {
       id: 4,
+      title: 'คำสั่งซื้อ',
+      link: '/order',
+      icon: <TbMessageCode size={75} color="#555555 " />,
+    },
+    {
+      id: 5,
       title: 'เช็คยอด',
       link: '/admin/sales',
       icon: <TbArrowElbowRight size={75} color="#555555 " />,
+    },
+    {
+      id: 6,
+      title: 'รายงานสรุปยอด',
+      link: '/analysis',
+      icon: <VscGraph size={75} color="#555555 " />,
     },
   ]
 
@@ -51,6 +65,8 @@ function AdminHome() {
             </div>
           ))}
         </div>
+        <br />
+        <br />
       </div>
     </>
   )

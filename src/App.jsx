@@ -18,10 +18,11 @@ import ProductStock from './components/pages/admin/ProductStock'
 import CustomerOrder from './components/pages/admin/CustomerOrder'
 import DailyStock from './components/pages/admin/DailyStock'
 import AdminSale from './components/pages/admin/AdminSale'
-import AdminSearch from './components/pages/admin/AdminSearch'
-import AdminSearchOrder from './components/pages/admin/AdminSearchOrder'
+import SearchCustomer from './components/pages/admin/SearchCustomer'
+import SearchOrder from './components/pages/admin/SearchOrder'
 import ManageUser from './components/pages/admin/ManageUser'
 import AdminCheckout from './components/pages/admin/AdminCheckout'
+import CustomerEdit from './components/pages/admin/CustomerEdit'
 
 import ResponsiveAppBar from './components/layout/ResponsiveAppBar'
 import UserOrder from './components/pages/user/UserOrderID'
@@ -38,6 +39,8 @@ import ExpressDelete from './components/pages/admin/ExpressDelete'
 import EditProduct from './components/pages/admin/ProductEdit'
 import ProductCreate from './components/pages/admin/ProductCreate'
 import DailyEdit from './components/pages/admin/DailyEdit'
+import AnalysisReport from './components/pages/admin/AnalysisReport'
+import Info from './components/pages/admin/Info'
 
 export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 
@@ -170,10 +173,18 @@ function App() {
           }
         />
         <Route
-          path="/admin/search"
+          path="/search/customer"
           element={
             <AdminRoute>
-              <AdminSearch />
+              <SearchCustomer />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/customer/edit/:id"
+          element={
+            <AdminRoute>
+              <CustomerEdit />
             </AdminRoute>
           }
         />
@@ -181,7 +192,7 @@ function App() {
           path="/search/order"
           element={
             <AdminRoute>
-              <AdminSearchOrder />
+              <SearchOrder />
             </AdminRoute>
           }
         />
@@ -242,6 +253,22 @@ function App() {
           element={
             <AdminRoute>
               <CustomerOrder />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/analysis"
+          element={
+            <AdminRoute>
+              <AnalysisReport />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/info"
+          element={
+            <AdminRoute>
+              <Info />
             </AdminRoute>
           }
         />

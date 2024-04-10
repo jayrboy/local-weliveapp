@@ -1,25 +1,40 @@
 import { Checkbox } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined'
 import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined'
 import PlagiarismOutlinedIcon from '@mui/icons-material/PlagiarismOutlined'
+import CloseIcon from '@mui/icons-material/Close'
 
-export default function ADeditcus() {
+export default function CustomerEdit() {
+  const navigate = useNavigate()
   return (
-    <div className=" container">
-      <div className="m-2">
-        <h3>
-          <Link to="/admin/home" className="  text-decoration-none">
-            WE LIVE |
-          </Link>{' '}
-          <span className=" text-danger"> แก้ไขข้อมูลของลูกค้า </span>
-        </h3>
+    <>
+      <div className="row m-3">
+        <div className="col-lg-12">
+          <h3>
+            <Link to="/admin/home" className="text-decoration-none">
+              WE LIVE |
+            </Link>{' '}
+            <span className="text-success"> แก้ไขข้อมูลของลูกค้า</span>
+          </h3>
+        </div>
       </div>
+
       <div
-        className=" position-relative card mt-5 p-4 m-auto "
-        style={{ width: '500' }}
+        className="card shadow rounded mx-auto"
+        style={{ width: '400px', background: '#fff' }}
       >
-        <form className=" row justify-content-md-center">
+        <span className="card-header d-flex justify-content-between align-items-center">
+          <h4>CUSTOMER / แก้ไขข้อมูลลูกค้า</h4>
+          <button
+            className="btn btn-sm"
+            onClick={() => navigate('/search/customer')}
+          >
+            <CloseIcon sx={{ color: 'red' }} />
+          </button>
+        </span>
+        <form className="p-4">
           <label className="form-label">ชื่อ</label>
           <input
             type="text"
@@ -104,70 +119,70 @@ export default function ADeditcus() {
             required
           />
           <br />
-          <label className="form-label">สถานะ</label>
-          <div className="ms-2">
-            <span className="text-success">
-              <Checkbox /> ส่งแล้ว
-            </span>
-            <span className=" ms-2 text-danger">
-              <Checkbox /> ยังไม่ส่ง
-            </span>
-            <span className=" ms-2 text-warning">
-              <Checkbox /> ไม่โอน/ใส่แบล็คลิสต์
-            </span>
+          <div>
+            <label className="form-label">สถานะ :</label>
+            <small className="text-success">
+              <Checkbox />
+              ส่งแล้ว
+            </small>
+            <small className="text-danger">
+              <Checkbox />
+              ยังไม่ส่ง
+            </small>
+            <small className="text-warning">
+              <Checkbox />
+              ไม่โอน/Ban
+            </small>
           </div>
-
-          <br />
-          <div className="d-flex justify-content-center">
-            <button className="btn btn-success btn-sm">บันทึกการแก้ไข</button>
-            <button className="btn btn-outline-success btn-sm ms-5 ">
+          <div className="d-flex justify-content-center mt-2">
+            <Link to="/search/customer" className="btn btn-secondary btn-sm">
+              กลับหน้าหลัก
+            </Link>
+            &nbsp;&nbsp;
+            <button className="btn btn-outline-success btn-sm">
               พิมพ์ข้อมูลนี้
             </button>
-            <a href="/db/adminsearch" className="btn btn-primary btn-sm ms-5">
-              กลับหน้าหลัก
-            </a>
+            &nbsp;&nbsp;
+            <button className="btn btn-success btn-sm">บันทึกการแก้ไข</button>
           </div>
         </form>
       </div>
-      <br />
 
-      <div className="card justify-content-center bg-white mt-3 ">
-        <div className=" border-success border border-3 boer">
-          <div className="m-3 border-gray border-bottom ">
-            <h5>ประวัติการซื้อขายของลูกค้า</h5>
-          </div>
-          <table className=" table mt-3 table-striped">
-            <thead className=" table-success border-bottom border-bottom-5 ">
-              <tr className=" text-center">
-                <th>#</th>
-                <th>วันที่</th>
-                <th>จำนวน</th>
-                <th>จำนวนเงิน</th>
-                <th className="ms-3">action 1</th>
-                <th>action 2</th>
-                <th>action 3</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className=" text-center">
-                <th>run number</th>
-                <th>date</th>
-                <th>amout</th>
-                <th>money</th>
-                <th className="ms-3">
-                  <PlagiarismOutlinedIcon />
-                </th>
-                <th>
-                  <PictureAsPdfOutlinedIcon />
-                </th>
-                <th>
-                  <LocalPrintshopOutlinedIcon />
-                </th>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+      <table className="table table-sm table-striped text-center table-bordered border-light caption-top">
+        <caption className="ms-3">
+          <small>ประวัติการซื้อขายของลูกค้า</small>
+        </caption>
+        <thead className="table-light">
+          <tr>
+            <th>#</th>
+            <th>วันที่</th>
+            <th>จำนวน</th>
+            <th>จำนวนเงิน</th>
+            <th className="ms-3">action 1</th>
+            <th>action 2</th>
+            <th>action 3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>run number</td>
+            <td>date</td>
+            <td>amout</td>
+            <td>money</td>
+            <td className="ms-3">
+              <PlagiarismOutlinedIcon />
+            </td>
+            <td>
+              <PictureAsPdfOutlinedIcon />
+            </td>
+            <td>
+              <LocalPrintshopOutlinedIcon />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br />
+      <br />
+    </>
   )
 }

@@ -1,7 +1,7 @@
 import { MdArrowDropDown } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 
-export default function AdminSearchOrder() {
+export default function SearchOrder() {
   function dropExpress() {
     var myEx = document.getElementById('myEx')
     document.getElementById('SelectExpress').value =
@@ -142,6 +142,12 @@ export default function AdminSearchOrder() {
           </table>
         </div>
       </form>
+      <br />
+      <div className="d-flex justify-content-center mx-auto">
+        <Link to="/admin/home" className="btn btn-light btn-sm">
+          หน้าหลัก
+        </Link>
+      </div>
     </>
   )
 }

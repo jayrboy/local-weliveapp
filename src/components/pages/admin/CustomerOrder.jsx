@@ -64,11 +64,12 @@ export default function CustomerOrder() {
                       <MdDelete />
                     </button>
                     &nbsp;
-                    <Link to={'/daily-stock/edit/' + doc._id}>
+                    {/* <Link to={'/daily-stock/edit/' + doc._id}>
                       <div className="btn btn-sm btn-outline-warning">
                         <MdEdit />
                       </div>
                     </Link>
+                    &nbsp; */}
                     <Link to={'/order/' + doc._id}>
                       <div className="btn btn-sm btn-outline-primary">
                         <MdOutlineManageSearch />
@@ -130,7 +131,7 @@ export default function CustomerOrder() {
             <Link to="/admin/home" className="text-decoration-none">
               WE LIVE |
             </Link>
-            <span className="text-success"> ค้นหาลูกค้า</span>
+            <span className="text-success"> คำสั่งซื้อ</span>
           </h3>
         </div>
       </div>
