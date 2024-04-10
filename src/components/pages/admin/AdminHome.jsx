@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom'
 
 // icons
-import { FaRegMap } from 'react-icons/fa6'
-import { FaSearchDollar } from 'react-icons/fa'
-import { FaList } from 'react-icons/fa'
+import { MdOutlineTableView } from 'react-icons/md'
+import { FaSearchDollar, FaList } from 'react-icons/fa'
 import { TbArrowElbowRight } from 'react-icons/tb'
 
 function AdminHome() {
@@ -12,18 +11,18 @@ function AdminHome() {
       id: 1,
       title: 'สินค้า',
       link: '/admin/stock',
-      icon: <FaRegMap size={75} color="#555555 " />,
+      icon: <MdOutlineTableView size={75} color="#555555 " />,
     },
     {
       id: 2,
       title: 'ค้นหารายการสั่งซื้อ',
-      link: '/admin/checkout',
+      link: '/search/order',
       icon: <FaSearchDollar size={75} color="#555555 " />,
     },
     {
       id: 3,
-      title: 'รายการสั่งซื้อ',
-      link: '/search/by-order',
+      title: 'ขายสินค้ารายวัน',
+      link: '/admin/daily-stock',
       icon: <FaList size={75} color="#555555 " />,
     },
     {

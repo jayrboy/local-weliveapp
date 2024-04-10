@@ -46,11 +46,11 @@ function ProductCreate() {
   return (
     <div className="modal-create">
       <div
-        className="card shadow mx-auto rounded mt-5"
+        className="card shadow mx-auto rounded"
         style={{ width: '400px', background: '#fff' }}
       >
         <span className="card-header d-flex justify-content-between align-items-center p-3">
-          <h4 className="mb-0">เพิ่มสินค้า</h4>
+          <h4>PRODUCT / เพิ่มสินค้า</h4>
           <button
             className="btn btn-sm"
             onClick={() => navigate('/admin/stock')}

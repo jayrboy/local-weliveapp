@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
 
-function ProductEdit() {
+function DailyEdit() {
   const { id } = useParams()
   const navigate = useNavigate()
 
@@ -61,7 +61,7 @@ function ProductEdit() {
           toast.error(result.error)
         } else {
           toast.success('ข้อมูลถูกแก้ไขแล้ว')
-          navigate('/admin/stock')
+          navigate('/admin/daily-stock')
         }
       })
       .catch((e) => toast.error(e))
@@ -74,10 +74,10 @@ function ProductEdit() {
         style={{ width: '400px', background: '#fff' }}
       >
         <span className="card-header d-flex justify-content-between align-items-center">
-          <h4>PRODUCT / แก้ไขสินค้า</h4>
+          <h4>DAILY STOCK / แก้ไขสินค้า</h4>
           <button
             className="btn btn-sm"
-            onClick={() => navigate('/admin/stock')}
+            onClick={() => navigate('/admin/daily-stock')}
           >
             <CloseIcon sx={{ color: 'red' }} />
           </button>
@@ -150,7 +150,7 @@ function ProductEdit() {
             &nbsp;&nbsp;&nbsp;
             <button
               className="btn btn-sm"
-              onClick={() => navigate('/admin/stock')}
+              onClick={() => navigate('/admin/daily-stock')}
             >
               ยกเลิก
             </button>
@@ -160,4 +160,4 @@ function ProductEdit() {
     </div>
   )
 }
-export default ProductEdit
+export default DailyEdit

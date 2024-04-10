@@ -5,23 +5,24 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 // icon
+import DashboardIcon from '@mui/icons-material/Dashboard'
 import CallMissedOutgoingIcon from '@mui/icons-material/CallMissedOutgoing'
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
 import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined'
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined'
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined'
 import TableViewIcon from '@mui/icons-material/TableView'
-import DataObjectOutlinedIcon from '@mui/icons-material/DataObjectOutlined'
-
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import SettingsSuggestOutlinedIcon from '@mui/icons-material/SettingsSuggestOutlined'
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined'
 import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined'
-
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
-
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch'
 import StorefrontIcon from '@mui/icons-material/Storefront'
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
+import EqualizerIcon from '@mui/icons-material/Equalizer'
+import InfoIcon from '@mui/icons-material/Info'
+import CommentIcon from '@mui/icons-material/Comment'
 
 const SideBar = () => {
   const { user } = useSelector((state) => state.user)
@@ -74,7 +75,7 @@ const SideBar = () => {
               </MenuItem>
 
               <MenuItem
-                icon={<HomeOutlinedIcon />}
+                icon={<DashboardIcon />}
                 onClick={() => navigate('/admin/home')}
               >
                 Dashboard
@@ -89,10 +90,10 @@ const SideBar = () => {
                 </MenuItem>
 
                 <MenuItem
-                  icon={<DataObjectOutlinedIcon />}
-                  onClick={() => navigate('/admin/cf-code')}
+                  icon={<FormatListBulletedIcon />}
+                  onClick={() => navigate('/admin/daily-stock')}
                 >
-                  รายการขายสินค้า
+                  รายการไลฟ์สด
                 </MenuItem>
               </SubMenu>
 
@@ -104,14 +105,20 @@ const SideBar = () => {
                   ค้นหาลูกค้า
                 </MenuItem>
                 <MenuItem
-                  icon={<PersonSearchOutlinedIcon />}
-                  onClick={() => navigate('/search/by-order')}
+                  icon={<ContentPasteSearchIcon />}
+                  onClick={() => navigate('/search/order')}
                 >
                   ค้นหาคำสั่งซื้อ
                 </MenuItem>
                 <MenuItem
+                  icon={<CommentIcon />}
+                  onClick={() => navigate('/order')}
+                >
+                  <span className=" text-success">คำสั่งซื้อ</span>
+                </MenuItem>
+                <MenuItem
                   icon={<SettingsSuggestOutlinedIcon />}
-                  onClick={() => navigate('/admin/exupdate')}
+                  onClick={() => navigate('/express')}
                 >
                   ตั้งค่าราคาขนส่ง
                 </MenuItem>
@@ -171,8 +178,10 @@ const SideBar = () => {
             </div>
 
             <Menu>
-              <MenuItem icon={<CalendarTodayOutlinedIcon />}>Calendar</MenuItem>
-              <MenuItem icon={<ReceiptOutlinedIcon />}>Documentation</MenuItem>
+              {/* <MenuItem icon={<CalendarTodayOutlinedIcon />}>Calendar</MenuItem> */}
+              {/* <MenuItem icon={<ReceiptOutlinedIcon />}>Documentation</MenuItem> */}
+              <MenuItem icon={<EqualizerIcon />}>สรุปยอด</MenuItem>
+              <MenuItem icon={<InfoIcon />}>วิธีการใช้งาน</MenuItem>
             </Menu>
           </div>
         </div>

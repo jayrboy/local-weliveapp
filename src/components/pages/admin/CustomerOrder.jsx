@@ -1,9 +1,10 @@
 import { baseURL } from '../../../App'
-
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
-export default function DBCart() {
+import { MdEdit, MdDelete, MdOutlineManageSearch } from 'react-icons/md'
+
+export default function CustomerOrder() {
   let [data, setData] = useState('')
   const form = useRef()
   const navigate = useNavigate()
@@ -25,16 +26,24 @@ export default function DBCart() {
   const showData = (result) => {
     let r = (
       <form onSubmit={onSubmitForm} ref={form}>
-        <table className="table table-striped">
-          <thead className="table-success">
+        <table className="table table-sm table-striped text-center table-bordered border-light">
+          <caption className="ms-3">
+            {result.length === 0 ? (
+              <>ไม่พบข้อมูล</>
+            ) : (
+              <small>พบข้อมูลทั้งหมด {result.length} รายการ</small>
+            )}
+          </caption>
+          <thead className="table-light">
             <tr>
-              <th className="text-center">รหัสไอดีผู้ใช้</th>
-              <th className="text-center">โค้ดสินค้า</th>
-              <th className="text-center">ความคิดเห็น</th>
-              <th className="text-center">วันที่และเวลา</th>
+              <th>รหัสไอดีผู้ใช้</th>
+              <th>โค้ดสินค้า</th>
+              <th>ความคิดเห็น</th>
+              <th>วันที่และเวลา</th>
+              <th>Action</th>
             </tr>
           </thead>
-          <tbody className="table-group-divider">
+          <tbody>
             {result.map((doc) => {
               let dt = new Date(Date.parse(doc.date_added))
               let df = (
@@ -46,17 +55,31 @@ export default function DBCart() {
 
               return (
                 <tr key={doc._id}>
-                  <td className="text-center">{doc.itemid}</td>
-                  <td className="text-center">{doc.name}</td>
-                  <td className="text-center">{p}</td>
-                  <td className="text-center">{df}</td>
+                  <td>{doc.itemid}</td>
+                  <td>{doc.name}</td>
+                  <td>{p}</td>
+                  <td>{df}</td>
+                  <td>
+                    <button className="btn btn-sm btn-outline-danger">
+                      <MdDelete />
+                    </button>
+                    &nbsp;
+                    <Link to={'/daily-stock/edit/' + doc._id}>
+                      <div className="btn btn-sm btn-outline-warning">
+                        <MdEdit />
+                      </div>
+                    </Link>
+                    <Link to={'/order/' + doc._id}>
+                      <div className="btn btn-sm btn-outline-primary">
+                        <MdOutlineManageSearch />
+                      </div>
+                    </Link>
+                  </td>
                 </tr>
               )
             })}
           </tbody>
         </table>
-        <br />
-        <button className="btn btn-danger btn-sm">ลบรายการที่เลือก</button>
       </form>
     )
 
@@ -100,14 +123,24 @@ export default function DBCart() {
   }
 
   return (
-    <div style={{ margin: '20px' }}>
+    <>
+      <div className="row m-3">
+        <div className="col-lg-12">
+          <h3 className="text-start">
+            <Link to="/admin/home" className="text-decoration-none">
+              WE LIVE |
+            </Link>
+            <span className="text-success"> ค้นหาลูกค้า</span>
+          </h3>
+        </div>
+      </div>
       <div id="data">{data}</div>
       <br />
       <div className="d-flex justify-content-center mx-auto">
-        <a href={baseURL} className="btn btn-light btn-sm">
+        <Link to="/admin/home" className="btn btn-light btn-sm">
           หน้าหลัก
-        </a>
+        </Link>
       </div>
-    </div>
+    </>
   )
 }

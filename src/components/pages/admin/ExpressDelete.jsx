@@ -2,7 +2,7 @@ import { baseURL } from '../../../App'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
-export default function EXdelete() {
+export default function ExpressDelete() {
   let [data, setData] = useState('')
   const form = useRef()
   const navigate = useNavigate()
@@ -24,27 +24,31 @@ export default function EXdelete() {
   const showData = (result) => {
     let deleteForm = (
       <>
-        <h3 className="text-start">
-          <Link to="/admin/home" className="  text-decoration-none">
-            WE LIVE |
-          </Link>{' '}
-          <span className="text-success"> คลังสินค้า </span>
-        </h3>
+        <div className="row m-3">
+          <div className="col-lg-4">
+            <h3 className="text-start">
+              <Link to="/admin/home" className="text-decoration-none">
+                WE LIVE |
+              </Link>{' '}
+              <span className="text-success"> ลบขนส่ง</span>
+            </h3>
+          </div>
+        </div>
 
         <form onSubmit={onSubmitForm} ref={form}>
-          <table className="table table-striped">
-            <thead className=" table table-success">
+          <table className="table table-sm table-striped text-center table-bordered border-light">
+            <thead className="table-light">
               <tr>
-                <th className="text-center">แก้ไข</th>
-                <th className="text-center">ชื่อขนส่ง</th>
-                <th className="text-center">ค่าส่งเริ่มต้น</th>
-                <th className="text-center">ค่าส่งชิ้นต่อไป</th>
-                <th className="text-center">ค่าส่งสูงสุด</th>
-                <th className="text-center">ส่งฟรีต่อเมื่อยอดถึง</th>
-                <th className="text-center">วันที่เริ่มใช้</th>
+                <th>แก้ไข</th>
+                <th>ชื่อขนส่ง</th>
+                <th>ค่าส่งเริ่มต้น</th>
+                <th>ค่าส่งชิ้นต่อไป</th>
+                <th>ค่าส่งสูงสุด</th>
+                <th>ส่งฟรีต่อเมื่อยอดถึง</th>
+                <th>วันที่เริ่มใช้</th>
               </tr>
             </thead>
-            <tbody className="table-group-divider">
+            <tbody>
               {result.map((doc) => {
                 let dt = new Date(Date.parse(doc.date_start))
                 let df = (
@@ -62,12 +66,12 @@ export default function EXdelete() {
                       <input type="radio" name="exname" value={doc._id} />
                     </td>
 
-                    <td className="text-center">{doc.exname}</td>
-                    <td className="text-center">{doc.fprice}</td>
-                    <td className="text-center">{doc.sprice}</td>
-                    <td className="text-center">{doc.maxprice}</td>
-                    <td className="text-center">{doc.whenfprice}</td>
-                    <td className="text-center">{df}</td>
+                    <td>{doc.exname}</td>
+                    <td>{doc.fprice}</td>
+                    <td>{doc.sprice}</td>
+                    <td>{doc.maxprice}</td>
+                    <td>{doc.whenfprice}</td>
+                    <td>{df}</td>
                   </tr>
                 )
               })}
@@ -120,10 +124,5 @@ export default function EXdelete() {
       .catch((err) => alert(err))
   }
 
-  return (
-    <div style={{ margin: '20px' }}>
-      <div id="data">{data}</div>
-      <br />
-    </div>
-  )
+  return <>{data}</>
 }

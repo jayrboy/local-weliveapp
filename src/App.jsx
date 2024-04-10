@@ -15,15 +15,13 @@ import HomeUser from './components/pages/user/UserHome'
 import HomeAdmin from './components/pages/admin/AdminHome'
 
 import ProductStock from './components/pages/admin/ProductStock'
-import DBCart from './components/pages/admin/DBCart'
-import DBOrder from './components/pages/admin/DBOrder'
-import DBCFCode from './components/pages/admin/DBCFCode'
-import ADinvoice from './components/pages/admin/ADinvoice'
-import ADSales from './components/pages/admin/ADSales'
-import ADSeacrh from './components/pages/admin/ADSearch'
-import SearchbyOrder from './components/pages/admin/SearchbyOrder'
+import CustomerOrder from './components/pages/admin/CustomerOrder'
+import DailyStock from './components/pages/admin/DailyStock'
+import AdminSale from './components/pages/admin/AdminSale'
+import AdminSearch from './components/pages/admin/AdminSearch'
+import AdminSearchOrder from './components/pages/admin/AdminSearchOrder'
 import ManageUser from './components/pages/admin/ManageUser'
-import ADCheckout from './components/pages/admin/ADcheckout'
+import AdminCheckout from './components/pages/admin/AdminCheckout'
 
 import ResponsiveAppBar from './components/layout/ResponsiveAppBar'
 import UserOrder from './components/pages/user/UserOrderID'
@@ -34,11 +32,12 @@ import { login } from './redux/userSlice'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-import EXcreate from './components/pages/admin/EXcreate'
-import EXupdate from './components/pages/admin/EXupdate'
-import EXdelete from './components/pages/admin/EXdelete'
+import ExpressList from './components/pages/admin/ExpressList'
+import ExpressCreate from './components/pages/admin/ExpressCreate'
+import ExpressDelete from './components/pages/admin/ExpressDelete'
 import EditProduct from './components/pages/admin/ProductEdit'
 import ProductCreate from './components/pages/admin/ProductCreate'
+import DailyEdit from './components/pages/admin/DailyEdit'
 
 export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 
@@ -131,22 +130,6 @@ function App() {
           }
         />
         <Route
-          path="/admin/checkout"
-          element={
-            <AdminRoute>
-              <ADCheckout />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/search/by-order"
-          element={
-            <AdminRoute>
-              <SearchbyOrder />
-            </AdminRoute>
-          }
-        />
-        <Route
           path="/admin/stock"
           element={
             <AdminRoute>
@@ -171,84 +154,94 @@ function App() {
           }
         />
         <Route
-          path="/db/cart"
+          path="/admin/daily-stock"
           element={
             <AdminRoute>
-              <DBCart />
+              <DailyStock />
             </AdminRoute>
           }
         />
         <Route
-          path="/db/order"
+          path="/daily-stock/edit/:id"
           element={
             <AdminRoute>
-              <DBOrder />
+              <DailyEdit />
             </AdminRoute>
           }
         />
-        <Route
-          path="/admin/cf-code"
-          element={
-            <AdminRoute>
-              <DBCFCode />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/invoice"
-          element={
-            <AdminRoute>
-              <ADinvoice />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/sales"
-          element={
-            <AdminRoute>
-              <ADSales />
-            </AdminRoute>
-          }
-        />
-
         <Route
           path="/admin/search"
           element={
             <AdminRoute>
-              <ADSeacrh />
+              <AdminSearch />
             </AdminRoute>
           }
         />
         <Route
-          path="/admin/exupdate"
+          path="/search/order"
           element={
             <AdminRoute>
-              <EXupdate />
+              <AdminSearchOrder />
             </AdminRoute>
           }
         />
         <Route
-          path="/admin/excreate"
+          path="/express"
           element={
             <AdminRoute>
-              <EXcreate />
+              <ExpressList />
             </AdminRoute>
           }
         />
         <Route
-          path="/admin/exdelete"
+          path="/express/create"
           element={
             <AdminRoute>
-              <EXdelete />
+              <ExpressCreate />
             </AdminRoute>
           }
         />
+        <Route
+          path="/express/delete"
+          element={
+            <AdminRoute>
+              <ExpressDelete />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/checkout"
+          element={
+            <AdminRoute>
+              <AdminCheckout />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/sales"
+          element={
+            <AdminRoute>
+              <AdminSale />
+            </AdminRoute>
+          }
+        />
+        {/* Manage User */}
         <Route
           path="/admin/manage"
           element={
             <AdminRoute>
               <ManageUser />
+            </AdminRoute>
+          }
+        />
+
+        {/* --------------- */}
+        <Route
+          path="/order"
+          element={
+            <AdminRoute>
+              <CustomerOrder />
             </AdminRoute>
           }
         />
