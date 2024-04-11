@@ -3,7 +3,7 @@ import UserOrder from './UserOrderID'
 
 import { useSelector, useDispatch } from 'react-redux'
 
-export default function UserHome() {
+export default function HomeUser() {
   const { user } = useSelector((state) => state.user)
 
   return (

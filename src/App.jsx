@@ -11,10 +11,11 @@ import AdminRoute from './routes/AdminRoute'
 import UserRoute from './routes/UserRoute'
 import NotFound from './components/pages/NotFound'
 
-import HomeUser from './components/pages/user/UserHome'
-import HomeAdmin from './components/pages/admin/AdminHome'
+import HomeUser from './components/pages/user/HomeUser'
+import HomeAdmin from './components/pages/admin/HomeAdmin'
 
 import ProductStock from './components/pages/admin/ProductStock'
+import ProductEdit from './components/pages/admin/ProductEdit'
 import CustomerOrder from './components/pages/admin/CustomerOrder'
 import DailyStock from './components/pages/admin/DailyStock'
 import AdminSale from './components/pages/admin/AdminSale'
@@ -139,6 +140,14 @@ function App() {
           }
         />
 
+        <Route
+          path="/product/edit/:id"
+          element={
+            <AdminRoute>
+              <ProductEdit />
+            </AdminRoute>
+          }
+        />
         <Route
           path="/admin/daily-stock"
           element={

@@ -30,6 +30,7 @@ const Stock = () => {
 
   let [isOpenCreate, setOpenCreate] = useState(false)
   let [isOpenEdit, setOpenEdit] = useState(false)
+  let [idEdit, setIdEdit] = useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -54,7 +55,7 @@ const Stock = () => {
 
     let r = (
       <React.Fragment>
-        <form onSubmit={onSubmitForm} ref={form}>
+        <form onSubmit={onSubmitForm} ref={form} className="px-1">
           <table className="table table-sm table-striped text-center table-bordered border-light">
             <caption className="ms-3">
               {' '}
@@ -222,12 +223,12 @@ const Stock = () => {
 
   const onEditClick = (e) => {
     e.preventDefault()
-
     const selectedInput = document.querySelector('input[name="_id"]:checked')
-
     if (selectedInput) {
-      const selectedId = selectedInput.value
-      navigate(`/product/edit/${selectedId}`)
+      setOpenEdit(true)
+      const id = selectedInput.value
+      setIdEdit(id)
+      // navigate(`/product/edit/${id}`)
     } else {
       toast.warning('กรุณาเลือกรายการที่ต้องการแก้ไข')
     }
@@ -245,7 +246,7 @@ const Stock = () => {
           </h3>
         </div>
 
-        <div className="col-lg-4 mt-3">
+        <div className="col-lg-4 p-1">
           <form action="/admin/stock" method="get" className="d-flex">
             <div className="d-inline-block">
               <input
@@ -258,35 +259,26 @@ const Stock = () => {
               />
             </div>
             &nbsp;&nbsp;
-            <button className="btn btn-sm btn-outline-info">
+            <button className="btn btn-sm btn-light">
               <MdOutlineSearch />
-              ค้นหา
             </button>
           </form>
         </div>
 
-        <div className="col-lg-4 mt-3">
+        <div className="col-lg-4 p-1">
           <button
-            className="btn btn-outline-primary btn-sm"
+            className="btn btn-sm btn-light"
             onClick={() => setOpenCreate(true)}
           >
-            <MdPostAdd />
+            <MdPostAdd color="blue" />
             เพิ่ม
           </button>
-          &nbsp;&nbsp;
-          <button
-            onClick={onEditClick}
-            className="btn btn-outline-warning btn-sm"
-          >
-            <MdEdit />
+          <button onClick={onEditClick} className="btn btn-sm btn-light ms-4">
+            <MdEdit color="orange" />
             แก้ไข
           </button>
-          &nbsp;&nbsp;
-          <button
-            className="btn btn-outline-danger btn-sm"
-            onClick={onSubmitForm}
-          >
-            <MdDeleteForever />
+          <button className="btn btn-sm btn-light ms-4" onClick={onSubmitForm}>
+            <MdDeleteForever color="red" />
             ลบ
           </button>
         </div>
@@ -323,7 +315,11 @@ const Stock = () => {
         ''
       )}
       {isOpenEdit ? (
-        <ProductEdit isOpenEdit={isOpenEdit} setOpenEdit={setOpenEdit} />
+        <ProductEdit
+          isOpenEdit={isOpenEdit}
+          setOpenEdit={setOpenEdit}
+          idEdit={idEdit}
+        />
       ) : (
         ''
       )}

@@ -1,12 +1,13 @@
 import { baseURL } from '../../../App'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
 
-function ProductEdit() {
-  const { id } = useParams()
+function ProductEdit(props) {
+  let { isOpenEdit, setOpenEdit, idEdit } = props
+  // const { id } = useParams()
   const navigate = useNavigate()
 
   const form = useRef()
@@ -19,7 +20,8 @@ function ProductEdit() {
   let date_added = useRef()
 
   useEffect(() => {
-    fetch(`${baseURL}/api/db/read/${id}`)
+    // fetch(`${baseURL}/api/db/read/${id}`)
+    fetch(`${baseURL}/api/db/read/${idEdit}`)
       .then((res) => res.json())
       .then((result) => {
         // console.log(result)
@@ -47,7 +49,8 @@ function ProductEdit() {
     event.preventDefault()
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
-    formEnt._id = id
+    // formEnt._id = id
+    formEnt._id = idEdit
 
     fetch(`${baseURL}/api/db/update`, {
       method: 'POST',
@@ -61,6 +64,7 @@ function ProductEdit() {
           toast.error(result.error)
         } else {
           toast.success('ข้อมูลถูกแก้ไขแล้ว')
+          setOpenEdit(false)
           navigate('/admin/stock')
         }
       })
@@ -68,17 +72,14 @@ function ProductEdit() {
   }
 
   return (
-    <div className="modal-edit">
+    <div className="modal-product">
       <div
         className="card shadow rounded"
         style={{ width: '400px', background: '#fff' }}
       >
         <span className="card-header d-flex justify-content-between align-items-center">
           <h4>PRODUCT / แก้ไขสินค้า</h4>
-          <button
-            className="btn btn-sm"
-            onClick={() => navigate('/admin/stock')}
-          >
+          <button className="btn btn-sm" onClick={() => setOpenEdit(false)}>
             <CloseIcon sx={{ color: 'red' }} />
           </button>
         </span>
@@ -148,10 +149,7 @@ function ProductEdit() {
               แก้ไสินค้า
             </button>
             &nbsp;&nbsp;&nbsp;
-            <button
-              className="btn btn-sm"
-              onClick={() => navigate('/admin/stock')}
-            >
+            <button className="btn btn-sm" onClick={() => setOpenEdit(false)}>
               ยกเลิก
             </button>
           </div>

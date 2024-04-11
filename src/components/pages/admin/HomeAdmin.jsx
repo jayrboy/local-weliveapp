@@ -7,7 +7,7 @@ import { TbArrowElbowRight } from 'react-icons/tb'
 import { VscGraph } from 'react-icons/vsc'
 import { TbMessageCode } from 'react-icons/tb'
 
-function AdminHome() {
+function HomeAdmin() {
   const features = [
     {
       id: 1,
@@ -71,4 +71,4 @@ function AdminHome() {
     </>
   )
 }
-export default AdminHome
+export default HomeAdmin
