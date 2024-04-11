@@ -36,8 +36,6 @@ import 'react-toastify/dist/ReactToastify.css'
 import ExpressList from './components/pages/admin/ExpressList'
 import ExpressCreate from './components/pages/admin/ExpressCreate'
 import ExpressDelete from './components/pages/admin/ExpressDelete'
-import EditProduct from './components/pages/admin/ProductEdit'
-import ProductCreate from './components/pages/admin/ProductCreate'
 import DailyEdit from './components/pages/admin/DailyEdit'
 import AnalysisReport from './components/pages/admin/AnalysisReport'
 import Info from './components/pages/admin/Info'
@@ -140,22 +138,7 @@ function App() {
             </AdminRoute>
           }
         />
-        <Route
-          path="/product/create"
-          element={
-            <AdminRoute>
-              <ProductCreate />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/product/edit/:id"
-          element={
-            <AdminRoute>
-              <EditProduct />
-            </AdminRoute>
-          }
-        />
+
         <Route
           path="/admin/daily-stock"
           element={

@@ -6,7 +6,8 @@ import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
 
-function ProductCreate() {
+function ProductCreate(props) {
+  let { isOpenCreate, setOpenCreate } = props
   const form = useRef()
   const navigate = useNavigate()
 
@@ -35,6 +36,7 @@ function ProductCreate() {
         if (result === 'true') {
           form.current.reset()
           toast.success('ข้อมูลถูกจัดเก็บแล้ว')
+          setOpenCreate(false)
           navigate('/admin/stock')
         } else {
           toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
@@ -44,17 +46,14 @@ function ProductCreate() {
   }
 
   return (
-    <div className="modal-create">
+    <div className="modal-product">
       <div
         className="card shadow mx-auto rounded"
         style={{ width: '400px', background: '#fff' }}
       >
         <span className="card-header d-flex justify-content-between align-items-center p-3">
           <h4>PRODUCT / เพิ่มสินค้า</h4>
-          <button
-            className="btn btn-sm"
-            onClick={() => navigate('/admin/stock')}
-          >
+          <button className="btn btn-sm" onClick={() => setOpenCreate(false)}>
             <CloseIcon sx={{ color: 'red' }} />
           </button>
         </span>
@@ -143,10 +142,7 @@ function ProductCreate() {
               เพิ่มสินค้า
             </button>
             &nbsp;&nbsp;&nbsp;
-            <button
-              className="btn btn-sm"
-              onClick={() => navigate('/admin/stock')}
-            >
+            <button className="btn btn-sm" onClick={() => setOpenCreate(false)}>
               ยกเลิก
             </button>
           </div>

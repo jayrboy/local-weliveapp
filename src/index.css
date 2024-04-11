@@ -108,24 +108,10 @@ IconButton,
   animation: bounceY 1s infinite;
 }
 
-.modal-create {
+.modal-product {
   position: fixed;
-  top: 50%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
-  max-height: none;
-  flex-direction: column;
-  align-items: center;
-  z-index: 10; /* ให้มีค่า z-index สูงกว่าเนื้อหาหลักของเว็บ */
-}
-
-.modal-edit {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-height: none;
-  flex-direction: column;
-  align-items: center;
   z-index: 10; /* ให้มีค่า z-index สูงกว่าเนื้อหาหลักของเว็บ */
 }

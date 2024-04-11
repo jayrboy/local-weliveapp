@@ -158,7 +158,7 @@ export default function ExpressList() {
     const fd = new FormData(form.current)
     const fe = Object.fromEntries(fd.entries())
 
-    fetch('/api/ex/update', {
+    fetch(`${baseURL}/api/ex/update`, {
       method: 'POST',
       body: JSON.stringify(fe),
       headers: { 'Content-Type': 'application/json' },

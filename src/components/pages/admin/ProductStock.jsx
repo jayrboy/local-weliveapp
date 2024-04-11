@@ -11,6 +11,9 @@ import {
   MdOutlineSearch,
 } from 'react-icons/md'
 
+import ProductCreate from './ProductCreate'
+import ProductEdit from './ProductEdit'
+
 //TODO: Product
 const Stock = () => {
   let [data, setData] = useState('')
@@ -24,6 +27,9 @@ const Stock = () => {
   const location = useLocation()
   const { q } = useParams()
   const navigate = useNavigate()
+
+  let [isOpenCreate, setOpenCreate] = useState(false)
+  let [isOpenEdit, setOpenEdit] = useState(false)
 
   useEffect(() => {
     setLoading(true)
@@ -262,7 +268,7 @@ const Stock = () => {
         <div className="col-lg-4 mt-3">
           <button
             className="btn btn-outline-primary btn-sm"
-            onClick={() => navigate('/product/create')}
+            onClick={() => setOpenCreate(true)}
           >
             <MdPostAdd />
             เพิ่ม
@@ -308,6 +314,19 @@ const Stock = () => {
           หน้าหลัก
         </Link>
       </div>
+      {isOpenCreate ? (
+        <ProductCreate
+          isOpenCreate={isOpenCreate}
+          setOpenCreate={setOpenCreate}
+        />
+      ) : (
+        ''
+      )}
+      {isOpenEdit ? (
+        <ProductEdit isOpenEdit={isOpenEdit} setOpenEdit={setOpenEdit} />
+      ) : (
+        ''
+      )}
     </>
   )
 }
