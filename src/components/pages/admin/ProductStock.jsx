@@ -70,16 +70,13 @@ const Stock = () => {
                 <th>
                   <MdGrid3X3 />
                 </th>
-                <th>รหัสสินค้า</th>
-                <th>ชื่อสินค้า</th>
+                <th>รหัส CF</th>
+                <th>สินค้า</th>
                 <th>ราคา</th>
-                <th>ราคาต้นทุน</th>
+                <th>ต้นทุน</th>
                 <th>จำนวน</th>
-                <th>ราคาทั้งหมด</th>
-                <th>ขายเกินจำนวน</th>
                 <th>วันที่เพิ่มสินค้า</th>
                 <th>จำนวน CF</th>
-                <th>จ่ายแล้ว</th>
                 <th>สินค้าคงเหลือ</th>
               </tr>
             </thead>
@@ -105,17 +102,14 @@ const Stock = () => {
                         className="form-check-input"
                       />
                     </td>
-                    <td>{doc.itemid}</td>
+                    <td>{doc.code}</td>
                     <td>{doc.name}</td>
                     <td>{p}</td>
                     <td>{c}</td>
                     <td>{doc.stock}</td>
-                    <td>{doc.stock}</td>
-                    <td>{doc.over_stock}</td>
                     <td>{df}</td>
-                    <td>{5}</td>
-                    <td>{1}</td>
-                    <td>{doc.stock}</td>
+                    <td>{doc.remaining_cf}</td>
+                    <td>{doc.remaining}</td>
                   </tr>
                 )
               })}

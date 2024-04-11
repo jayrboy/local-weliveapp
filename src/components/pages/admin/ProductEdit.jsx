@@ -1,36 +1,32 @@
 import { baseURL } from '../../../App'
 import { useEffect, useRef } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
 
 function ProductEdit(props) {
   let { isOpenEdit, setOpenEdit, idEdit } = props
-  // const { id } = useParams()
   const navigate = useNavigate()
 
   const form = useRef()
-  let itemid = useRef()
+  let code = useRef()
   let name = useRef()
   let cost = useRef()
   let price = useRef()
   let stock = useRef()
-  let over_stock = useRef()
   let date_added = useRef()
 
   useEffect(() => {
-    // fetch(`${baseURL}/api/db/read/${id}`)
     fetch(`${baseURL}/api/db/read/${idEdit}`)
       .then((res) => res.json())
       .then((result) => {
         // console.log(result)
-        itemid.current.value = result.itemid
+        code.current.value = result.code
         name.current.value = result.name
         price.current.value = result.price
         cost.current.value = result.cost
         stock.current.value = result.stock
-        over_stock.current.value = result.over_stock
 
         let dt = new Date(Date.parse(result.date_added))
         let y = dt.getFullYear()
@@ -87,9 +83,9 @@ function ProductEdit(props) {
           <label className="form-label">รหัส CF</label>
           <input
             type="text"
-            name="itemid"
+            name="code"
             className="form-control form-control-sm"
-            ref={itemid}
+            ref={code}
           />
 
           <label className="form-label mt-2">ชื่อสินค้า</label>
@@ -125,24 +121,13 @@ function ProductEdit(props) {
             className="form-control form-control-sm"
             ref={stock}
           />
-
-          <label className="form-label mt-2">
-            จำนวนสินค้าที่อนุญาติให้ล้นสต็อก
-          </label>
-          <input
-            type="number"
-            name="over_stock"
-            min="0"
-            className="form-control form-control-sm"
-            ref={over_stock}
-          />
-
           <label className="form-label mt-2">วันที่เพิ่มสินค้า</label>
           <input
             type="date"
             name="date_added"
             className="form-control form-control-sm mb-3"
             ref={date_added}
+            disabled={true}
           />
           <div className="d-flex justify-content-center ">
             <button className="btn btn-outline-warning btn-sm">

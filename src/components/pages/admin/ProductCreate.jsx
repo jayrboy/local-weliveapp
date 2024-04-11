@@ -1,5 +1,5 @@
 import { baseURL } from '../../../App'
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -22,7 +22,7 @@ function ProductCreate(props) {
     color: 'red',
   }
 
-  const onSubmitForm = (event) => {
+  const onSubmitForm = () => {
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
@@ -62,9 +62,9 @@ function ProductCreate(props) {
           <label className="form-label">รหัส CF</label>
           <input
             type="text"
-            name="itemid"
+            name="code"
             className="form-control form-control-sm"
-            {...register('itemid', { required: true, maxLength: 30 })}
+            {...register('code', { required: true, maxLength: 30 })}
           />
           {errors.name && (
             <div style={err}>กรุณาระบุรหัสสินค้า ตัวอย่าง &quot;A01&quot;</div>
@@ -114,23 +114,7 @@ function ProductCreate(props) {
             })}
           />
           {errors.price && <div style={err}>กำหนดจำนวนสินค้า ตัวอย่าง: 10</div>}
-          <label className="form-label mt-2">
-            จำนวนสินค้าที่อนุญาติให้ล้นสต็อก
-          </label>
-          <input
-            type="number"
-            name="over_stock"
-            min="0"
-            className="form-control form-control-sm"
-            {...register('over_stock', {
-              validate: (value) => parseFloat(value) >= 0,
-            })}
-          />
-          {errors.price && (
-            <div style={err}>
-              กำหนดจำนวน limit จำนวนที่นำมาตัดในสต็อก ตัวอย่าง: 10
-            </div>
-          )}
+
           <label className="form-label mt-2">วันที่เพิ่มสินค้า</label>
           <input
             type="Date"
@@ -138,9 +122,7 @@ function ProductCreate(props) {
             className="form-control form-control-sm mb-3"
           />
           <div className="d-flex justify-content-center ">
-            <button className="btn btn-outline-primary btn-sm">
-              เพิ่มสินค้า
-            </button>
+            <button className="btn btn-light btn-sm">เพิ่มสินค้า</button>
             &nbsp;&nbsp;&nbsp;
             <button className="btn btn-sm" onClick={() => setOpenCreate(false)}>
               ยกเลิก
