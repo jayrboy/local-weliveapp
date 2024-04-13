@@ -2,16 +2,17 @@ import { baseURL } from '../../../App'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaBoxOpen } from 'react-icons/fa'
-import { MdEdit, MdDelete } from 'react-icons/md'
+import { MdEdit, MdDelete, MdContentPasteSearch } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 
 export default function DailyStock() {
-  const navigate = useNavigate()
   let [data, setData] = useState('')
+  let status = ['new', 'clear']
+  const navigate = useNavigate()
   const form = useRef()
 
   useEffect(() => {
-    fetch(`${baseURL}/api/db/read`)
+    fetch(`${baseURL}/api/daily/read`)
       .then((response) => response.json())
       .then((docs) => {
         if (docs.length > 0) {
@@ -22,6 +23,10 @@ export default function DailyStock() {
       })
       .catch((err) => alert(err))
   }, [])
+
+  const onChangeRole = (id, event) => {
+    console.log(id, event.target.value)
+  }
 
   const showData = (result) => {
     let r = (
@@ -40,15 +45,13 @@ export default function DailyStock() {
                 <th>วันที่</th>
                 <th>สถานะ</th>
                 <th>Chanel</th>
-                <th>รายการไลฟ์สด</th>
+                <th>สินค้า</th>
                 <th>ราคาทั้งหมด</th>
-                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {result.map((doc) => {
-                let price = new Intl.NumberFormat().format(doc.price)
-                let stock = new Intl.NumberFormat().format(doc.stock)
+                let total = new Intl.NumberFormat().format(doc.price_total)
                 let dt = new Date(Date.parse(doc.date_added))
                 let df = (
                   <>
@@ -60,24 +63,31 @@ export default function DailyStock() {
                   <tr key={doc._id}>
                     <td>{df}</td>
                     <td>
-                      <div>{doc.code}</div>
+                      <div className="d-flex justify-content-center">
+                        <select
+                          name="status"
+                          defaultValue={doc.status}
+                          onChange={(event) => onChangeRole(doc._id, event)}
+                          className="form-select form-select-sm"
+                          style={{ width: '80px' }}
+                        >
+                          {status.map((item, i) => (
+                            <option key={i + 1}>{item}</option>
+                          ))}
+                        </select>
+                      </div>
                     </td>
-                    <td>{doc.name}</td>
+                    <td>{doc.chanel}</td>
                     <td>
-                      <FaBoxOpen /> &nbsp;
-                      {stock}
-                    </td>
-                    <td>{price} ฿</td>
-                    <td>
-                      <button className="btn btn-sm btn-outline-danger m-1">
-                        <MdDelete />
+                      {doc.products.length}&nbsp;รายการ&nbsp;
+                      <button
+                        className="btn btn-sm btn-light"
+                        onClick={() => {}}
+                      >
+                        <MdContentPasteSearch color="blue" size={20} />
                       </button>
-                      <Link to={'/daily-stock/edit/' + doc._id}>
-                        <div className="btn btn-sm btn-outline-warning">
-                          <MdEdit />
-                        </div>
-                      </Link>
                     </td>
+                    <td>{total} ฿</td>
                   </tr>
                 )
               })}
