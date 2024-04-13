@@ -29,13 +29,21 @@ const DailyCreate = () => {
   }, [products])
 
   useEffect(() => {
-    dispatch(getProducts())
-  }, [])
+    if (!isOpenEdit) {
+      dispatch(getProducts())
+    }
+  }, [isOpenEdit])
 
-  const onSubmitForm = () => {
+  const onSubmitForm = (e) => {
+    e.preventDefault()
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
+    formEnt.products = products
+    formEnt.price_total = total
+    // console.log(formEnt)
+
+    // fetch(`http://localhost:8000/api/daily/create`, {
     fetch(`${baseURL}/api/daily/create`, {
       method: 'POST',
       body: JSON.stringify(formEnt),
@@ -46,7 +54,7 @@ const DailyCreate = () => {
         if (result === 'true') {
           form.current.reset()
           toast.success('ข้อมูลถูกจัดเก็บแล้ว')
-          navigate('/admin/stock')
+          navigate('/admin/daily-stock')
         } else {
           toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
         }
@@ -94,27 +102,29 @@ const DailyCreate = () => {
               </div>
               <div className="col-sm-4">
                 <label className="form-label">สถานะ</label>
-                <select className="form-select form-select-sm">
-                  <option value="new" name="new">
-                    New
-                  </option>
-                  <option value="clear" name="clear">
-                    Clear
-                  </option>
+                <select
+                  name="status"
+                  defaultValue="new"
+                  className="form-select form-select-sm"
+                >
+                  <option value="new">New</option>
+                  <option value="clear">Clear</option>
                 </select>
               </div>
               <div className="col-sm-4">
                 <label className="form-label">Chanel</label>
-                <select className="form-select form-select-sm">
-                  <option value="facebook" name="facebook">
-                    Facebook
-                  </option>
+                <select
+                  name="chanel"
+                  defaultValue="facebook"
+                  className="form-select form-select-sm"
+                >
+                  <option value="facebook">Facebook</option>
                 </select>
               </div>
             </div>
             {/* Table */}
-            <div className="table-responsive">
-              <table className="table table-sm table-striped text-center table-bordered border-light">
+            <div className="table-responsive px-2">
+              <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
                 <thead className="table-light">
                   <tr>
                     <th>
@@ -175,8 +185,8 @@ const DailyCreate = () => {
               </div>
               <div className="col-sm-4">
                 <span>
-                  {total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}{' '}
-                  บาท
+                  {total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                  &nbsp;&nbsp;&nbsp;บาท
                 </span>
               </div>
             </div>
@@ -196,14 +206,12 @@ const DailyCreate = () => {
           </form>
         </div>
       </div>
-      {isOpenEdit ? (
+      {isOpenEdit && (
         <ProductEdit
           isOpenEdit={isOpenEdit}
           setOpenEdit={setOpenEdit}
           idEdit={idEdit}
         />
-      ) : (
-        ''
       )}
     </>
   )

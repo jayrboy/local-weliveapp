@@ -25,63 +25,65 @@ export default function DailyStock() {
 
   const showData = (result) => {
     let r = (
-      <form onSubmit={onSubmitForm} ref={form}>
-        <table className="table table-sm table-striped text-center table-bordered border-light">
-          <caption className="ms-3">
-            {result.length === 0 ? (
-              <>ไม่พบข้อมูล</>
-            ) : (
-              <small>พบข้อมูลทั้งหมด {result.length} รายการ</small>
-            )}
-          </caption>
-          <thead className="table-light">
-            <tr>
-              <th>วันที่</th>
-              <th>สถานะ</th>
-              <th>Chanel</th>
-              <th>รายการไลฟ์สด</th>
-              <th>ราคาทั้งหมด</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.map((doc) => {
-              let price = new Intl.NumberFormat().format(doc.price)
-              let stock = new Intl.NumberFormat().format(doc.stock)
-              let dt = new Date(Date.parse(doc.date_added))
-              let df = (
-                <>
-                  {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                </>
-              )
+      <form onSubmit={onSubmitForm} ref={form} className="px-2">
+        <div className="table-responsive">
+          <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
+            <caption className="ms-3">
+              {result.length === 0 ? (
+                <>ไม่พบข้อมูล</>
+              ) : (
+                <small>พบข้อมูลทั้งหมด {result.length} รายการ</small>
+              )}
+            </caption>
+            <thead className="table-light">
+              <tr>
+                <th>วันที่</th>
+                <th>สถานะ</th>
+                <th>Chanel</th>
+                <th>รายการไลฟ์สด</th>
+                <th>ราคาทั้งหมด</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.map((doc) => {
+                let price = new Intl.NumberFormat().format(doc.price)
+                let stock = new Intl.NumberFormat().format(doc.stock)
+                let dt = new Date(Date.parse(doc.date_added))
+                let df = (
+                  <>
+                    {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                  </>
+                )
 
-              return (
-                <tr key={doc._id}>
-                  <td>{df}</td>
-                  <td>
-                    <div>{doc.code}</div>
-                  </td>
-                  <td>{doc.name}</td>
-                  <td>
-                    <FaBoxOpen /> &nbsp;
-                    {stock}
-                  </td>
-                  <td>{price} ฿</td>
-                  <td>
-                    <button className="btn btn-sm btn-outline-danger m-1">
-                      <MdDelete />
-                    </button>
-                    <Link to={'/daily-stock/edit/' + doc._id}>
-                      <div className="btn btn-sm btn-outline-warning">
-                        <MdEdit />
-                      </div>
-                    </Link>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+                return (
+                  <tr key={doc._id}>
+                    <td>{df}</td>
+                    <td>
+                      <div>{doc.code}</div>
+                    </td>
+                    <td>{doc.name}</td>
+                    <td>
+                      <FaBoxOpen /> &nbsp;
+                      {stock}
+                    </td>
+                    <td>{price} ฿</td>
+                    <td>
+                      <button className="btn btn-sm btn-outline-danger m-1">
+                        <MdDelete />
+                      </button>
+                      <Link to={'/daily-stock/edit/' + doc._id}>
+                        <div className="btn btn-sm btn-outline-warning">
+                          <MdEdit />
+                        </div>
+                      </Link>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
       </form>
     )
 
@@ -131,7 +133,7 @@ export default function DailyStock() {
           <h3 className="text-start">
             <Link to="/admin/home" className="  text-decoration-none">
               WE LIVE |
-            </Link>{' '}
+            </Link>
             <span className="text-success"> รายการไลฟ์สด</span>
           </h3>
         </div>
@@ -144,7 +146,6 @@ export default function DailyStock() {
           </button>
         </div>
       </div>
-
       {data}
       <br />
       <div className="d-flex justify-content-center mx-auto">

@@ -15,11 +15,8 @@ import HomeUser from './components/pages/user/HomeUser'
 import HomeAdmin from './components/pages/admin/HomeAdmin'
 
 import ProductStock from './components/pages/admin/ProductStock'
-import ProductEdit from './components/pages/admin/ProductEdit'
-
 import DailyStock from './components/pages/admin/DailyStock'
 import DailyCreate from './components/pages/admin/DailyCreate'
-import DailyEdit from './components/pages/admin/DailyEdit'
 
 import CustomerOrder from './components/pages/admin/CustomerOrder'
 import AdminSale from './components/pages/admin/AdminSale'
@@ -142,15 +139,6 @@ function App() {
             </AdminRoute>
           }
         />
-
-        <Route
-          path="/product/edit/:id"
-          element={
-            <AdminRoute>
-              <ProductEdit />
-            </AdminRoute>
-          }
-        />
         <Route
           path="/admin/daily-stock"
           element={
@@ -164,14 +152,6 @@ function App() {
           element={
             <AdminRoute>
               <DailyCreate />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/daily-stock/edit/:id"
-          element={
-            <AdminRoute>
-              <DailyEdit />
             </AdminRoute>
           }
         />

@@ -56,9 +56,9 @@ const Stock = () => {
     }
 
     let r = (
-      <React.Fragment>
-        <form onSubmit={onSubmitForm} ref={form} className="px-1">
-          <table className="table table-sm table-striped text-center table-bordered border-light">
+      <form onSubmit={onSubmitForm} ref={form} className="px-2">
+        <div className="table-responsive">
+          <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
             <caption className="ms-3">
               {' '}
               {numDocs === 0 ? (
@@ -119,8 +119,8 @@ const Stock = () => {
               })}
             </tbody>
           </table>
-        </form>
-      </React.Fragment>
+        </div>
+      </form>
     )
 
     setData(r)
@@ -245,7 +245,7 @@ const Stock = () => {
         </div>
 
         <div className="col-lg-4 p-1">
-          <form action="/admin/stock" method="get" className="d-flex">
+          <form action="/admin/stock" method="get">
             <div className="d-inline-block">
               <input
                 type="text"

@@ -18,10 +18,8 @@ export const getProducts = createAsyncThunk(
 const initialState = {
   products: [],
   stock: 0,
-  dailyStock: [],
   total: 0,
   isLoading: false,
-  totalProduct: 0,
 }
 
 const modalSlice = createSlice({
