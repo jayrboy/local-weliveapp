@@ -21,7 +21,6 @@ export default function DailyStock() {
         }
       })
       .catch((err) => alert(err))
-    // eslint-disable-next-line
   }, [])
 
   const showData = (result) => {

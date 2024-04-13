@@ -4,14 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
-import { MdEdit, MdDelete, MdGrid3X3 } from 'react-icons/md'
+import { MdEdit, MdDelete } from 'react-icons/md'
 
 import { useSelector, useDispatch } from 'react-redux'
 import {
   getProducts,
   calTotals,
   deletedProduct,
-  editedProduct,
 } from '../../../redux/productSlice'
 
 import ProductEdit from './ProductEdit'
@@ -22,12 +21,6 @@ const DailyCreate = () => {
   const navigate = useNavigate()
 
   const form = useRef()
-  const code = useRef()
-  const name = useRef()
-  const stock = useRef()
-  const limit = useRef()
-  const price = useRef()
-  const remaining = useRef()
   let [isOpenEdit, setOpenEdit] = useState(false)
   let [idEdit, setIdEdit] = useState('')
 
