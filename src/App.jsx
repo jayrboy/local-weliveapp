@@ -16,8 +16,12 @@ import HomeAdmin from './components/pages/admin/HomeAdmin'
 
 import ProductStock from './components/pages/admin/ProductStock'
 import ProductEdit from './components/pages/admin/ProductEdit'
-import CustomerOrder from './components/pages/admin/CustomerOrder'
+
 import DailyStock from './components/pages/admin/DailyStock'
+import DailyCreate from './components/pages/admin/DailyCreate'
+import DailyEdit from './components/pages/admin/DailyEdit'
+
+import CustomerOrder from './components/pages/admin/CustomerOrder'
 import AdminSale from './components/pages/admin/AdminSale'
 import SearchCustomer from './components/pages/admin/SearchCustomer'
 import SearchOrder from './components/pages/admin/SearchOrder'
@@ -37,7 +41,6 @@ import 'react-toastify/dist/ReactToastify.css'
 import ExpressList from './components/pages/admin/ExpressList'
 import ExpressCreate from './components/pages/admin/ExpressCreate'
 import ExpressDelete from './components/pages/admin/ExpressDelete'
-import DailyEdit from './components/pages/admin/DailyEdit'
 import AnalysisReport from './components/pages/admin/AnalysisReport'
 import Info from './components/pages/admin/Info'
 
@@ -153,6 +156,14 @@ function App() {
           element={
             <AdminRoute>
               <DailyStock />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/daily-stock/create"
+          element={
+            <AdminRoute>
+              <DailyCreate />
             </AdminRoute>
           }
         />

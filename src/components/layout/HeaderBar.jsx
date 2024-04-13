@@ -57,7 +57,7 @@ export default function HeaderBar() {
         <IconButton onClick={() => dispatch(openModal())}>
           {firstLoad ? <RiLiveFill color="red" /> : <RiLiveFill color="grey" />}
         </IconButton>
-        <IconButton>
+        <IconButton onClick={() => navigate('/order')}>
           <CartIcon />
           <div className="amount-container">
             <p className="total-amount">{'0'}</p>
@@ -83,6 +83,7 @@ export default function HeaderBar() {
           onClose={handleClose}
         >
           {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
+          <MenuItem onClick={() => navigate('/info')}>วิธีการใช้งาน</MenuItem>
           <MenuItem onClick={onClickLogout}>Logout</MenuItem>
         </Menu>
       </Box>

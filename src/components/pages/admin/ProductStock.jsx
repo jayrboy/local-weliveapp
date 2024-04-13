@@ -33,19 +33,21 @@ const Stock = () => {
   let [idEdit, setIdEdit] = useState('')
 
   useEffect(() => {
-    setLoading(true)
-    fetch(`${baseURL}/api/db/search?` + params)
-      .then((response) => response.json())
-      .then((result) => {
-        showData(result)
-        paginate(result)
-        setLoading(false)
-      })
-      .catch((err) => {
-        toast.error(err)
-        setLoading(true)
-      })
-  }, [location])
+    if (!isOpenEdit) {
+      // เรียก fetch ข้อมูลอีกครั้งหลังจากปิดการแก้ไข
+      fetch(`${baseURL}/api/db/search?` + params)
+        .then((response) => response.json())
+        .then((result) => {
+          showData(result)
+          paginate(result)
+          setLoading(false)
+        })
+        .catch((err) => {
+          toast.error(err)
+          setLoading(true)
+        })
+    }
+  }, [location, isOpenEdit])
 
   const showData = (result) => {
     const numDocs = result.totalDocs
@@ -70,14 +72,15 @@ const Stock = () => {
                 <th>
                   <MdGrid3X3 />
                 </th>
-                <th>รหัส CF</th>
+                <th>รหัส</th>
                 <th>สินค้า</th>
+                <th>จำนวน</th>
                 <th>ราคา</th>
                 <th>ต้นทุน</th>
-                <th>จำนวน</th>
                 <th>วันที่เพิ่มสินค้า</th>
-                <th>จำนวน CF</th>
-                <th>สินค้าคงเหลือ</th>
+                <th>CF</th>
+                <th>จ่ายแล้ว</th>
+                <th>คงเหลือ</th>
               </tr>
             </thead>
             <tbody>
@@ -104,11 +107,12 @@ const Stock = () => {
                     </td>
                     <td>{doc.code}</td>
                     <td>{doc.name}</td>
+                    <td>{doc.stock}</td>
                     <td>{p}</td>
                     <td>{c}</td>
-                    <td>{doc.stock}</td>
                     <td>{df}</td>
-                    <td>{doc.remaining_cf}</td>
+                    <td>{doc.cf}</td>
+                    <td>{doc.paid}</td>
                     <td>{doc.remaining}</td>
                   </tr>
                 )
@@ -300,22 +304,18 @@ const Stock = () => {
           หน้าหลัก
         </Link>
       </div>
-      {isOpenCreate ? (
+      {isOpenCreate && (
         <ProductCreate
           isOpenCreate={isOpenCreate}
           setOpenCreate={setOpenCreate}
         />
-      ) : (
-        ''
       )}
-      {isOpenEdit ? (
+      {isOpenEdit && (
         <ProductEdit
           isOpenEdit={isOpenEdit}
           setOpenEdit={setOpenEdit}
           idEdit={idEdit}
         />
-      ) : (
-        ''
       )}
     </>
   )

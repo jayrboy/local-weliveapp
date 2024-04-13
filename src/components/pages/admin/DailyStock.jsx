@@ -5,13 +5,10 @@ import { FaBoxOpen } from 'react-icons/fa'
 import { MdEdit, MdDelete } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 
-import { MdGrid3X3 } from 'react-icons/md'
-
 export default function DailyStock() {
+  const navigate = useNavigate()
   let [data, setData] = useState('')
   const form = useRef()
-  const navigate = useNavigate()
-  let switchReq = useRef()
 
   useEffect(() => {
     fetch(`${baseURL}/api/db/read`)
@@ -30,61 +27,47 @@ export default function DailyStock() {
   const showData = (result) => {
     let r = (
       <form onSubmit={onSubmitForm} ref={form}>
-        <table className="table table-sm table-striped text-center table-bordered border-light caption-top">
+        <table className="table table-sm table-striped text-center table-bordered border-light">
           <caption className="ms-3">
-            <Link to="/db/create">
-              <button className="btn btn-outline-primary btn-sm">
-                เพิ่มโค้ดการขาย
-              </button>
-            </Link>
+            {result.length === 0 ? (
+              <>ไม่พบข้อมูล</>
+            ) : (
+              <small>พบข้อมูลทั้งหมด {result.length} รายการ</small>
+            )}
           </caption>
           <thead className="table-light">
             <tr>
-              <th>CF</th>
-              <th>รหัสสินค้า</th>
-              <th>ชื่อสินค้า</th>
-              <th>สินค้าที่มี</th>
-              <th>ราคา</th>
-              <th>จำนวน</th>
-              <th>ขายเกินจำนวน</th>
-              <th>จำนวน CF</th>
-              <th>จ่ายแล้ว</th>
-              <th>สินค้าคงเหลือ</th>
-              <th>ลบ/แก้ไข</th>
+              <th>วันที่</th>
+              <th>สถานะ</th>
+              <th>Chanel</th>
+              <th>รายการไลฟ์สด</th>
+              <th>ราคาทั้งหมด</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {result.map((doc) => {
-              let p = new Intl.NumberFormat().format(doc.price)
+              let price = new Intl.NumberFormat().format(doc.price)
+              let stock = new Intl.NumberFormat().format(doc.stock)
+              let dt = new Date(Date.parse(doc.date_added))
+              let df = (
+                <>
+                  {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                </>
+              )
+
               return (
                 <tr key={doc._id}>
+                  <td>{df}</td>
                   <td>
-                    <div className="form-check form-switch d-flex justify-content-center">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value="require"
-                        role="switch"
-                        ref={switchReq}
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div>{doc.itemid}</div>
+                    <div>{doc.code}</div>
                   </td>
                   <td>{doc.name}</td>
                   <td>
                     <FaBoxOpen /> &nbsp;
-                    {doc.stock}
+                    {stock}
                   </td>
-                  <td>{p} ฿</td>
-                  <td>{doc.stock}</td>
-                  <td>{doc.over_stock}</td>
-                  <td>{0}</td>
-                  <td>{0}</td>
-                  <td>
-                    <FaBoxOpen /> &nbsp;{doc.stock}
-                  </td>
+                  <td>{price} ฿</td>
                   <td>
                     <button className="btn btn-sm btn-outline-danger m-1">
                       <MdDelete />
@@ -145,7 +128,7 @@ export default function DailyStock() {
   return (
     <>
       <div className="row m-3">
-        <div className="col-lg-12">
+        <div className="col-lg-6">
           <h3 className="text-start">
             <Link to="/admin/home" className="  text-decoration-none">
               WE LIVE |
@@ -153,7 +136,16 @@ export default function DailyStock() {
             <span className="text-success"> รายการไลฟ์สด</span>
           </h3>
         </div>
+        <div className="col-lg-6">
+          <button
+            className="btn btn-outline-primary btn-sm"
+            onClick={() => navigate('/daily-stock/create')}
+          >
+            เพิ่มรายการไลฟ์สด
+          </button>
+        </div>
       </div>
+
       {data}
       <br />
       <div className="d-flex justify-content-center mx-auto">

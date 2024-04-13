@@ -12,28 +12,44 @@ export const getProducts = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue('something went wrong')
     }
-  } 
+  }
 )
 
 const initialState = {
   products: [],
-  amount: 0,
+  stock: 0,
+  dailyStock: [],
   total: 0,
   isLoading: false,
+  totalProduct: 0,
 }
 
 const modalSlice = createSlice({
   name: 'product',
   initialState,
   reducers: {
-    calculateTotals: (state) => {
-      let amount = 0
+    deletedProduct: (state, action) => {
+      return {
+        ...state,
+        products: state.products.filter(
+          (product) => product._id !== action.payload
+        ),
+      }
+    },
+    editedProduct: (state, action) => {
+      return {
+        ...state,
+        products: [...state.products, action.payload],
+      }
+    },
+    calTotals: (state) => {
+      let stock = 0
       let total = 0
-      state.cartItems.forEach((item) => {
-        amount += item.amount
-        total += item.amount * item.price
+      state.products.forEach((item) => {
+        stock += item.stock
+        total += item.stock * item.price
       })
-      state.amount = amount
+      state.stock = stock
       state.total = total
     },
   },
@@ -53,5 +69,5 @@ const modalSlice = createSlice({
   },
 })
 
-export const { calculateTotals } = modalSlice.actions
+export const { calTotals, deletedProduct, editedProduct } = modalSlice.actions
 export default modalSlice.reducer

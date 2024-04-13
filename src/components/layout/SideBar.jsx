@@ -23,6 +23,7 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
 import EqualizerIcon from '@mui/icons-material/Equalizer'
 import InfoIcon from '@mui/icons-material/Info'
 import CommentIcon from '@mui/icons-material/Comment'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 
 const SideBar = () => {
   const { user } = useSelector((state) => state.user)
@@ -90,10 +91,10 @@ const SideBar = () => {
                 </MenuItem>
 
                 <MenuItem
-                  icon={<FormatListBulletedIcon />}
+                  icon={<ShoppingCartIcon />}
                   onClick={() => navigate('/admin/daily-stock')}
                 >
-                  รายการไลฟ์สด
+                  ขาย
                 </MenuItem>
               </SubMenu>
 

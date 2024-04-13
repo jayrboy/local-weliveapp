@@ -1,13 +1,12 @@
 import { baseURL } from '../../../App'
 import { useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
+import { MdEdit } from 'react-icons/md'
 
 function ProductEdit(props) {
   let { isOpenEdit, setOpenEdit, idEdit } = props
-  const navigate = useNavigate()
 
   const form = useRef()
   let code = useRef()
@@ -15,6 +14,7 @@ function ProductEdit(props) {
   let cost = useRef()
   let price = useRef()
   let stock = useRef()
+  let limit = useRef()
   let date_added = useRef()
 
   useEffect(() => {
@@ -27,6 +27,7 @@ function ProductEdit(props) {
         price.current.value = result.price
         cost.current.value = result.cost
         stock.current.value = result.stock
+        limit.current.value = result.limit
 
         let dt = new Date(Date.parse(result.date_added))
         let y = dt.getFullYear()
@@ -55,13 +56,12 @@ function ProductEdit(props) {
     })
       .then((res) => res.text())
       .then((result) => {
-        console.log(result)
+        // console.log(result)
         if (result.error) {
           toast.error(result.error)
         } else {
           toast.success('ข้อมูลถูกแก้ไขแล้ว')
           setOpenEdit(false)
-          navigate('/admin/stock')
         }
       })
       .catch((e) => toast.error(e))
@@ -80,63 +80,91 @@ function ProductEdit(props) {
           </button>
         </span>
         <form onSubmit={onSubmitForm} ref={form} className="p-4">
-          <label className="form-label">รหัส CF</label>
-          <input
-            type="text"
-            name="code"
-            className="form-control form-control-sm"
-            ref={code}
-          />
+          <div className="row">
+            <div className="col-12 col-md-12 col-lg-12">
+              <label className="form-label">รหัส CF</label>
+              <input
+                type="text"
+                name="code"
+                className="form-control form-control-sm"
+                ref={code}
+                required
+              />
+            </div>
+            <div className="col-12 col-md-12 col-lg-12">
+              <label className="form-label mt-2">ชื่อสินค้า</label>
+              <input
+                type="text"
+                name="name"
+                className="form-control form-control-sm"
+                ref={name}
+                required
+              />
+            </div>
+            <div className="col-6 col-md-6 col-lg-6">
+              <label className="form-label mt-2">ราคา</label>
+              <input
+                type="number"
+                name="price"
+                min="0"
+                className="form-control form-control-sm"
+                ref={price}
+                required
+              />
+            </div>
 
-          <label className="form-label mt-2">ชื่อสินค้า</label>
-          <input
-            type="text"
-            name="name"
-            className="form-control form-control-sm"
-            ref={name}
-          />
-          <label className="form-label mt-2">ราคา</label>
-          <input
-            type="number"
-            name="price"
-            min="0"
-            className="form-control form-control-sm"
-            ref={price}
-          />
+            <div className="col-6 col-md-6 col-lg-6">
+              <label className="form-label mt-2">ราคาต้นทุน</label>
+              <input
+                type="number"
+                name="cost"
+                min="0"
+                className="form-control form-control-sm"
+                ref={cost}
+                required
+              />
+            </div>
 
-          <label className="form-label mt-2">ราคาต้นทุน</label>
-          <input
-            type="number"
-            name="cost"
-            min="0"
-            className="form-control form-control-sm"
-            ref={cost}
-          />
-
-          <label className="form-label mt-2">จำนวนสินค้า</label>
-          <input
-            type="number"
-            name="stock"
-            min="0"
-            className="form-control form-control-sm"
-            ref={stock}
-          />
-          <label className="form-label mt-2">วันที่เพิ่มสินค้า</label>
-          <input
-            type="date"
-            name="date_added"
-            className="form-control form-control-sm mb-3"
-            ref={date_added}
-            disabled={true}
-          />
-          <div className="d-flex justify-content-center ">
-            <button className="btn btn-outline-warning btn-sm">
-              แก้ไสินค้า
-            </button>
-            &nbsp;&nbsp;&nbsp;
-            <button className="btn btn-sm" onClick={() => setOpenEdit(false)}>
-              ยกเลิก
-            </button>
+            <div className="col-4 col-md-4 col-lg-4">
+              <label className="form-label mt-2">จำนวนสินค้า</label>
+              <input
+                type="number"
+                name="stock"
+                min="0"
+                className="form-control form-control-sm"
+                ref={stock}
+                required
+              />
+            </div>
+            <div className="col-4 col-md-4 col-lg-4">
+              <label className="form-label mt-2">limit</label>
+              <input
+                type="number"
+                name="limit"
+                min="0"
+                className="form-control form-control-sm"
+                ref={limit}
+                required
+              />
+            </div>
+            <div className="col-4 col-md-4 col-lg-4">
+              <label className="form-label mt-2">วันที่เพิ่มสินค้า</label>
+              <input
+                type="date"
+                name="date_added"
+                className="form-control form-control-sm mb-3"
+                ref={date_added}
+              />
+            </div>
+            <div className="d-flex justify-content-center ">
+              <button className="btn btn-light btn-sm">
+                <MdEdit color="orange" /> แก้ไข
+              </button>
+              &nbsp;&nbsp;&nbsp;
+              <button className="btn btn-sm" onClick={() => setOpenEdit(false)}>
+                ยกเลิก
+              </button>
+            </div>
           </div>
         </form>
       </div>
