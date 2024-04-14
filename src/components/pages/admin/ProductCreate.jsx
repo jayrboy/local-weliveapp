@@ -53,7 +53,10 @@ function ProductCreate(props) {
       >
         <span className="card-header d-flex justify-content-between align-items-center p-3">
           <h4>PRODUCT / เพิ่มสินค้า</h4>
-          <button className="btn btn-sm" onClick={() => setOpenCreate(false)}>
+          <button
+            className="btn btn-sm border"
+            onClick={() => setOpenCreate(false)}
+          >
             <CloseIcon sx={{ color: 'red' }} />
           </button>
         </span>
@@ -122,7 +125,7 @@ function ProductCreate(props) {
             className="form-control form-control-sm mb-3"
           />
           <div className="d-flex justify-content-center ">
-            <button className="btn btn-light btn-sm">เพิ่มสินค้า</button>
+            <button className="btn btn-light btn-sm border">เพิ่มสินค้า</button>
             &nbsp;&nbsp;&nbsp;
             <button className="btn btn-sm" onClick={() => setOpenCreate(false)}>
               ยกเลิก

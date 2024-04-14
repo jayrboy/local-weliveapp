@@ -84,7 +84,7 @@ const DailyCreate = () => {
             <header className="card-header d-flex justify-content-between align-items-center p-3">
               <h4>DAILY / เพิ่มรายการไลฟ์สด</h4>
               <button
-                className="btn btn-sm"
+                className="btn btn-sm "
                 onClick={() => navigate('/admin/daily-stock')}
               >
                 <CloseIcon sx={{ color: 'red' }} />
@@ -129,7 +129,7 @@ const DailyCreate = () => {
                   <tr>
                     <th>
                       <button
-                        className="btn btn-sm btn-light"
+                        className="btn btn-sm btn-light border"
                         onClick={onEditClick}
                       >
                         <MdEdit color="orange" />
@@ -156,9 +156,7 @@ const DailyCreate = () => {
                             className="form-check-input"
                           />
                         </td>
-                        <td>
-                          <div>{p.code}</div>
-                        </td>
+                        <td>{p.code}</td>
                         <td>{p.name}</td>
                         <td>{p.stock}</td>
                         <td>{p.limit}</td>
@@ -166,7 +164,7 @@ const DailyCreate = () => {
                         <td>{p.remaining}</td>
                         <td>
                           <button
-                            className="btn btn-sm btn-light"
+                            className="btn btn-sm btn-light border"
                             onClick={() => dispatch(deletedProduct(p._id))}
                           >
                             <MdDelete color="red" />
@@ -192,7 +190,7 @@ const DailyCreate = () => {
             </div>
             {/* Footer Button */}
             <footer className="d-flex justify-content-center p-4">
-              <button type="submit" className="btn btn-light btn-sm">
+              <button type="submit" className="btn btn-light btn-sm border">
                 เพิ่มรายการไลฟ์สด
               </button>
               &nbsp;&nbsp;&nbsp;

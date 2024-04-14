@@ -4,12 +4,12 @@ import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import {
-  MdPostAdd,
   MdEdit,
   MdDeleteForever,
   MdGrid3X3,
   MdOutlineSearch,
 } from 'react-icons/md'
+import { FaPlus } from 'react-icons/fa'
 
 import ProductCreate from './ProductCreate'
 import ProductEdit from './ProductEdit'
@@ -56,69 +56,71 @@ const Stock = () => {
     }
 
     let r = (
-      <form onSubmit={onSubmitForm} ref={form} className="px-2">
-        <div className="table-responsive">
-          <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
-            <caption className="ms-3">
-              {' '}
-              {numDocs === 0 ? (
-                <>ไม่พบข้อมูล</>
-              ) : (
-                <small>พบข้อมูลทั้งหมด {result.totalDocs} รายการ</small>
-              )}
-            </caption>
-            <thead className="table-light">
-              <tr style={numDocs === 0 ? hidden : null}>
-                <th>
-                  <MdGrid3X3 />
-                </th>
-                <th>รหัส</th>
-                <th>สินค้า</th>
-                <th>จำนวน</th>
-                <th>ราคา</th>
-                <th>ต้นทุน</th>
-                <th>วันที่เพิ่มสินค้า</th>
-                <th>CF</th>
-                <th>จ่ายแล้ว</th>
-                <th>คงเหลือ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.docs.map((doc) => {
-                //จัดรูปแบบวันเดือนปี ที่สามารถเข้าใจได้
-                let dt = new Date(Date.parse(doc.date_added))
-                let df = (
-                  <>
-                    {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                  </>
-                )
-                let p = new Intl.NumberFormat().format(doc.price)
-                let c = new Intl.NumberFormat().format(doc.cost)
+      <form onSubmit={onSubmitForm} ref={form}>
+        <div className="col-12 col-sm-12 col-lg-12">
+          <div className="table-responsive px-2">
+            <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
+              <caption className="ms-3">
+                {' '}
+                {numDocs === 0 ? (
+                  <>ไม่พบข้อมูล</>
+                ) : (
+                  <small>พบข้อมูลทั้งหมด {result.totalDocs} รายการ</small>
+                )}
+              </caption>
+              <thead className="table-light">
+                <tr style={numDocs === 0 ? hidden : null}>
+                  <th>
+                    <MdGrid3X3 />
+                  </th>
+                  <th>รหัส</th>
+                  <th>สินค้า</th>
+                  <th>จำนวน</th>
+                  <th>ราคา</th>
+                  <th>ต้นทุน</th>
+                  <th>วันที่</th>
+                  <th>CF</th>
+                  <th>Paid</th>
+                  <th>เหลือ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.docs.map((doc) => {
+                  //จัดรูปแบบวันเดือนปี ที่สามารถเข้าใจได้
+                  let dt = new Date(Date.parse(doc.date_added))
+                  let df = (
+                    <>
+                      {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                    </>
+                  )
+                  let p = new Intl.NumberFormat().format(doc.price)
+                  let c = new Intl.NumberFormat().format(doc.cost)
 
-                return (
-                  <tr key={doc._id}>
-                    <td>
-                      <input
-                        type="radio"
-                        name="_id"
-                        value={doc._id}
-                        className="form-check-input"
-                      />
-                    </td>
-                    <td>{doc.code}</td>
-                    <td>{doc.name}</td>
-                    <td>{doc.stock}</td>
-                    <td>{p}</td>
-                    <td>{c}</td>
-                    <td>{df}</td>
-                    <td>{doc.cf}</td>
-                    <td>{doc.paid}</td>
-                    <td>{doc.remaining}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                  return (
+                    <tr key={doc._id}>
+                      <td>
+                        <input
+                          type="radio"
+                          name="_id"
+                          value={doc._id}
+                          className="form-check-input "
+                        />
+                      </td>
+                      <td>{doc.code}</td>
+                      <td>{doc.name}</td>
+                      <td>{doc.stock}</td>
+                      <td>{p}</td>
+                      <td>{c}</td>
+                      <td>{df}</td>
+                      <td>{doc.cf}</td>
+                      <td>{doc.paid}</td>
+                      <td>{doc.remaining}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </form>
     )
@@ -257,7 +259,7 @@ const Stock = () => {
               />
             </div>
             &nbsp;&nbsp;
-            <button className="btn btn-sm btn-light">
+            <button className="btn btn-sm btn-light border">
               <MdOutlineSearch />
             </button>
           </form>
@@ -265,19 +267,24 @@ const Stock = () => {
 
         <div className="col-lg-4 p-1">
           <button
-            className="btn btn-sm btn-light"
+            className="btn btn-sm btn-light border"
             onClick={() => setOpenCreate(true)}
           >
-            <MdPostAdd color="blue" />
-            เพิ่ม
+            <FaPlus color="blue" />
+            &nbsp;เพิ่ม
           </button>
-          <button onClick={onEditClick} className="btn btn-sm btn-light ms-4">
+          &nbsp;
+          <button onClick={onEditClick} className="btn btn-sm btn-light border">
             <MdEdit color="orange" />
-            แก้ไข
+            &nbsp;แก้ไข
           </button>
-          <button className="btn btn-sm btn-light ms-4" onClick={onSubmitForm}>
+          &nbsp;
+          <button
+            className="btn btn-sm btn-light border"
+            onClick={onSubmitForm}
+          >
             <MdDeleteForever color="red" />
-            ลบ
+            &nbsp;ลบ
           </button>
         </div>
       </div>

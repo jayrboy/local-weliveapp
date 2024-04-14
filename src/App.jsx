@@ -17,6 +17,7 @@ import HomeAdmin from './components/pages/admin/HomeAdmin'
 import ProductStock from './components/pages/admin/ProductStock'
 import DailyStock from './components/pages/admin/DailyStock'
 import DailyCreate from './components/pages/admin/DailyCreate'
+import DailyEdit from './components/pages/admin/DailyEdit'
 
 import CustomerOrder from './components/pages/admin/CustomerOrder'
 import AdminSale from './components/pages/admin/AdminSale'
@@ -98,7 +99,6 @@ function App() {
     <React.Fragment>
       <CssBaseline />
       <ToastContainer position="top-center" autoClose={1000} />
-
       {/* Public */}
       <Routes>
         <Route
@@ -110,7 +110,6 @@ function App() {
         <Route path="/" element={[<ResponsiveAppBar />, <HomeUser />]} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-
         {/* Customer */}
         <Route
           path="/user/home"
@@ -148,10 +147,18 @@ function App() {
           }
         />
         <Route
-          path="/daily-stock/create"
+          path="/admin/daily-stock/create"
           element={
             <AdminRoute>
               <DailyCreate />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/daily-stock/edit/:id"
+          element={
+            <AdminRoute>
+              <DailyEdit />
             </AdminRoute>
           }
         />
@@ -203,7 +210,6 @@ function App() {
             </AdminRoute>
           }
         />
-
         <Route
           path="/admin/checkout"
           element={
@@ -229,7 +235,6 @@ function App() {
             </AdminRoute>
           }
         />
-
         {/* --------------- */}
         <Route
           path="/order"

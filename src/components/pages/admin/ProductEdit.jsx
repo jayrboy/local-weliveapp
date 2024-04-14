@@ -75,7 +75,10 @@ function ProductEdit(props) {
       >
         <span className="card-header d-flex justify-content-between align-items-center">
           <h4>PRODUCT / แก้ไขสินค้า</h4>
-          <button className="btn btn-sm" onClick={() => setOpenEdit(false)}>
+          <button
+            className="btn btn-sm border"
+            onClick={() => setOpenEdit(false)}
+          >
             <CloseIcon sx={{ color: 'red' }} />
           </button>
         </span>
@@ -157,7 +160,7 @@ function ProductEdit(props) {
               />
             </div>
             <div className="d-flex justify-content-center ">
-              <button className="btn btn-light btn-sm">
+              <button className="btn btn-light btn-sm border">
                 <MdEdit color="orange" /> แก้ไข
               </button>
               &nbsp;&nbsp;&nbsp;

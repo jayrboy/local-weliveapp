@@ -100,7 +100,7 @@ const ManageUser = () => {
                       <Select
                         value={item.role}
                         onChange={(event) => onChangeRole(item._id, event)}
-                        style={{ width: '100px' }}
+                        style={{ width: '91px', height: '30px' }}
                       >
                         {role.map((item, i) => (
                           <MenuItem key={i + 1} value={item}>

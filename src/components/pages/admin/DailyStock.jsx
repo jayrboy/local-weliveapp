@@ -1,9 +1,10 @@
 import { baseURL } from '../../../App'
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { FaBoxOpen } from 'react-icons/fa'
-import { MdEdit, MdDelete, MdContentPasteSearch } from 'react-icons/md'
-import { Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+
+import { MdEdit, MdDelete } from 'react-icons/md'
+import { FaPlus } from 'react-icons/fa'
+import { SiFacebooklive } from 'react-icons/si'
 
 export default function DailyStock() {
   let [data, setData] = useState('')
@@ -30,71 +31,103 @@ export default function DailyStock() {
 
   const showData = (result) => {
     let r = (
-      <form onSubmit={onSubmitForm} ref={form} className="px-2">
-        <div className="table-responsive">
-          <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
-            <caption className="ms-3">
-              {result.length === 0 ? (
-                <>ไม่พบข้อมูล</>
-              ) : (
-                <small>พบข้อมูลทั้งหมด {result.length} รายการ</small>
-              )}
-            </caption>
-            <thead className="table-light">
-              <tr>
-                <th>วันที่</th>
-                <th>สถานะ</th>
-                <th>Chanel</th>
-                <th>สินค้า</th>
-                <th>ราคาทั้งหมด</th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.map((doc) => {
-                let total = new Intl.NumberFormat().format(doc.price_total)
-                let dt = new Date(Date.parse(doc.date_added))
-                let df = (
-                  <>
-                    {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                  </>
-                )
+      <>
+        <span className="ms-3">
+          {result.length === 0 ? (
+            <>ไม่พบข้อมูล</>
+          ) : (
+            <small>พบข้อมูลทั้งหมด {result.length} รายการ</small>
+          )}
+        </span>
+        <form onSubmit={onSubmitForm} ref={form} className="px-2">
+          <div className="row">
+            {result.map((doc) => {
+              let total = new Intl.NumberFormat().format(doc.price_total)
+              let dt = new Date(Date.parse(doc.date_added))
+              let df = (
+                <>
+                  {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                </>
+              )
 
-                return (
-                  <tr key={doc._id}>
-                    <td>{df}</td>
-                    <td>
-                      <div className="d-flex justify-content-center">
-                        <select
-                          name="status"
-                          defaultValue={doc.status}
-                          onChange={(event) => onChangeRole(doc._id, event)}
-                          className="form-select form-select-sm"
-                          style={{ width: '80px' }}
-                        >
-                          {status.map((item, i) => (
-                            <option key={i + 1}>{item}</option>
-                          ))}
-                        </select>
+              return (
+                <div
+                  key={doc._id}
+                  className="col-12 col-sm-12 col-md-6 col-lg-6 mt-3"
+                >
+                  <div className="card shadow">
+                    <div className="card-header">
+                      วันที่:&nbsp;
+                      <strong className="text-primary">{df}</strong>
+                      <Link to={`/admin/daily-stock/edit/${doc._id}`}>
+                        <button className="btn btn-light btn-sm float-end border">
+                          <MdEdit color="orange" />
+                        </button>
+                      </Link>
+                    </div>
+                    {/* Content */}
+                    <div className="card-body">
+                      <div className="row">
+                        <span className="col-6 d-flex align-items-center">
+                          Status:&nbsp;
+                          <select
+                            className="btn btn-sm btn-light border"
+                            name="status"
+                            defaultValue={doc.status}
+                            style={{ height: '30px' }}
+                          >
+                            {status.map((item) => (
+                              <option key={item._id} value={item}>
+                                {item}
+                              </option>
+                            ))}
+                          </select>
+                        </span>
+                        <span className="col-md-6 d-flex align-items-center justify-content-end">
+                          Chanel:&nbsp;
+                          {doc.chanel && <SiFacebooklive size={45} />}
+                        </span>
                       </div>
-                    </td>
-                    <td>{doc.chanel}</td>
-                    <td>
-                      {doc.products.length}&nbsp;รายการ&nbsp;
-                      <button
-                        className="btn btn-sm btn-light"
-                        onClick={() => {}}
-                      >
-                        <MdContentPasteSearch color="blue" size={20} />
-                      </button>
-                    </td>
-                    <td>{total} ฿</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      </form>
+                      {/* Table */}
+                      <div className="table-responsive">
+                        <table className="table table-sm table-striped table-bordered border-light table-hover">
+                          <thead className="table-light">
+                            <tr>
+                              <th>รหัส</th>
+                              <th>สินค้า</th>
+                              <th>จำนวน</th>
+                              <th>limit</th>
+                              <th>ราคา</th>
+                              <th>เหลือ</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {doc.products.map((p) => (
+                              <tr key={p._id}>
+                                <td>{p.code}</td>
+                                <td>{p.name}</td>
+                                <td>{p.stock}</td>
+                                <td>{p.limit}</td>
+                                <td>{p.price}</td>
+                                <td>{p.remaining}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className="text-end">
+                        ยอดรวม&nbsp;&nbsp;
+                        <strong className="text-success">{total}</strong>
+                        &nbsp;บาท
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </form>
+      </>
     )
 
     setData(r)
@@ -147,19 +180,20 @@ export default function DailyStock() {
             <span className="text-success"> รายการไลฟ์สด</span>
           </h3>
         </div>
-        <div className="col-lg-6">
+        <div className="col-lg-6 mt-1">
           <button
-            className="btn btn-outline-primary btn-sm"
-            onClick={() => navigate('/daily-stock/create')}
+            className="btn btn-light btn-sm border"
+            onClick={() => navigate('/admin/daily-stock/create')}
           >
-            เพิ่มรายการไลฟ์สด
+            <FaPlus color="blue" />
+            &nbsp;เพิ่ม
           </button>
         </div>
       </div>
-      {data}
+      <>{data}</>
       <br />
       <div className="d-flex justify-content-center mx-auto">
-        <Link to="/admin/home" className="btn btn-light btn-sm">
+        <Link to="/admin/home" className="btn btn-light btn-sm border">
           หน้าหลัก
         </Link>
       </div>

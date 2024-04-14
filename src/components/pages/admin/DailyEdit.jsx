@@ -1,163 +1,217 @@
 import { baseURL } from '../../../App'
-import { useEffect, useRef } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
+import { MdEdit, MdDelete } from 'react-icons/md'
 
-function DailyEdit() {
-  const { id } = useParams()
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  getProducts,
+  calTotals,
+  deletedProduct,
+} from '../../../redux/productSlice'
+
+import ProductEdit from './ProductEdit'
+
+const DailyEdit = () => {
+  let { products, total } = useSelector((store) => store.product)
+  const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const form = useRef()
-  let itemid = useRef()
-  let name = useRef()
-  let cost = useRef()
-  let price = useRef()
-  let stock = useRef()
-  let over_stock = useRef()
-  let date_added = useRef()
+  let [isOpenEdit, setOpenEdit] = useState(false)
+  let [idEdit, setIdEdit] = useState('')
 
   useEffect(() => {
-    fetch(`${baseURL}/api/db/read/${id}`)
-      .then((res) => res.json())
-      .then((result) => {
-        // console.log(result)
-        itemid.current.value = result.itemid
-        name.current.value = result.name
-        price.current.value = result.price
-        cost.current.value = result.cost
-        stock.current.value = result.stock
-        over_stock.current.value = result.over_stock
+    dispatch(calTotals())
+  }, [products])
 
-        let dt = new Date(Date.parse(result.date_added))
-        let y = dt.getFullYear()
-        let m = dt.getMonth() + 1
-        //ค่าที่จะกำหนดให้แก่อินพุตชนิด date ต้องเป็นรูปแบบ yyyy-mm-dd
-        //สำหรับเดือนและวันที่ หากเป็นเลขตัวเดียวต้องเติม 0 ข้างหน้า
-        m = m >= 10 ? m : '0' + m
-        let d = dt.getDate()
-        d = d >= 10 ? d : '0' + d
-        date_added.current.value = `${y}-${m}-${d}`
-      })
-      .catch((err) => toast.error(err))
-  }, [])
+  useEffect(() => {
+    if (!isOpenEdit) {
+      dispatch(getProducts())
+    }
+  }, [isOpenEdit])
 
-  const onSubmitForm = (event) => {
-    event.preventDefault()
+  const onSubmitForm = (e) => {
+    e.preventDefault()
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
-    formEnt._id = id
 
-    fetch(`${baseURL}/api/db/update`, {
+    formEnt.products = products
+    formEnt.price_total = total
+    // console.log(formEnt)
+
+    // fetch(`http://localhost:8000/api/daily/create`, {
+    fetch(`${baseURL}/api/daily/create`, {
       method: 'POST',
       body: JSON.stringify(formEnt),
       headers: { 'Content-Type': 'application/json' },
     })
       .then((res) => res.text())
       .then((result) => {
-        console.log(result)
-        if (result.error) {
-          toast.error(result.error)
-        } else {
-          toast.success('ข้อมูลถูกแก้ไขแล้ว')
+        if (result === 'true') {
+          form.current.reset()
+          toast.success('ข้อมูลถูกจัดเก็บแล้ว')
           navigate('/admin/daily-stock')
+        } else {
+          toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
         }
       })
       .catch((e) => toast.error(e))
   }
 
+  const onEditClick = (e) => {
+    e.preventDefault()
+    const selectedInput = document.querySelector('input[name="_id"]:checked')
+    if (selectedInput) {
+      setOpenEdit(true)
+      const id = selectedInput.value
+      setIdEdit(id)
+      // navigate(`/product/edit/${id}`)
+    } else {
+      toast.warning('กรุณาเลือกรายการที่ต้องการแก้ไข')
+    }
+  }
+
   return (
-    <div className="modal-edit">
-      <div
-        className="card shadow rounded"
-        style={{ width: '400px', background: '#fff' }}
-      >
-        <span className="card-header d-flex justify-content-between align-items-center">
-          <h4>DAILY STOCK / แก้ไขสินค้า</h4>
-          <button
-            className="btn btn-sm"
-            onClick={() => navigate('/admin/daily-stock')}
-          >
-            <CloseIcon sx={{ color: 'red' }} />
-          </button>
-        </span>
-        <form onSubmit={onSubmitForm} ref={form} className="p-4">
-          <label className="form-label">รหัส CF</label>
-          <input
-            type="text"
-            name="itemid"
-            className="form-control form-control-sm"
-            ref={itemid}
-          />
+    <>
+      <div className="px-1 mt-1">
+        <div className="card shadow mx-auto rounded" style={{ width: '100%' }}>
+          <form ref={form} onSubmit={onSubmitForm}>
+            {/* Card Header */}
+            <header className="card-header d-flex justify-content-between align-items-center p-3">
+              <h4>DAILY / เพิ่มรายการไลฟ์สด</h4>
+              <button
+                className="btn btn-sm"
+                onClick={() => navigate('/admin/daily-stock')}
+              >
+                <CloseIcon sx={{ color: 'red' }} />
+              </button>
+            </header>
 
-          <label className="form-label mt-2">ชื่อสินค้า</label>
-          <input
-            type="text"
-            name="name"
-            className="form-control form-control-sm"
-            ref={name}
-          />
-          <label className="form-label mt-2">ราคา</label>
-          <input
-            type="number"
-            name="price"
-            min="0"
-            className="form-control form-control-sm"
-            ref={price}
-          />
-
-          <label className="form-label mt-2">ราคาต้นทุน</label>
-          <input
-            type="number"
-            name="cost"
-            min="0"
-            className="form-control form-control-sm"
-            ref={cost}
-          />
-
-          <label className="form-label mt-2">จำนวนสินค้า</label>
-          <input
-            type="number"
-            name="stock"
-            min="0"
-            className="form-control form-control-sm"
-            ref={stock}
-          />
-
-          <label className="form-label mt-2">
-            จำนวนสินค้าที่อนุญาติให้ล้นสต็อก
-          </label>
-          <input
-            type="number"
-            name="over_stock"
-            min="0"
-            className="form-control form-control-sm"
-            ref={over_stock}
-          />
-
-          <label className="form-label mt-2">วันที่เพิ่มสินค้า</label>
-          <input
-            type="date"
-            name="date_added"
-            className="form-control form-control-sm mb-3"
-            ref={date_added}
-          />
-          <div className="d-flex justify-content-center ">
-            <button className="btn btn-outline-warning btn-sm">
-              แก้ไสินค้า
-            </button>
-            &nbsp;&nbsp;&nbsp;
-            <button
-              className="btn btn-sm"
-              onClick={() => navigate('/admin/daily-stock')}
-            >
-              ยกเลิก
-            </button>
-          </div>
-        </form>
+            <div className="row p-4">
+              <div className="col-sm-4">
+                <label className="form-label">วันที่</label>
+                <input
+                  type="Date"
+                  name="date_added"
+                  className="form-control form-control-sm mb-3"
+                />
+              </div>
+              <div className="col-sm-4">
+                <label className="form-label">สถานะ</label>
+                <select
+                  name="status"
+                  defaultValue="new"
+                  className="form-select form-select-sm"
+                >
+                  <option value="new">New</option>
+                  <option value="clear">Clear</option>
+                </select>
+              </div>
+              <div className="col-sm-4">
+                <label className="form-label">Chanel</label>
+                <select
+                  name="chanel"
+                  defaultValue="facebook"
+                  className="form-select form-select-sm"
+                >
+                  <option value="facebook">Facebook</option>
+                </select>
+              </div>
+            </div>
+            {/* Table */}
+            <div className="table-responsive px-2">
+              <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
+                <thead className="table-light">
+                  <tr>
+                    <th>
+                      <button
+                        className="btn btn-sm btn-light"
+                        onClick={onEditClick}
+                      >
+                        <MdEdit color="orange" />
+                      </button>
+                    </th>
+                    <th>รหัส</th>
+                    <th>สินค้า</th>
+                    <th>สินค้าที่มี</th>
+                    <th>limit</th>
+                    <th>ราคา</th>
+                    <th>เหลือ</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map((p) => {
+                    return (
+                      <tr key={p._id}>
+                        <td>
+                          <input
+                            type="radio"
+                            name="_id"
+                            value={p._id}
+                            className="form-check-input"
+                          />
+                        </td>
+                        <td>{p.code}</td>
+                        <td>{p.name}</td>
+                        <td>{p.stock}</td>
+                        <td>{p.limit}</td>
+                        <td>{p.price}</td>
+                        <td>{p.remaining}</td>
+                        <td>
+                          <button
+                            className="btn btn-sm btn-light"
+                            onClick={() => dispatch(deletedProduct(p._id))}
+                          >
+                            <MdDelete color="red" />
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {/* Total */}
+            <div className="row p-4">
+              <div className="col-sm-8">
+                <label className="form-label">ราคารวมจำนวนสินค้าทั้งหมด</label>
+              </div>
+              <div className="col-sm-4">
+                <span>
+                  {total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                  &nbsp;&nbsp;&nbsp;บาท
+                </span>
+              </div>
+            </div>
+            {/* Footer Button */}
+            <footer className="d-flex justify-content-center p-4">
+              <button type="submit" className="btn btn-light btn-sm">
+                เพิ่มรายการไลฟ์สด
+              </button>
+              &nbsp;&nbsp;&nbsp;
+              <button
+                className="btn btn-sm"
+                onClick={() => navigate('/admin/daily-stock')}
+              >
+                ยกเลิก
+              </button>
+            </footer>
+          </form>
+        </div>
       </div>
-    </div>
+      {isOpenEdit && (
+        <ProductEdit
+          isOpenEdit={isOpenEdit}
+          setOpenEdit={setOpenEdit}
+          idEdit={idEdit}
+        />
+      )}
+    </>
   )
 }
 export default DailyEdit
