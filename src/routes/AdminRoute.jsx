@@ -27,7 +27,9 @@ const AdminRoute = ({ children }) => {
             headers: { authToken },
           }
         )
-        .then((response) => console.log(response.data)) // ดูข้อมูลที่ส่งกลับมาจาก API
+        .then((response) => {
+          // console.log(response.data) // ดูข้อมูลที่ส่งกลับมาจาก API
+        })
         .catch((error) => {
           console.log(error)
           setFirstLoad(false)

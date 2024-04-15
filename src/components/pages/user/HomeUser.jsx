@@ -1,5 +1,5 @@
 import React from 'react'
-import UserOrder from './CustomerOrderID'
+import UserOrder from '../customer/CustomerOrderID'
 
 import { useSelector, useDispatch } from 'react-redux'
 

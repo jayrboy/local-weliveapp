@@ -1,6 +1,6 @@
 import { baseURL } from '../../../../App'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
@@ -8,15 +8,17 @@ import { MdEdit, MdDelete } from 'react-icons/md'
 
 import { useSelector, useDispatch } from 'react-redux'
 import {
-  getProducts,
+  getDaily,
   calTotals,
   deletedProduct,
-} from '../../../../redux/productSlice'
+} from '../../../../redux/dailyStockSlice'
+import { SiFacebooklive } from 'react-icons/si'
 
-import ProductEdit from '../product/ProductEdit'
+import DailyProductEdit from '../daily/DailyProductEdit'
 
 const DailyEdit = () => {
-  let { products, total } = useSelector((store) => store.product)
+  let { dailyStock, total } = useSelector((store) => store.dailyStock)
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -24,43 +26,46 @@ const DailyEdit = () => {
   let [isOpenEdit, setOpenEdit] = useState(false)
   let [idEdit, setIdEdit] = useState('')
 
+  let status = ['new', 'clear']
+  const { id } = useParams()
+
   useEffect(() => {
     dispatch(calTotals())
-  }, [products])
+  }, [dailyStock])
 
   useEffect(() => {
     if (!isOpenEdit) {
-      dispatch(getProducts())
+      dispatch(getDaily(id))
     }
   }, [isOpenEdit])
 
-  const onSubmitForm = (e) => {
-    e.preventDefault()
-    const formData = new FormData(form.current)
-    const formEnt = Object.fromEntries(formData.entries())
+  // const onSubmitForm = (e) => {
+  //   e.preventDefault()
+  //   const formData = new FormData(form.current)
+  //   const formEnt = Object.fromEntries(formData.entries())
 
-    formEnt.products = products
-    formEnt.price_total = total
-    // console.log(formEnt)
+  //   formEnt.products = products
+  //   formEnt.price_total = total
+  //   // console.log(formEnt)
 
-    // fetch(`http://localhost:8000/api/daily/create`, {
-    fetch(`${baseURL}/api/daily/create`, {
-      method: 'POST',
-      body: JSON.stringify(formEnt),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then((res) => res.text())
-      .then((result) => {
-        if (result === 'true') {
-          form.current.reset()
-          toast.success('ข้อมูลถูกจัดเก็บแล้ว')
-          navigate('/admin/daily-stock')
-        } else {
-          toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
-        }
-      })
-      .catch((e) => toast.error(e))
-  }
+  //   // fetch(`http://localhost:8000/api/daily/create`, {
+  //   fetch(`${baseURL}/api/daily/update`, {
+  //     method: 'POST',
+  //     body: JSON.stringify(formEnt),
+  //     headers: { 'Content-Type': 'application/json' },
+  //   })
+  //     .then((res) => res.text())
+  //     .then((result) => {
+  //       if (result === 'true') {
+  //         form.current.reset()
+  //         toast.success('ข้อมูลถูกจัดเก็บแล้ว')
+  //         navigate('/admin/daily-stock')
+  //       } else {
+  //         toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
+  //       }
+  //     })
+  //     .catch((e) => toast.error(e))
+  // }
 
   const onEditClick = (e) => {
     e.preventDefault()
@@ -75,56 +80,62 @@ const DailyEdit = () => {
     }
   }
 
+  let dt = new Date(Date.parse(dailyStock.date_added))
+  let df = (
+    <>
+      {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+    </>
+  )
+
   return (
     <>
       <div className="px-1 mt-1">
         <div className="card shadow mx-auto rounded" style={{ width: '100%' }}>
-          <form ref={form} onSubmit={onSubmitForm}>
+          <form ref={form}>
             {/* Card Header */}
-            <header className="card-header d-flex justify-content-between align-items-center p-3">
-              <h4>DAILY / เพิ่มรายการไลฟ์สด</h4>
-              <button
-                className="btn btn-sm"
-                onClick={() => navigate('/admin/daily-stock')}
-              >
-                <CloseIcon sx={{ color: 'red' }} />
-              </button>
+            <header className="card-header d-flex justify-content-start align-items-center p-3">
+              วันที่:&nbsp;
+              <strong className="text-primary">{df}</strong>
             </header>
-
-            <div className="row p-4">
-              <div className="col-sm-4">
-                <label className="form-label">วันที่</label>
-                <input
-                  type="Date"
-                  name="date_added"
-                  className="form-control form-control-sm mb-3"
-                />
-              </div>
-              <div className="col-sm-4">
-                <label className="form-label">สถานะ</label>
-                <select
-                  name="status"
-                  defaultValue="new"
-                  className="form-select form-select-sm"
-                >
-                  <option value="new">New</option>
-                  <option value="clear">Clear</option>
-                </select>
-              </div>
-              <div className="col-sm-4">
-                <label className="form-label">Chanel</label>
-                <select
-                  name="chanel"
-                  defaultValue="facebook"
-                  className="form-select form-select-sm"
-                >
-                  <option value="facebook">Facebook</option>
-                </select>
+            <div className="container">
+              <div className="row">
+                <div className="col-6 d-flex align-items-center">
+                  Status:&nbsp;
+                  <select
+                    className="btn btn-sm btn-light border"
+                    name="status"
+                    defaultValue={dailyStock.status}
+                    style={{ height: '30px' }}
+                  >
+                    {status.map((item, i) => (
+                      <option key={i + 1} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-6 d-flex justify-content-end align-items-center">
+                  Chanel:&nbsp;
+                  {dailyStock.chanel && <SiFacebooklive size={45} />}
+                </div>
               </div>
             </div>
             {/* Table */}
             <div className="table-responsive px-2">
               <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
+                <caption className="ms-3">
+                  {dailyStock.length === 0 ? (
+                    <>ไม่พบข้อมูล</>
+                  ) : (
+                    <small>
+                      พบข้อมูลทั้งหมด{' '}
+                      {dailyStock.products.length
+                        ? dailyStock.products.length
+                        : 0}{' '}
+                      รายการ
+                    </small>
+                  )}
+                </caption>
                 <thead className="table-light">
                   <tr>
                     <th>
@@ -145,48 +156,46 @@ const DailyEdit = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((p) => {
-                    return (
-                      <tr key={p._id}>
-                        <td>
-                          <input
-                            type="radio"
-                            name="_id"
-                            value={p._id}
-                            className="form-check-input"
-                          />
-                        </td>
-                        <td>{p.code}</td>
-                        <td>{p.name}</td>
-                        <td>{p.stock}</td>
-                        <td>{p.limit}</td>
-                        <td>{p.price}</td>
-                        <td>{p.remaining}</td>
-                        <td>
-                          <button
-                            className="btn btn-sm btn-light"
-                            onClick={() => dispatch(deletedProduct(p._id))}
-                          >
-                            <MdDelete color="red" />
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  })}
+                  {dailyStock.products &&
+                    dailyStock.products.map((p) => {
+                      // console.log(p)
+                      return (
+                        <tr key={p._id}>
+                          <td>
+                            <input
+                              type="radio"
+                              name="_id"
+                              defaultValue={p._id}
+                              className="form-check-input"
+                            />
+                          </td>
+                          <td>{p.code}</td>
+                          <td>{p.name}</td>
+                          <td>{p.stock}</td>
+                          <td>{p.limit}</td>
+                          <td>{p.price}</td>
+                          <td>{p.remaining}</td>
+                          <td>
+                            <button
+                              className="btn btn-sm btn-light"
+                              onClick={() => dispatch(deletedProduct(p._id))}
+                            >
+                              <MdDelete color="red" />
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })}
                 </tbody>
               </table>
             </div>
             {/* Total */}
-            <div className="row p-4">
-              <div className="col-sm-8">
-                <label className="form-label">ราคารวมจำนวนสินค้าทั้งหมด</label>
-              </div>
-              <div className="col-sm-4">
-                <span>
-                  {total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                  &nbsp;&nbsp;&nbsp;บาท
-                </span>
-              </div>
+            <div className="text-end container">
+              <label className="form-label">ยอดรวม&nbsp;&nbsp;</label>
+              <span>
+                {total.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                &nbsp;&nbsp;&nbsp;บาท
+              </span>
             </div>
             {/* Footer Button */}
             <footer className="d-flex justify-content-center p-4">
@@ -205,7 +214,7 @@ const DailyEdit = () => {
         </div>
       </div>
       {isOpenEdit && (
-        <ProductEdit
+        <DailyProductEdit
           isOpenEdit={isOpenEdit}
           setOpenEdit={setOpenEdit}
           idEdit={idEdit}

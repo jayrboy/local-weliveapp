@@ -68,7 +68,7 @@ export default function DailyStock() {
                     {/* Content */}
                     <div className="card-body">
                       <div className="row">
-                        <span className="col-6 d-flex align-items-center">
+                        <div className="col-6 d-flex align-items-center">
                           Status:&nbsp;
                           <select
                             className="btn btn-sm btn-light border"
@@ -76,17 +76,17 @@ export default function DailyStock() {
                             defaultValue={doc.status}
                             style={{ height: '30px' }}
                           >
-                            {status.map((item) => (
-                              <option key={item._id} value={item}>
+                            {status.map((item, i) => (
+                              <option key={i + 1} value={item}>
                                 {item}
                               </option>
                             ))}
                           </select>
-                        </span>
-                        <span className="col-md-6 d-flex align-items-center justify-content-end">
+                        </div>
+                        <div className="col-6 d-flex justify-content-end align-items-center">
                           Chanel:&nbsp;
                           {doc.chanel && <SiFacebooklive size={45} />}
-                        </span>
+                        </div>
                       </div>
                       {/* Table */}
                       <div className="table-responsive">

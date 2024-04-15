@@ -13,7 +13,7 @@ import AdminRoute from './routes/AdminRoute'
 import UserRoute from './routes/UserRoute'
 import NotFound from './components/pages/NotFound'
 
-import HomeUser from './components/pages/customer/HomeUser'
+import HomeUser from './components/pages/user/HomeUser'
 import HomeAdmin from './components/pages/admin/HomeAdmin'
 import ManageUser from './components/pages/admin/ManageUser'
 
@@ -100,7 +100,15 @@ function App() {
               <NotFound text="The page you are looking for does not exist." />
             }
           />
-          <Route path="/" element={[<ResponsiveAppBar />, <HomeUser />]} />
+          <Route
+            path="/"
+            element={
+              <>
+                <ResponsiveAppBar />
+                <HomeUser />
+              </>
+            }
+          />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           {/* Customer */}
