@@ -1,7 +1,11 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+
 import { historySale } from '../../../data'
 
 export default function AdminSale() {
+  let [data, setData] = useState(historySale)
+
   return (
     <>
       <div className="row m-3">
@@ -45,7 +49,7 @@ export default function AdminSale() {
           </tr>
         </thead>
         <tbody>
-          {historySale.map((h, i) => {
+          {data.map((h, i) => {
             // คำนวณค่า itempr * among - discount
             return (
               <tr key={h.id}>

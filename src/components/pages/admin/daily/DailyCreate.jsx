@@ -1,4 +1,4 @@
-import { baseURL } from '../../../App'
+import { baseURL } from '../../../../App'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -11,9 +11,9 @@ import {
   getProducts,
   calTotals,
   deletedProduct,
-} from '../../../redux/productSlice'
+} from '../../../../redux/productSlice'
 
-import ProductEdit from './ProductEdit'
+import ProductEdit from '../product/ProductEdit'
 
 const DailyCreate = () => {
   let { products, total } = useSelector((store) => store.product)

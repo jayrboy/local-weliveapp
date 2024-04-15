@@ -19,7 +19,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }))
 
-export default function UserOrderID() {
+export default function CustomerOrderID() {
   return (
     <div className="container position-relative mt-3 mx-auto">
       <h3 className="text-start mb-3">

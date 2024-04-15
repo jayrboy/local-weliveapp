@@ -86,8 +86,6 @@ const ResponsiveAppBar = () => {
     <AppBar position="static" style={{ backgroundColor: '#EDE7F6' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* LOGO */}
-          {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
           <Typography
             variant="h6"
             noWrap
@@ -103,12 +101,11 @@ const ResponsiveAppBar = () => {
             }}
           >
             <Avatar alt="logo" src={logo} />
-       
           </Typography>
 
-          {/* /LOGO */}
           {/* Mobile Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            {/* Hamburger */}
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -119,7 +116,6 @@ const ResponsiveAppBar = () => {
             >
               <MenuIcon />
             </IconButton>
-
             <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
@@ -143,7 +139,6 @@ const ResponsiveAppBar = () => {
                   <Typography textAlign="center">หน้าแรก</Typography>
                 </Link>
               </MenuItem>
-
               {user.length === 0 &&
                 linkAuth.map((page, index) => (
                   <MenuItem key={index} onClick={handleCloseNavMenu}>
@@ -153,31 +148,10 @@ const ResponsiveAppBar = () => {
                   </MenuItem>
                 ))}
             </Menu>
+            {/* LOGO Mobile */}
+            <Avatar alt="logo" src={logo} sx={{ my: 'auto' }} />
           </Box>
-          {/* /Mobile Menu */}
-          {/* LOGO Mobile */}
-          {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            {/* <IconButton>
-              <Avatar alt="logo" src={logo} />
-            </IconButton> */}
-          </Typography>
-          {/* /LOGO Mobile */}
+
           {/* Menu Left Full */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Link to="/">
@@ -189,7 +163,7 @@ const ResponsiveAppBar = () => {
               </Button>
             </Link>
           </Box>
-          {/* /Menu Left Full */}
+
           {/* Menu Right Full */}
           <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
             {user.length === 0 &&
@@ -211,7 +185,6 @@ const ResponsiveAppBar = () => {
                 </React.Fragment>
               ))}
           </Box>
-          {/* /Menu Right Full */}
 
           {/* User Menu */}
           {user.length != 0 && (
@@ -269,7 +242,6 @@ const ResponsiveAppBar = () => {
               </Box>
             </>
           )}
-          {/* /User Menu */}
         </Toolbar>
       </Container>
     </AppBar>

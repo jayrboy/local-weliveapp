@@ -1,4 +1,4 @@
-import { baseURL } from '../../../App'
+import { baseURL } from '../../../../App'
 import React, { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -18,7 +18,6 @@ import ProductEdit from './ProductEdit'
 const Stock = () => {
   let [data, setData] = useState('')
   let [page, setPage] = useState([])
-  let [loading, setLoading] = useState(false)
   const form = useRef()
 
   //อ่านคีย์เวิร์ดจาก URL
@@ -40,12 +39,8 @@ const Stock = () => {
         .then((result) => {
           showData(result)
           paginate(result)
-          setLoading(false)
         })
-        .catch((err) => {
-          toast.error(err)
-          setLoading(true)
-        })
+        .catch((err) => toast.error(err))
     }
   }, [location, isOpenEdit])
 
@@ -288,16 +283,7 @@ const Stock = () => {
           </button>
         </div>
       </div>
-
-      {loading ? (
-        <div className="d-flex justify-content-center p-5">
-          <div className="spinner-border text-secondary" role="status">
-            <span className="visually-hidden">Loading..</span>
-          </div>
-        </div>
-      ) : (
-        <>{data}</>
-      )}
+      <>{data}</>
       <div className="d-flex justify-content-center">
         <ul className="pagination pagination-sm">
           {page.map((p, i) => (
