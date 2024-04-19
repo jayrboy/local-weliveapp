@@ -11,6 +11,8 @@ import Register from './components/pages/Register'
 import Login from './components/pages/Login'
 import AdminRoute from './routes/AdminRoute'
 import UserRoute from './routes/UserRoute'
+
+import HomePage from './components/pages/HomePage'
 import NotFound from './components/pages/NotFound'
 
 import HomeUser from './components/pages/user/HomeUser'
@@ -74,10 +76,7 @@ function App() {
             )
             setLoading(false)
           })
-          .catch((err) => {
-            alert(err)
-            setLoading(false)
-          })
+          .catch((err) => setLoading(false))
 
       axiosFetch(userToken)
     } else {
@@ -105,7 +104,7 @@ function App() {
             element={
               <>
                 <ResponsiveAppBar />
-                <HomeUser />
+                <HomePage />
               </>
             }
           />

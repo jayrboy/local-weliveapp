@@ -1,11 +1,6 @@
 import React from 'react'
-import UserOrder from '../customer/CustomerOrderID'
-
-import { useSelector, useDispatch } from 'react-redux'
 
 export default function HomeUser() {
-  const { user } = useSelector((state) => state.user)
-
   return (
     <React.Fragment>
       <div
