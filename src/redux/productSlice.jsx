@@ -34,12 +34,6 @@ const modalSlice = createSlice({
         ),
       }
     },
-    editedProduct: (state, action) => {
-      return {
-        ...state,
-        products: [...state.products, action.payload],
-      }
-    },
     calTotals: (state) => {
       let stock = 0
       let total = 0
@@ -67,5 +61,5 @@ const modalSlice = createSlice({
   },
 })
 
-export const { calTotals, deletedProduct, editedProduct } = modalSlice.actions
+export const { calTotals, deletedProduct } = modalSlice.actions
 export default modalSlice.reducer

@@ -15,22 +15,22 @@ export const getDaily = createAsyncThunk(
   }
 )
 
-// export const deleteProduct = createAsyncThunk(
-//   'dailyStock/deleteProduct',
-//   async (productId, { dispatch }) => {
-//     try {
-//       // const resp = await axios.post(url + `/delete/${productId}`)
-//       const resp = await axios.post(
-//         `http://localhost:8000/api/daily/delete/${productId}`
-//       )
-//       dispatch(deletedProduct(productId))
-//       return resp.data
-//     } catch (error) {
-//       console.log('delete product error')
-//       throw error
-//     }
-//   }
-// )
+export const deleteProduct = createAsyncThunk(
+  'dailyStock/deleteProduct',
+  async (productId, thunkAPI) => {
+    try {
+      // const resp = await axios.post(url + `/delete/${productId}`)
+      const resp = await axios.post(
+        `http://localhost:8000/api/daily/delete/${productId}`
+      )
+      thunkAPI.dispatch(deletedProduct(productId))
+      return resp.data
+    } catch (error) {
+      console.log('delete product error')
+      throw error
+    }
+  }
+)
 
 const initialState = {
   dailyStock: {

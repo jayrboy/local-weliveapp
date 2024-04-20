@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import CloseIcon from '@mui/icons-material/Close'
 import { MdEdit, MdDelete } from 'react-icons/md'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -12,6 +11,7 @@ import {
   calTotals,
   deletedProduct,
 } from '../../../../redux/dailyStockSlice'
+
 import { SiFacebooklive } from 'react-icons/si'
 
 import DailyProductEdit from '../daily/DailyProductEdit'
@@ -78,6 +78,31 @@ const DailyEdit = () => {
     } else {
       toast.warning('กรุณาเลือกรายการที่ต้องการแก้ไข')
     }
+  }
+
+  const onDeleteClick = (e) => {
+    e.preventDefault()
+
+    const selectedInput = document.querySelector('input[name="_id"]:checked')
+    if (!selectedInput) {
+      toast.warning('กรุณาเลือกรายการที่ต้องการลบ')
+      return
+    }
+
+    const idP = selectedInput.value
+
+    fetch(`${baseURL}/api/daily/delete/product/${idP}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.text())
+      .then((result) => {
+        toast.success(result)
+        dispatch(deletedProduct(idP))
+        navigate(`/admin/daily-stock/edit/${id}`)
+      })
   }
 
   let dt = new Date(Date.parse(dailyStock.date_added))
@@ -178,7 +203,7 @@ const DailyEdit = () => {
                           <td>
                             <button
                               className="btn btn-sm btn-light"
-                              onClick={() => dispatch(deletedProduct(p._id))}
+                              onClick={onDeleteClick}
                             >
                               <MdDelete color="red" />
                             </button>

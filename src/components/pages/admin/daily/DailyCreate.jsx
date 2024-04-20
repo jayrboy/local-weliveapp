@@ -75,6 +75,41 @@ const DailyCreate = () => {
     }
   }
 
+  const onDeleteClick = (e) => {
+    e.preventDefault()
+
+    const selectedInput = document.querySelector('input[name="_id"]:checked')
+    if (!selectedInput) {
+      toast.warning('กรุณาเลือกรายการที่ต้องการลบ')
+      return
+    }
+
+    const idP = selectedInput.value
+
+    fetch(`${baseURL}/api/db/delete/${idP}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to delete product')
+        }
+        return response.json()
+      })
+      .then(() => {
+        toast.success('ข้อมูลถูกลบแล้ว')
+        // ลบสินค้าออกจาก Redux store
+        dispatch(deletedProduct(idP))
+        navigate('/admin/daily-stock/create')
+      })
+      .catch((error) => {
+        toast.error('เกิดข้อผิดพลาดในการลบข้อมูล')
+        console.error(error)
+      })
+  }
+
   return (
     <>
       <div className="px-1 mt-1">
@@ -165,7 +200,8 @@ const DailyCreate = () => {
                         <td>
                           <button
                             className="btn btn-sm btn-light border"
-                            onClick={() => dispatch(deletedProduct(p._id))}
+                            // onClick={() => dispatch(deletedProduct(p._id))}
+                            onClick={onDeleteClick}
                           >
                             <MdDelete color="red" />
                           </button>
