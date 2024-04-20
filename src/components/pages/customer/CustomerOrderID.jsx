@@ -24,7 +24,7 @@ export default function CustomerOrderID() {
     <div className="container position-relative mt-3 mx-auto">
       <h3 className="text-start mb-3">
         <span>We Live App</span>
-        <span className="text-success ms-2">| รายการสั่งซื้อ</span>
+        <span className="text-success ms-2">| รายการสั่งซื้อ </span>
       </h3>
       <div className="card shadow">
         <div className="text-center">

@@ -1,147 +1,393 @@
-import { baseURL } from '../../../../App'
-import { useState, useRef, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-
-import { MdEdit, MdDelete, MdOutlineManageSearch } from 'react-icons/md'
+import React, { useState } from 'react'
+import Paper from '@mui/material/Paper'
+import { productList } from '../../../../data.js'
+import { orderDetail } from '../../../../data.js'
+import { comments } from '../../../../data.js'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
 
 export default function CustomerOrder() {
-  let [data, setData] = useState('')
-  const form = useRef()
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    fetch(`${baseURL}/api/db/read`)
-      .then((response) => response.json())
-      .then((docs) => {
-        if (docs.length > 0) {
-          showData(docs)
-        } else {
-          setData(<>ไม่มีรายการข้อมูล</>)
-        }
-      })
-      .catch((err) => alert(err))
-    // eslint-disable-next-line
-  }, [])
-
-  const showData = (result) => {
-    let r = (
-      <form onSubmit={onSubmitForm} ref={form}>
-        <table className="table table-sm table-striped text-center table-bordered border-light">
-          <caption className="ms-3">
-            {result.length === 0 ? (
-              <>ไม่พบข้อมูล</>
-            ) : (
-              <small>พบข้อมูลทั้งหมด {result.length} รายการ</small>
-            )}
-          </caption>
-          <thead className="table-light">
-            <tr>
-              <th>รหัสไอดีผู้ใช้</th>
-              <th>โค้ดสินค้า</th>
-              <th>ความคิดเห็น</th>
-              <th>วันที่และเวลา</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.map((doc) => {
-              let dt = new Date(Date.parse(doc.date_added))
-              let df = (
-                <>
-                  {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                </>
-              )
-              let p = new Intl.NumberFormat().format(doc.price)
-
-              return (
-                <tr key={doc._id}>
-                  <td>{doc.itemid}</td>
-                  <td>{doc.name}</td>
-                  <td>{p}</td>
-                  <td>{df}</td>
-                  <td>
-                    <button className="btn btn-sm btn-outline-danger">
-                      <MdDelete />
-                    </button>
-                    &nbsp;
-                    {/* <Link to={'/daily-stock/edit/' + doc._id}>
-                      <div className="btn btn-sm btn-outline-warning">
-                        <MdEdit />
-                      </div>
-                    </Link>
-                    &nbsp; */}
-                    <Link to={'/order/' + doc._id}>
-                      <div className="btn btn-sm btn-outline-primary">
-                        <MdOutlineManageSearch />
-                      </div>
-                    </Link>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </form>
-    )
-
-    setData(r)
+  const formatDateTime = () => {
+    const now = new Date()
+    const options = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    }
+    return now.toLocaleString('th-TH', options)
   }
 
-  const onSubmitForm = (event) => {
-    event.preventDefault()
-    if (!window.confirm('ยืนยันการลบรายการนี้')) {
-      return
+  const usernamesToDisplay = ['Jay Jakkrit']
+
+  const provinces = [
+    'กรุงเทพมหานคร',
+    'กระบี่',
+    'กาญจนบุรี',
+    'กาฬสินธุ์',
+    'กำแพงเพชร',
+    'ขอนแก่น',
+    'จันทบุรี',
+    'ฉะเชิงเทรา',
+    'ชลบุรี',
+    'ชัยนาท',
+    'ชัยภูมิ',
+    'ชุมพร',
+    'เชียงราย',
+    'เชียงใหม่',
+    'ตรัง',
+    'ตราด',
+    'ตาก',
+    'นครนายก',
+    'นครปฐม',
+    'นครพนม',
+    'นครราชสีมา',
+    'นครศรีธรรมราช',
+    'นครสวรรค์',
+    'นนทบุรี',
+    'นราธิวาส',
+    'น่าน',
+    'บึงกาฬ',
+    'บุรีรัมย์',
+    'ปทุมธานี',
+    'ประจวบคีรีขันธ์',
+    'ปราจีนบุรี',
+    'ปัตตานี',
+    'พระนครศรีอยุธยา',
+    'พะเยา',
+    'พังงา',
+    'พัทลุง',
+    'พิจิตร',
+    'พิษณุโลก',
+    'เพชรบุรี',
+    'เพชรบูรณ์',
+    'แพร่',
+    'ภูเก็ต',
+    'มหาสารคาม',
+    'มุกดาหาร',
+    'แม่ฮ่องสอน',
+    'ยโสธร',
+    'ยะลา',
+    'ร้อยเอ็ด',
+    'ระนอง',
+    'ระยอง',
+    'ราชบุรี',
+    'ลพบุรี',
+    'ลำปาง',
+    'ลำพูน',
+    'เลย',
+    'ศรีสะเกษ',
+    'สกลนคร',
+    'สงขลา',
+    'สตูล',
+    'สมุทรปราการ',
+    'สมุทรสงคราม',
+    'สมุทรสาคร',
+    'สระแก้ว',
+    'สระบุรี',
+    'สิงห์บุรี',
+    'สุโขทัย',
+    'สุพรรณบุรี',
+    'สุราษฎร์ธานี',
+    'สุรินทร์',
+    'หนองคาย',
+    'หนองบัวลำภู',
+    'อ่างทอง',
+    'อำนาจเจริญ',
+    'อุดรธานี',
+    'อุตรดิตถ์',
+    'อุทัยธานี',
+    'อุบลราชธานี',
+  ]
+
+  const [formData, setFormData] = useState({
+    OrderID: comments[0].from.id,
+    UserID: comments[0].from.name,
+    transactionDate: '',
+    transactionTime: '',
+    transactionAmount: '',
+    transactionImage: '',
+    customerName: '',
+    customerAddress: '',
+    customerProvince: '',
+    customerPostalCode: '',
+    customerPhone: '',
+  })
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  }
+
+  const extractDataFromMessage = (message) => {
+    // ตัดข้อความที่อยู่หลังเครื่องหมาย "="
+    const data = message.split('=')[1].trim()
+
+    // แยกรหัสสินค้าและจำนวน
+    const [productCode, quantity] = data.split(' ')
+
+    return {
+      productCode,
+      quantity,
     }
+  }
 
-    const fd = new FormData(form.current)
-    const fe = Object.fromEntries(fd.entries())
-
-    if (Object.keys(fe).length === 0) {
-      alert('ต้องเลือกรายการที่จะลบ')
-      return
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (
+      formData.transactionDate &&
+      formData.transactionAmount &&
+      formData.customerName
+    ) {
+      console.log('Form submitted:', formData)
+      // ส่งข้อมูลไปยัง API หรือทำการประมวลผลต่อไปตามความเหมาะสม
+      // fetch('https://example.com/api/submit', { method: 'POST', body: JSON.stringify(formData) })
+      // และจัดการการตอบกลับจากเซิร์ฟเวอร์
+    } else {
+      alert('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน')
     }
-
-    fetch(`${baseURL}/api/db/cart`, {
-      method: 'POST',
-      body: JSON.stringify(fe),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.error) {
-          alert(result.error)
-        } else {
-          if (result.length === 0) {
-            setData('ไม่มีรายการข้อมูล')
-          } else {
-            showData(result)
-          }
-          alert('ข้อมูลถูกลบแล้ว')
-        }
-        navigate('/db/cart')
-      })
-      .catch((err) => alert(err))
   }
 
   return (
-    <>
-      <div className="row m-3">
-        <div className="col-lg-12">
-          <h3 className="text-start">
-            <Link to="/admin/home" className="text-decoration-none">
-              WE LIVE |
-            </Link>
-            <span className="text-success"> คำสั่งซื้อ</span>
-          </h3>
+    <div className="position-relative mt-5">
+      <div className=" card">
+        <div className="">
+          <div className=" m-3">
+            <h5>
+              WeLive | <span className=" text-success">สินค้าของคุณ</span>
+            </h5>
+            <div className="container mt-3 mx-auto">
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell className=" text-center">วันที่</TableCell>
+                      <TableCell className=" text-center">ชื่อ</TableCell>
+                      <TableCell className=" text-center">
+                        ความคิดเห็น
+                      </TableCell>
+                      <TableCell className=" text-center">
+                        รหัสที่สั่งซื้อ
+                      </TableCell>
+                      <TableCell>จำนวนชิ้น</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {/* Map through comments and display them */}
+                    {comments.map(
+                      (comment, index) =>
+                        usernamesToDisplay.includes(comment.from.name) && (
+                          <TableRow key={index} className=" text-center">
+                            <TableCell className=" text-center">
+                              {comment.created_time}
+                            </TableCell>
+                            <TableCell className=" text-center">
+                              {comment.from.name}
+                            </TableCell>
+                            <TableCell className=" text-center">
+                              {comment.message}
+                            </TableCell>
+                            {comment.message.includes('=') ? (
+                              // แยกข้อมูลและแสดงผลรหัสสินค้า
+                              <TableCell className=" text-center">
+                                {
+                                  extractDataFromMessage(comment.message)
+                                    .productCode
+                                }
+                              </TableCell>
+                            ) : (
+                              <TableCell className=" text-center">-</TableCell>
+                            )}
+                            {comment.message.includes('=') ? (
+                              // แยกข้อมูลและแสดงผลจำนวน
+                              <TableCell className=" text-center">
+                                {
+                                  extractDataFromMessage(comment.message)
+                                    .quantity
+                                }
+                              </TableCell>
+                            ) : (
+                              <TableCell className=" text-center">-</TableCell>
+                            )}
+                          </TableRow>
+                        )
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
+          </div>
+        </div>
+        <div className="mt-3">
+          <div className="">
+            <div className="m-3 ms-5">
+              <div className="card">
+                <div className="m-3">
+                  <span>Order</span>
+                  <span className="text-danger ms-3 ">#{formData.OrderID}</span>
+                  <span className="ms-3">
+                    Facebook Name :{' '}
+                    <span className=" text-primary ">
+                      {comments[0].from.name}
+                    </span>
+                  </span>
+                  <br />
+                  <span>วันที่และเวลาปัจจุบัน :</span>
+                  <span className="ms-3 text-primary">{formatDateTime()}</span>
+                </div>
+              </div>
+              <div className="container float-start">
+                <div className="container mt-3 mx-auto shadow">
+                  <form className="m-3" onSubmit={handleSubmit}>
+                    <div className="row">
+                      <div className="row">
+                        <div className="col-md-6 ">
+                          <div className="mb-3">
+                            <label>วันที่ทำรายการ</label>
+                            <input
+                              type="date"
+                              className="form-control"
+                              name="transactionDate"
+                              value={formData.transactionDate}
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="mb-3">
+                            <label>เวลาที่ทำรายการ</label>
+                            <input
+                              type="time"
+                              className="form-control"
+                              name="transactionTime"
+                              value={formData.transactionTime}
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="mb-3">
+                            <label>จำนวนเงินที่ทำรายการ</label>
+                            <input
+                              type="number"
+                              className="form-control"
+                              name="transactionAmount"
+                              value={formData.transactionAmount}
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="mb-3">
+                            <label>อัพโหลดภาพสลิปการโอนเงิน</label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              name="transactionImage"
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="mb-3">
+                            <label>ชื่อ</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="ใส่ชื่อผู้โอน"
+                              name="customerName"
+                              value={formData.customerName}
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="mb-3">
+                            <label>ที่อยู่</label>
+                            <textarea
+                              rows="3"
+                              type="text"
+                              className="form-control"
+                              placeholder="กรอกที่อยู่ของลูกค้า ระบุให้ชัดเจน"
+                              name="customerAddress"
+                              value={formData.customerAddress}
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="mb-3">
+                            <label>จังหวัด</label>
+                            <select
+                              className="form-select"
+                              name="customerProvince"
+                              value={formData.customerProvince}
+                              onChange={handleInputChange}
+                            >
+                              <option value="">เลือกจังหวัด</option>
+                              {provinces.map((province, index) => (
+                                <option key={index} value={province}>
+                                  {province}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="mb-3">
+                            <label>รหัสไปรษณีย์</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              name="customerPostalCode"
+                              value={formData.customerPostalCode}
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="mb-3">
+                            <label>โทรศัพท์</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              name="customerPhone"
+                              value={formData.customerPhone}
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="mb-3">
+                            <input type="checkbox" name="save" /> &nbsp;
+                            <label>
+                              ยอมรับ <a href="">นโยบายความเป็นส่วนตัว</a>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <button
+                        className="btn btn-sm btn-primary mt-3 mb-3 "
+                        type="submit"
+                      >
+                        บันทึก
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="data">{data}</div>
-      <br />
-      <div className="d-flex justify-content-center mx-auto">
-        <Link to="/admin/home" className="btn btn-light btn-sm">
-          หน้าหลัก
-        </Link>
-      </div>
-    </>
+    </div>
   )
 }
