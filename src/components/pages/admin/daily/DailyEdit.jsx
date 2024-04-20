@@ -39,33 +39,24 @@ const DailyEdit = () => {
     }
   }, [isOpenEdit])
 
-  // const onSubmitForm = (e) => {
-  //   e.preventDefault()
-  //   const formData = new FormData(form.current)
-  //   const formEnt = Object.fromEntries(formData.entries())
-
-  //   formEnt.products = products
-  //   formEnt.price_total = total
-  //   // console.log(formEnt)
-
-  //   // fetch(`http://localhost:8000/api/daily/create`, {
-  //   fetch(`${baseURL}/api/daily/update`, {
-  //     method: 'POST',
-  //     body: JSON.stringify(formEnt),
-  //     headers: { 'Content-Type': 'application/json' },
-  //   })
-  //     .then((res) => res.text())
-  //     .then((result) => {
-  //       if (result === 'true') {
-  //         form.current.reset()
-  //         toast.success('ข้อมูลถูกจัดเก็บแล้ว')
-  //         navigate('/admin/daily-stock')
-  //       } else {
-  //         toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
-  //       }
-  //     })
-  //     .catch((e) => toast.error(e))
-  // }
+  const onSubmitForm = (e) => {
+    e.preventDefault()
+    const data = {
+      id: id,
+      total: total,
+    }
+    fetch(`${baseURL}/api/daily/update/total`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        toast.success('ข้อมูลถูกจัดเก็บแล้ว')
+        navigate('/admin/daily-stock')
+      })
+      .catch((err) => toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก'))
+  }
 
   const onEditClick = (e) => {
     e.preventDefault()
@@ -116,7 +107,7 @@ const DailyEdit = () => {
     <>
       <div className="px-1 mt-1">
         <div className="card shadow mx-auto rounded" style={{ width: '100%' }}>
-          <form ref={form}>
+          <form ref={form} onSubmit={onSubmitForm}>
             {/* Card Header */}
             <header className="card-header d-flex justify-content-start align-items-center p-3">
               วันที่:&nbsp;
@@ -225,7 +216,7 @@ const DailyEdit = () => {
             {/* Footer Button */}
             <footer className="d-flex justify-content-center p-4">
               <button type="submit" className="btn btn-light btn-sm">
-                เพิ่มรายการไลฟ์สด
+                ยืนยัน
               </button>
               &nbsp;&nbsp;&nbsp;
               <button
