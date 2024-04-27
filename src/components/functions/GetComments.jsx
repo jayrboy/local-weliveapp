@@ -46,7 +46,40 @@ function latestComment(oldComment, newComment) {
   return new Promise((resolve) => {
     newComment.map((comment) => {
       if (oldComment.find((cm) => cm.id === comment.id) === undefined) {
-        console.log('New comments', comment)
+        console.log('got message = ' + comment.message)
+        let thisComment = comment.message
+
+        //เช็คเครื่องหมาย
+        if (thisComment.includes('=')) {
+          console.log('Have =' + thisComment)
+          let parts = thisComment.split('=') // ตัดข้อความก่อนและหลังเครื่องหมาย =
+          console.log('Text after =:', parts) // ข้อความทั้งหมดที่อยู่ใน parts
+          console.log('i think is first = ' + parts[0]) // ข้อความตัวแรก
+          console.log('i think is seconde = ' + parts[1]) // ข้อความตัวสอง
+          axios(
+            'https://vercel-server-weliveapp.vercel.app/api/daily/read/6623fb4279f47bbf47aed627'
+          )
+            .then((result) => {
+              result.data.products.map((p) => {
+                console.log(
+                  'this console before x value : ',
+                  parts[0] == p.code
+                )
+                let x = parts[0] == p.code
+                console.log('This X value = ' + x)
+                if (x == true) {
+                  console.log('We in if true condition')
+                } else {
+                  console.log('We in else condition')
+                }
+              })
+            })
+            .catch(() => {
+              console.log('This Catch ')
+            })
+        } else {
+          console.log("Don't have =" + thisComment)
+        }
       }
     })
     resolve(newComment)
@@ -73,7 +106,7 @@ const GetComments = () => {
       } catch (error) {
         console.error('Error fetching comments:', error)
       }
-    }, 15000)
+    }, 5000)
 
     return () => clearInterval(realTime)
   }, [])

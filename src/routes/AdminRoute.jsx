@@ -9,12 +9,14 @@ import NotFound from '../components/pages/NotFound'
 import LiveVideoModal from '../components/functions/LiveVideoModal'
 
 export const firstLoadContext = createContext()
+export const commentContext = createContext()
 
 const AdminRoute = ({ children }) => {
   const { user } = useSelector((state) => state.user)
   const { isOpen } = useSelector((state) => state.modal)
 
   let [firstLoad, setFirstLoad] = useState(false)
+  let [comment, setComment] = useState([])
 
   const axiosFetch = useCallback(
     (authToken) => {
@@ -47,16 +49,18 @@ const AdminRoute = ({ children }) => {
   if (user.token) {
     return (
       <firstLoadContext.Provider value={[firstLoad, setFirstLoad]}>
-        <div className="app">
-          <SideBar />
-          <main className="content">
-            {isOpen && <LiveVideoModal />}
-            <HeaderBar />
-            <div className="content_body">
-              <Box>{children}</Box>
-            </div>
-          </main>
-        </div>
+        <commentContext.Provider value={[comment, setComment]}>
+          <div className="app">
+            <SideBar />
+            <main className="content">
+              {isOpen && <LiveVideoModal />}
+              <HeaderBar />
+              <div className="content_body">
+                <Box>{children}</Box>
+              </div>
+            </main>
+          </div>
+        </commentContext.Provider>
       </firstLoadContext.Provider>
     )
   } else {
