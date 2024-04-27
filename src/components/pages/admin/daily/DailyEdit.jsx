@@ -83,6 +83,7 @@ const DailyEdit = () => {
     }
 
     const idP = selectedInput.value
+    // console.log(idP)
 
     fetch(`${baseURL}/api/daily/delete/product/${idP}`, {
       method: 'DELETE',
@@ -120,7 +121,7 @@ const DailyEdit = () => {
                 <div className="col-6 d-flex align-items-center">
                   Status:&nbsp;
                   <select
-                    className="btn btn-sm btn-light border"
+                    className="btn btn-sm btn-light border text-capitalize"
                     name="status"
                     defaultValue={dailyStock.status}
                     style={{ height: '30px' }}
@@ -145,20 +146,22 @@ const DailyEdit = () => {
                   {dailyStock.length === 0 ? (
                     <>ไม่พบข้อมูล</>
                   ) : (
-                    <small>
-                      พบข้อมูลทั้งหมด{' '}
-                      {dailyStock.products.length
-                        ? dailyStock.products.length
-                        : 0}{' '}
-                      รายการ
-                    </small>
+                    <>
+                      <small>
+                        พบข้อมูลทั้งหมด{' '}
+                        {dailyStock.products.length
+                          ? dailyStock.products.length
+                          : 0}{' '}
+                        รายการ
+                      </small>
+                    </>
                   )}
                 </caption>
                 <thead className="table-light">
                   <tr>
                     <th>
                       <button
-                        className="btn btn-sm btn-light"
+                        className="btn btn-sm btn-light border"
                         onClick={onEditClick}
                       >
                         <MdEdit color="orange" />
@@ -170,7 +173,6 @@ const DailyEdit = () => {
                     <th>limit</th>
                     <th>ราคา</th>
                     <th>เหลือ</th>
-                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -193,20 +195,23 @@ const DailyEdit = () => {
                           <td>{p.limit}</td>
                           <td>{p.price}</td>
                           <td>{p.remaining}</td>
-                          <td>
-                            <button
-                              className="btn btn-sm btn-light"
-                              onClick={onDeleteClick}
-                            >
-                              <MdDelete color="red" />
-                            </button>
-                          </td>
                         </tr>
                       )
                     })}
+                  <tr>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-light border"
+                        onClick={onDeleteClick}
+                      >
+                        <MdDelete color="red" />
+                      </button>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
+
             {/* Total */}
             <div className="text-end container">
               <label className="form-label">ยอดรวม&nbsp;&nbsp;</label>
@@ -217,7 +222,7 @@ const DailyEdit = () => {
             </div>
             {/* Footer Button */}
             <footer className="d-flex justify-content-center p-4">
-              <button type="submit" className="btn btn-light btn-sm">
+              <button type="submit" className="btn btn-light btn-sm border">
                 ยืนยัน
               </button>
               &nbsp;&nbsp;&nbsp;

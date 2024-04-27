@@ -176,7 +176,6 @@ const DailyCreate = () => {
                     <th>limit</th>
                     <th>ราคา</th>
                     <th>เหลือ</th>
-                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -197,18 +196,20 @@ const DailyCreate = () => {
                         <td>{p.limit}</td>
                         <td>{p.price}</td>
                         <td>{p.remaining}</td>
-                        <td>
-                          <button
-                            className="btn btn-sm btn-light border"
-                            // onClick={() => dispatch(deletedProduct(p._id))}
-                            onClick={onDeleteClick}
-                          >
-                            <MdDelete color="red" />
-                          </button>
-                        </td>
                       </tr>
                     )
                   })}
+                  <tr>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-light border"
+                        // onClick={() => dispatch(deletedProduct(p._id))}
+                        onClick={onDeleteClick}
+                      >
+                        <MdDelete color="red" />
+                      </button>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>

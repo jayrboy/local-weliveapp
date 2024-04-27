@@ -71,7 +71,7 @@ export default function DailyStock() {
                         <div className="col-6 d-flex align-items-center">
                           Status:&nbsp;
                           <select
-                            className="btn btn-sm btn-light border"
+                            className="btn btn-sm btn-light border text-capitalize"
                             name="status"
                             defaultValue={doc.status}
                             style={{ height: '30px' }}
