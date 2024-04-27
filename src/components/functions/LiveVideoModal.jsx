@@ -64,7 +64,7 @@ const LiveVideoModal = () => {
           </div>
         </div>
       </aside>
-      {firstLoad && <GetComments />}
+      {/* {firstLoad && <GetComments />} */}
     </>
   )
 }

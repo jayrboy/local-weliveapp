@@ -11,6 +11,7 @@ import { logout } from '../../redux/userSlice'
 
 import { openModal } from '../../redux/modalSlice'
 import { firstLoadContext } from '../../routes/AdminRoute'
+import GetComments from '../functions/GetComments'
 
 export default function HeaderBar() {
   const dispatch = useDispatch()
@@ -55,7 +56,14 @@ export default function HeaderBar() {
       {/* icons */}
       <Box display="flex">
         <IconButton onClick={() => dispatch(openModal())}>
-          {firstLoad ? <RiLiveFill color="red" /> : <RiLiveFill color="grey" />}
+          {firstLoad ? (
+            <>
+              <RiLiveFill color="red" />
+              <GetComments />
+            </>
+          ) : (
+            <RiLiveFill color="grey" />
+          )}
         </IconButton>
         <IconButton onClick={() => navigate('/order')}>
           <CartIcon />

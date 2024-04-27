@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { baseURL } from '../../App'
 
 async function getLiveVideoID() {
   let liveVideoID
@@ -38,47 +39,43 @@ export async function getCommentsGraphAPI() {
 
 //TODO: ฟังก์ชันอ่านเฉพาะ comment ใหม่
 /*
-  วนลูป newComment ใหม่ที่ได้มา แล้วตรวจสอบ newComment ว่ามี oldComment หรือไม่
-  id oldComment ไม่ตรงกับ id ของ newComment เท่ากับ newComment ใหม่
-  หากทำงานเสร็จสิ้น ส่ง newComment ใหม่
+  วนลูป newComment แต่ละแถว แล้วตรวจสอบ oldComment มันมี
+  id ตรงกับ id ของ newComment ของแถวนี้ไหม
+  ถ้ามี id: '514878379814006_514885169813327' มันจะไม่ 'undefined'
+  ถ้ามี 'undefined' คือไม่มี ก็คือ newComment ใหม่
 */
 function latestComment(oldComment, newComment) {
   return new Promise((resolve) => {
     newComment.map((comment) => {
       if (oldComment.find((cm) => cm.id === comment.id) === undefined) {
-        console.log('got message = ' + comment.message)
+        console.log('Got message :', comment.message)
         let thisComment = comment.message
 
         //เช็คเครื่องหมาย
         if (thisComment.includes('=')) {
-          console.log('Have =' + thisComment)
+          console.log('Have :', thisComment)
           let parts = thisComment.split('=') // ตัดข้อความก่อนและหลังเครื่องหมาย =
-          console.log('Text after =:', parts) // ข้อความทั้งหมดที่อยู่ใน parts
-          console.log('i think is first = ' + parts[0]) // ข้อความตัวแรก
-          console.log('i think is seconde = ' + parts[1]) // ข้อความตัวสอง
-          axios(
-            'https://vercel-server-weliveapp.vercel.app/api/daily/read/6623fb4279f47bbf47aed627'
-          )
+          console.log('Text after :', parts) // ข้อความทั้งหมดที่อยู่ใน parts
+          console.log('first index :', parts[0]) // ข้อความตัวแรก
+          console.log('seconde index :', parts[1]) // ข้อความตัวสอง
+          axios(`${baseURL}/api/daily/new-status`)
             .then((result) => {
               result.data.products.map((p) => {
-                console.log(
-                  'this console before x value : ',
-                  parts[0] == p.code
-                )
+                console.log('this console before x value :', parts[0] == p.code)
                 let x = parts[0] == p.code
-                console.log('This X value = ' + x)
+                console.log('This X value :', x)
                 if (x == true) {
-                  console.log('We in if true condition')
+                  console.log('We in if true condition\n')
                 } else {
-                  console.log('We in else condition')
+                  console.log('We in else condition\n')
                 }
               })
             })
             .catch(() => {
-              console.log('This Catch ')
+              console.log('This Catch\n')
             })
         } else {
-          console.log("Don't have =" + thisComment)
+          console.log("Don't have :", thisComment)
         }
       }
     })
