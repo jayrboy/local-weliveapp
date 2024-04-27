@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
 import { MdEdit, MdDelete } from 'react-icons/md'
-import { FaPlus } from 'react-icons/fa'
+import { FaPlus, FaHistory } from 'react-icons/fa'
 import { SiFacebooklive } from 'react-icons/si'
 
 import { toast } from 'react-toastify'
@@ -153,11 +153,9 @@ export default function DailyStock() {
                       <div className="card-header">
                         วันที่:&nbsp;
                         <strong className="text-danger">{df}</strong>
-                        <Link to={`/admin/daily-stock/edit/${doc._id}`}>
-                          <button className="btn btn-sm float-end border">
-                            <MdEdit />
-                          </button>
-                        </Link>
+                        <div className="float-end">
+                          <FaHistory color="red" size={20} />
+                        </div>
                       </div>
                       {/* Content */}
                       <div className="card-body">
