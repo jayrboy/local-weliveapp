@@ -179,26 +179,27 @@ const DailyCreate = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((p) => {
-                    return (
-                      <tr key={p._id}>
-                        <td>
-                          <input
-                            type="radio"
-                            name="_id"
-                            value={p._id}
-                            className="form-check-input"
-                          />
-                        </td>
-                        <td>{p.code}</td>
-                        <td>{p.name}</td>
-                        <td>{p.stock}</td>
-                        <td>{p.limit}</td>
-                        <td>{p.price}</td>
-                        <td>{p.remaining}</td>
-                      </tr>
-                    )
-                  })}
+                  {products &&
+                    products.map((p) => {
+                      return (
+                        <tr key={p._id}>
+                          <td>
+                            <input
+                              type="radio"
+                              name="_id"
+                              value={p._id}
+                              className="form-check-input"
+                            />
+                          </td>
+                          <td>{p.code}</td>
+                          <td>{p.name}</td>
+                          <td>{p.stock}</td>
+                          <td>{p.limit}</td>
+                          <td>{p.price}</td>
+                          <td>{p.remaining}</td>
+                        </tr>
+                      )
+                    })}
                   <tr>
                     <td>
                       <button

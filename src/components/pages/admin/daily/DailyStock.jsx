@@ -6,13 +6,16 @@ import { MdEdit, MdDelete } from 'react-icons/md'
 import { FaPlus } from 'react-icons/fa'
 import { SiFacebooklive } from 'react-icons/si'
 
+import { toast } from 'react-toastify'
+
 export default function DailyStock() {
   let [data, setData] = useState('')
-  let status = ['new', 'clear']
+  const [status, setStatus] = useState(['new', 'clear'])
   const navigate = useNavigate()
   const form = useRef()
 
   useEffect(() => {
+    // อัพเดทข้อมูลเมื่อ status เปลี่ยนแปลง
     fetch(`${baseURL}/api/daily/read`)
       .then((response) => response.json())
       .then((docs) => {
@@ -22,11 +25,27 @@ export default function DailyStock() {
           setData(<>ไม่มีรายการข้อมูล</>)
         }
       })
-      .catch((err) => alert(err))
-  }, [])
+      .catch((err) => toast.error(err))
+  }, [status]) // เพิ่ม status เป็น dependency
 
   const onChangeRole = (id, event) => {
-    console.log(id, event.target.value)
+    // อัพเดทสถานะ
+    const newRole = {
+      id: id,
+      status: event.target.value,
+    }
+    fetch(`${baseURL}/api/daily/change-role`, {
+      method: 'POST',
+      body: JSON.stringify(newRole),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((res) => res.text())
+      .then((result) => {
+        toast.success(result)
+        // เปลี่ยนแปลงสถานะเพื่อ trigger useEffect
+        setStatus((prevStatus) => [...prevStatus])
+      })
+      .catch((err) => toast.error(err))
   }
 
   const showData = (result) => {
@@ -55,75 +74,124 @@ export default function DailyStock() {
                   key={doc._id}
                   className="col-12 col-sm-12 col-md-6 col-lg-6 mt-3"
                 >
-                  <div className="card shadow">
-                    <div className="card-header">
-                      วันที่:&nbsp;
-                      <strong className="text-primary">{df}</strong>
-                      <Link to={`/admin/daily-stock/edit/${doc._id}`}>
-                        <button className="btn btn-light btn-sm float-end border">
-                          <MdEdit color="orange" />
-                        </button>
-                      </Link>
-                    </div>
-                    {/* Content */}
-                    <div className="card-body">
-                      <div className="row">
-                        <div className="col-6 d-flex align-items-center">
-                          Status:&nbsp;
-                          <select
-                            className="btn btn-sm btn-light border text-capitalize"
-                            name="status"
-                            defaultValue={doc.status}
-                            style={{ height: '30px' }}
-                          >
-                            {status.map((item, i) => (
-                              <option key={i + 1} value={item}>
-                                {item}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="col-6 d-flex justify-content-end align-items-center">
-                          Chanel:&nbsp;
-                          {doc.chanel && <SiFacebooklive size={45} />}
-                        </div>
+                  {doc && doc.status === 'new' ? (
+                    <div className="card shadow">
+                      <div className="card-header">
+                        วันที่:&nbsp;
+                        <strong className="text-primary">{df}</strong>
+                        <Link to={`/admin/daily-stock/edit/${doc._id}`}>
+                          <button className="btn btn-light btn-sm float-end border">
+                            <MdEdit color="orange" />
+                          </button>
+                        </Link>
                       </div>
-                      {/* Table */}
-                      <div className="table-responsive">
-                        <table className="table table-sm table-striped table-bordered border-light table-hover">
-                          <thead className="table-light">
-                            <tr>
-                              <th>รหัส</th>
-                              <th>สินค้า</th>
-                              <th>จำนวน</th>
-                              <th>limit</th>
-                              <th>ราคา</th>
-                              <th>Paid</th>
-                              <th>เหลือ</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {doc.products.map((p, index) => (
-                              <tr key={index + 1}>
-                                <td>{p.code}</td>
-                                <td>{p.name}</td>
-                                <td>{p.stock}</td>
-                                <td>{p.limit}</td>
-                                <td>{p.price}</td>
-                                <td>{p.paid}</td>
-                                <td>{p.remaining}</td>
+                      {/* Content */}
+                      <div className="card-body">
+                        <div className="row">
+                          <div className="col-6 d-flex align-items-center">
+                            Status:&nbsp;
+                            <select
+                              className="btn btn-sm btn-light border text-capitalize"
+                              name="status"
+                              defaultValue={doc.status}
+                              style={{ height: '30px' }}
+                              onChange={(event) => onChangeRole(doc._id, event)}
+                            >
+                              {status.map((item, i) => (
+                                <option key={i + 1} value={item}>
+                                  {item}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="col-6 d-flex justify-content-end align-items-center">
+                            Chanel:&nbsp;
+                            {doc.chanel && <SiFacebooklive size={45} />}
+                          </div>
+                        </div>
+                        {/* Table */}
+                        <div className="table-responsive">
+                          <table className="table table-sm table-striped table-bordered border-light table-hover">
+                            <thead className="table-light">
+                              <tr>
+                                <th>รหัส</th>
+                                <th>สินค้า</th>
+                                <th>จำนวน</th>
+                                <th>limit</th>
+                                <th>ราคา</th>
+                                <th>Paid</th>
+                                <th>เหลือ</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className="text-end">
-                        ยอดรวม&nbsp;&nbsp;
-                        <strong className="text-success">{total}</strong>
-                        &nbsp;บาท
+                            </thead>
+                            <tbody>
+                              {doc.products.map((p, index) => (
+                                <tr key={index + 1}>
+                                  <td>{p.code}</td>
+                                  <td>{p.name}</td>
+                                  <td>{p.stock}</td>
+                                  <td>{p.limit}</td>
+                                  <td>{p.price}</td>
+                                  <td>{p.paid}</td>
+                                  <td>{p.remaining}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div className="text-end">
+                          ยอดรวม&nbsp;&nbsp;
+                          <strong className="text-success">{total}</strong>
+                          &nbsp;บาท
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div
+                      className="card shadow"
+                      style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}
+                    >
+                      <div className="card-header">
+                        วันที่:&nbsp;
+                        <strong className="text-danger">{df}</strong>
+                        <Link to={`/admin/daily-stock/edit/${doc._id}`}>
+                          <button className="btn btn-sm float-end border">
+                            <MdEdit />
+                          </button>
+                        </Link>
+                      </div>
+                      {/* Content */}
+                      <div className="card-body">
+                        <div className="row">
+                          <div className="col-6 d-flex align-items-center">
+                            Status:&nbsp;
+                            <select
+                              className="btn btn-sm btn-light border text-capitalize text-danger"
+                              name="status"
+                              defaultValue={doc.status}
+                              style={{ height: '30px' }}
+                              onChange={(event) => onChangeRole(doc._id, event)}
+                            >
+                              {status.map((item, i) => (
+                                <option key={i + 1} value={item}>
+                                  {item}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="col-6 d-flex justify-content-end align-items-center">
+                            Chanel:&nbsp;
+                            {doc.chanel && <SiFacebooklive size={45} />}
+                          </div>
+                        </div>
+
+                        <div className="text-end">
+                          ยอดรวม&nbsp;&nbsp;
+                          <strong className="text-danger">{total}</strong>
+                          &nbsp;บาท
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )
             })}
@@ -145,7 +213,7 @@ export default function DailyStock() {
     const fe = Object.fromEntries(fd.entries())
 
     if (Object.keys(fe).length === 0) {
-      alert('ต้องเลือกรายการที่จะลบ')
+      toast.warning('ต้องเลือกรายการที่จะลบ')
       return
     }
 
@@ -157,18 +225,18 @@ export default function DailyStock() {
       .then((response) => response.json())
       .then((result) => {
         if (result.error) {
-          alert(result.error)
+          toast.error(result.error)
         } else {
           if (result.length === 0) {
             setData('ไม่มี CF CODE ดังกล่าว')
           } else {
             showData(result)
           }
-          alert('cf code ถูกลบแล้ว')
+          toast.success('cf code ถูกลบแล้ว')
         }
         navigate('/db/cfcode')
       })
-      .catch((err) => alert(err))
+      .catch((err) => toast.error(err))
   }
 
   return (

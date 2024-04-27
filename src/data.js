@@ -18,7 +18,7 @@ export const expressdetail = [
 ]
 export let orderDetail = [
   {
-    id: 1,
+    id: nanoid(),
     from: {
       userid: '231231245124123',
       orderID: '2341',
@@ -36,7 +36,7 @@ export let orderDetail = [
 ]
 export let productList = [
   {
-    id: 1,
+    id: nanoid(),
     from: {
       CFcode: 'A01',
       proName: 'กระเป๋าสัมภาระ',
@@ -47,7 +47,7 @@ export let productList = [
     },
   },
   {
-    id: 2,
+    id: nanoid(),
     from: {
       CFcode: 'B02',
       proName: 'เสื้อยืด',
@@ -58,7 +58,7 @@ export let productList = [
     },
   },
   {
-    id: 3,
+    id: nanoid(),
     from: {
       CFcode: 'C03',
       proName: 'กางเกงยีนส์',
@@ -69,7 +69,7 @@ export let productList = [
     },
   },
   {
-    id: 4,
+    id: nanoid(),
     from: {
       CFcode: 'D04',
       proName: 'รองเท้าผ้าใบ',
@@ -80,7 +80,7 @@ export let productList = [
     },
   },
   {
-    id: 5,
+    id: nanoid(),
     from: {
       CFcode: 'E05',
       proName: 'หมวกกันน้ำ',
@@ -91,7 +91,7 @@ export let productList = [
     },
   },
   {
-    id: 6,
+    id: nanoid(),
     from: {
       CFcode: 'F06',
       proName: 'ถุงเท้า',
@@ -102,7 +102,7 @@ export let productList = [
     },
   },
   {
-    id: 7,
+    id: nanoid(),
     from: {
       CFcode: 'G07',
       proName: 'แว่นตากันแดด',
@@ -113,7 +113,7 @@ export let productList = [
     },
   },
   {
-    id: 8,
+    id: nanoid(),
     from: {
       CFcode: 'H08',
       proName: 'กล้องถ่ายรูป',
@@ -124,7 +124,7 @@ export let productList = [
     },
   },
   {
-    id: 9,
+    id: nanoid(),
     from: {
       CFcode: 'I09',
       proName: 'ปากกา',
@@ -135,7 +135,7 @@ export let productList = [
     },
   },
   {
-    id: 10,
+    id: nanoid(),
     from: {
       CFcode: 'J10',
       proName: 'แผ่นรองเมาส์',
@@ -211,7 +211,7 @@ export const comments = [
 ]
 export let historySale = [
   {
-    id: 1,
+    id: nanoid(),
     from: {
       HSdate: '21-11-2001',
       HSamount: 45,
@@ -228,7 +228,7 @@ export let historySale = [
     },
   },
   {
-    id: 2,
+    id: nanoid(),
     from: {
       HSdate: '22-11-2001',
       HSamount: 60,
@@ -245,7 +245,7 @@ export let historySale = [
     },
   },
   {
-    id: 3,
+    id: nanoid(),
     from: {
       HSdate: '23-11-2001',
       HSamount: 30,
@@ -262,7 +262,7 @@ export let historySale = [
     },
   },
   {
-    id: 4,
+    id: nanoid(),
     from: {
       HSdate: '24-11-2001',
       HSamount: 25,
@@ -279,7 +279,7 @@ export let historySale = [
     },
   },
   {
-    id: 5,
+    id: nanoid(),
     from: {
       HSdate: '25-11-2001',
       HSamount: 80,
@@ -296,7 +296,7 @@ export let historySale = [
     },
   },
   {
-    id: 6,
+    id: nanoid(),
     from: {
       HSdate: '26-11-2001',
       HSamount: 40,
@@ -313,7 +313,7 @@ export let historySale = [
     },
   },
   {
-    id: 7,
+    id: nanoid(),
     from: {
       HSdate: '27-11-2001',
       HSamount: 55,
@@ -330,7 +330,7 @@ export let historySale = [
     },
   },
   {
-    id: 8,
+    id: nanoid(),
     from: {
       HSdate: '28-11-2001',
       HSamount: 65,
@@ -347,7 +347,7 @@ export let historySale = [
     },
   },
   {
-    id: 9,
+    id: nanoid(),
     from: {
       HSdate: '29-11-2001',
       HSamount: 70,
@@ -364,7 +364,7 @@ export let historySale = [
     },
   },
   {
-    id: 10,
+    id: nanoid(),
     from: {
       HSdate: '30-12-2001',
       HSamount: 75,
@@ -384,7 +384,7 @@ export let historySale = [
 export const checkoutDetail = [
   {
     from: {
-      id: 1,
+      id: nanoid(),
       OrderID: '4231',
       Date: '21/11/2001',
       FBName: 'Popthon Phankaowniew',
@@ -395,7 +395,7 @@ export const checkoutDetail = [
   },
   {
     from: {
-      id: 2,
+      id: nanoid(),
       OrderID: '3245',
       Date: '23/11/2001',
       FBName: 'Thapanan panyak',
@@ -406,7 +406,7 @@ export const checkoutDetail = [
   },
   {
     from: {
-      id: 3,
+      id: nanoid(),
       OrderID: '3245',
       Date: '29/11/2001',
       FBName: 'Demon Slayer eieiza2001',
