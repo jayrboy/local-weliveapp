@@ -98,17 +98,19 @@ export default function DailyStock() {
                               <th>จำนวน</th>
                               <th>limit</th>
                               <th>ราคา</th>
+                              <th>Paid</th>
                               <th>เหลือ</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {doc.products.map((p) => (
-                              <tr key={p._id}>
+                            {doc.products.map((p, index) => (
+                              <tr key={index + 1}>
                                 <td>{p.code}</td>
                                 <td>{p.name}</td>
                                 <td>{p.stock}</td>
                                 <td>{p.limit}</td>
                                 <td>{p.price}</td>
+                                <td>{p.paid}</td>
                                 <td>{p.remaining}</td>
                               </tr>
                             ))}

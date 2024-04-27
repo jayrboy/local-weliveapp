@@ -25,6 +25,7 @@ const DailyEdit = () => {
   const form = useRef()
   let [isOpenEdit, setOpenEdit] = useState(false)
   let [idEdit, setIdEdit] = useState('')
+  let [idProduct, setIdProduct] = useState('')
 
   let status = ['new', 'clear']
   const { id } = useParams()
@@ -36,6 +37,7 @@ const DailyEdit = () => {
   useEffect(() => {
     if (!isOpenEdit) {
       dispatch(getDaily(id))
+      setIdEdit(id)
     }
   }, [isOpenEdit])
 
@@ -63,8 +65,8 @@ const DailyEdit = () => {
     const selectedInput = document.querySelector('input[name="_id"]:checked')
     if (selectedInput) {
       setOpenEdit(true)
-      const id = selectedInput.value
-      setIdEdit(id)
+      const _id = selectedInput.value
+      setIdProduct(_id)
       // navigate(`/product/edit/${id}`)
     } else {
       toast.warning('กรุณาเลือกรายการที่ต้องการแก้ไข')
@@ -173,10 +175,10 @@ const DailyEdit = () => {
                 </thead>
                 <tbody>
                   {dailyStock.products &&
-                    dailyStock.products.map((p) => {
+                    dailyStock.products.map((p, index) => {
                       // console.log(p)
                       return (
-                        <tr key={p._id}>
+                        <tr key={index + 1}>
                           <td>
                             <input
                               type="radio"
@@ -234,6 +236,7 @@ const DailyEdit = () => {
           isOpenEdit={isOpenEdit}
           setOpenEdit={setOpenEdit}
           idEdit={idEdit}
+          idProduct={idProduct}
         />
       )}
     </>

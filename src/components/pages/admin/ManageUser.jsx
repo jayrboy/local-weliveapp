@@ -84,45 +84,59 @@ const ManageUser = () => {
               <TableCell>role</TableCell>
               <TableCell>create</TableCell>
               <TableCell>last update</TableCell>
-              <TableCell>action</TableCell>
+              {/* <TableCell>action</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
             {data
-              ? data.map((item, index) => (
-                  <StyledTableRow
-                    key={index}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{item.username}</TableCell>
-                    <TableCell>
-                      <Select
-                        value={item.role}
-                        onChange={(event) => onChangeRole(item._id, event)}
-                        style={{ width: '91px', height: '30px' }}
-                      >
-                        {role.map((item, i) => (
-                          <MenuItem key={i + 1} value={item}>
-                            {item}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </TableCell>
-                    <TableCell>{item.createdAt}</TableCell>
-                    <TableCell>{item.updatedAt}</TableCell>
+              ? data.map((item, index) => {
+                  let cdt = new Date(Date.parse(item.createdAt))
+                  let cdf = (
+                    <>
+                      {cdt.getDate()}-{cdt.getMonth() + 1}-{cdt.getFullYear()}
+                    </>
+                  )
+                  let udt = new Date(Date.parse(item.createdAt))
+                  let udf = (
+                    <>
+                      {udt.getDate()}-{udt.getMonth() + 1}-{udt.getFullYear()}
+                    </>
+                  )
+                  return (
+                    <StyledTableRow
+                      key={index}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{item.username}</TableCell>
+                      <TableCell>
+                        <Select
+                          value={item.role}
+                          onChange={(event) => onChangeRole(item._id, event)}
+                          style={{ width: '91px', height: '30px' }}
+                        >
+                          {role.map((item, i) => (
+                            <MenuItem key={i + 1} value={item}>
+                              {item}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </TableCell>
+                      <TableCell>{cdf}</TableCell>
+                      <TableCell>{udf}</TableCell>
 
-                    <TableCell>
+                      {/* <TableCell>
                       <DeleteForeverIcon color="error" />
-                    </TableCell>
+                    </TableCell> */}
 
-                    {/* <TableCell>
+                      {/* <TableCell>
                       <Link to={'/edit/' + item._id}>
                         <EditIcon />
                       </Link>
                     </TableCell> */}
-                  </StyledTableRow>
-                ))
+                    </StyledTableRow>
+                  )
+                })
               : null}
           </TableBody>
         </Table>

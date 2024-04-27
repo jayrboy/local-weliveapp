@@ -6,7 +6,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { MdEdit } from 'react-icons/md'
 
 function DailyProductEdit(props) {
-  let { isOpenEdit, setOpenEdit, idEdit } = props
+  let { isOpenEdit, setOpenEdit, idEdit, idProduct } = props
 
   const form = useRef()
   let code = useRef()
@@ -22,7 +22,7 @@ function DailyProductEdit(props) {
   let remaining
 
   useEffect(() => {
-    fetch(`${baseURL}/api/daily/read/product/${idEdit}`)
+    fetch(`${baseURL}/api/daily/read/${idEdit}/product/${idProduct}`)
       .then((res) => res.json())
       .then((result) => {
         // console.log(result)
@@ -55,11 +55,13 @@ function DailyProductEdit(props) {
     event.preventDefault()
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
-    formEnt._id = idEdit
+    formEnt.idDaily = idEdit
+    formEnt.idProduct = idProduct
     formEnt.cf = cf
     formEnt.remaining_cf = remaining_cf
     formEnt.paid = paid
     formEnt.remaining = remaining
+    // console.log(formEnt)
 
     fetch(`${baseURL}/api/daily/update`, {
       method: 'POST',
@@ -68,7 +70,7 @@ function DailyProductEdit(props) {
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log(result)
+        // console.log(result)
         if (result.error) {
           toast.error(result.error)
         } else {
