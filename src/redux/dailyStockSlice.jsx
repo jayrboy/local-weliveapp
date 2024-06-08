@@ -53,7 +53,7 @@ const initialState = {
   isLoading: false,
 }
 
-const modalSlice = createSlice({
+const dailyStockSlice = createSlice({
   name: 'dailyStock',
   initialState,
   reducers: {
@@ -112,5 +112,5 @@ export const {
   updateDailyStockStatus,
   updateProduct,
   updatePriceTotal,
-} = modalSlice.actions
-export default modalSlice.reducer
+} = dailyStockSlice.actions
+export default dailyStockSlice.reducer

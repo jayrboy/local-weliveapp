@@ -25,7 +25,7 @@ const initialState = {
   isLoading: false,
 }
 
-const modalSlice = createSlice({
+const productSlice = createSlice({
   name: 'product',
   initialState,
   reducers: {
@@ -64,5 +64,5 @@ const modalSlice = createSlice({
   },
 })
 
-export const { calTotals, deletedProduct } = modalSlice.actions
-export default modalSlice.reducer
+export const { calTotals, deletedProduct } = productSlice.actions
+export default productSlice.reducer

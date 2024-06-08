@@ -3,6 +3,7 @@ import userReducer from './userSlice'
 import modalReducer from './modalSlice'
 import productReducer from './productSlice'
 import dailyStockReducer from './dailyStockSlice'
+import saleOrderReducer from './saleOrderSlice'
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     modal: modalReducer,
     product: productReducer,
     dailyStock: dailyStockReducer,
+    saleOrder: saleOrderReducer,
   },
 })
 

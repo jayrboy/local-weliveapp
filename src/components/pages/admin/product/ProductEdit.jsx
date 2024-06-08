@@ -51,6 +51,12 @@ function ProductEdit(props) {
     const formEnt = Object.fromEntries(formData.entries())
     // formEnt._id = id
     formEnt._id = idEdit
+    formEnt.price = parseInt(formEnt.price)
+    formEnt.cost = parseInt(formEnt.cost)
+    formEnt.stock_quantity = parseInt(formEnt.stock_quantity)
+    formEnt.limit = parseInt(formEnt.limit)
+
+    // console.log(formEnt)
 
     fetch(`${baseURL}/api/product`, {
       method: 'PUT',

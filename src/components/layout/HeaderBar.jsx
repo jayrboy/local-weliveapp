@@ -1,11 +1,12 @@
 import logo from '../../assets/logo-we.png'
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 
 import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import { RiLiveFill } from 'react-icons/ri'
 
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { getOrders } from '../../redux/saleOrderSlice'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../../redux/userSlice'
 
@@ -14,10 +15,15 @@ import { firstLoadContext } from '../../routes/AdminRoute'
 import GetComments from '../functions/GetComments'
 
 export default function HeaderBar() {
+  let { orders } = useSelector((store) => store.saleOrder)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
   let [firstLoad, setFirstLoad] = useContext(firstLoadContext)
+
+  useEffect(() => {
+    dispatch(getOrders())
+  }, [])
 
   const onClickLogout = () => {
     dispatch(logout())
@@ -68,7 +74,7 @@ export default function HeaderBar() {
         <IconButton onClick={() => navigate('/order')}>
           <CartIcon />
           <div className="amount-container">
-            <p className="total-amount">{'0'}</p>
+            <p className="total-amount">{orders.length}</p>
           </div>
         </IconButton>
         <IconButton onClick={handleMenu}>

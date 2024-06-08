@@ -27,6 +27,13 @@ function ProductCreate(props) {
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
+    formEnt.price = parseInt(formEnt.price)
+    formEnt.cost = parseInt(formEnt.cost)
+    formEnt.stock_quantity = parseInt(formEnt.stock_quantity)
+    formEnt.limit = parseInt(formEnt.limit)
+
+    // console.log(formEnt)
+
     fetch(`${baseURL}/api/product`, {
       method: 'POST',
       body: JSON.stringify(formEnt),
@@ -127,7 +134,12 @@ function ProductCreate(props) {
             type="Date"
             name="date_added"
             className="form-control form-control-sm mb-3"
+            {...register('date_added', {
+              validate: (value) => parseFloat(value) > 0,
+            })}
           />
+          {errors.price && <div style={err}>โปรดเพิ่มวันที่</div>}
+
           <div className="d-flex justify-content-center ">
             <button className="btn btn-light btn-sm border">เพิ่มสินค้า</button>
             &nbsp;&nbsp;&nbsp;
