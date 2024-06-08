@@ -6,9 +6,15 @@ export default function ExpressDelete() {
   let [data, setData] = useState('')
   const form = useRef()
   const navigate = useNavigate()
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
-    fetch(`${baseURL}/api/ex/read`)
+    fetch(`${baseURL}/api/ex/read`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    })
       .then((response) => response.json())
       .then((docs) => {
         if (docs.length > 0) {
@@ -58,7 +64,7 @@ export default function ExpressDelete() {
                 )
 
                 return (
-                  <tr key={doc.exname}>
+                  <tr key={doc._id}>
                     {/* เมื่อคลิก radio บนรายการใด เราก็แนบ document ของรายการนั้น
                       ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
                   */}
@@ -102,10 +108,13 @@ export default function ExpressDelete() {
       return
     }
 
-    fetch('/api/ex/delete', {
+    fetch(`${baseURL}/api/ex/delete`, {
       method: 'POST',
       body: JSON.stringify(fe),
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
     })
       .then((response) => response.json())
       .then((result) => {
@@ -119,7 +128,7 @@ export default function ExpressDelete() {
           }
           alert('ข้อมูลถูกลบแล้ว')
         }
-        navigate('/admin/exdelete')
+        navigate('/express/delete')
       })
       .catch((err) => alert(err))
   }

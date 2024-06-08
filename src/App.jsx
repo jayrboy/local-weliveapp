@@ -44,227 +44,232 @@ import LoadingFn from './components/functions/LoadingFn'
 import { useDispatch } from 'react-redux'
 import { login } from './redux/userSlice'
 
-export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
-// export const baseURL = 'http://localhost:8000'
+// export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
+export const baseURL = 'http://localhost:8000'
 
 function App() {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(true)
+  const userToken = localStorage.getItem('token')
 
   useEffect(() => {
-    const userToken = localStorage.getItem('token')
-
     if (userToken) {
-      const axiosFetch = (authToken) =>
-        axios
-          .post(
-            `${baseURL}/api/current-user`,
-            {},
-            {
-              headers: { authToken },
-            }
-          )
-          .then((result) => {
-            dispatch(
-              login({
-                username: result.data.username,
-                role: result.data.role,
-                name: result.data.name,
-                email: result.data.email,
-                picture: result.data.picture,
-                token: authToken,
-              })
-            )
-            setLoading(false)
-          })
-          .catch((err) => setLoading(false))
-
       axiosFetch(userToken)
     } else {
       setLoading(false)
     }
   }, [dispatch])
 
+  const axiosFetch = async (authToken) => {
+    return await axios
+      .post(
+        `${baseURL}/api/current-user`,
+        {},
+        {
+          headers: {
+            Authorization: 'Bearer ' + authToken,
+          },
+        }
+      )
+      .then((result) => {
+        dispatch(
+          login({
+            username: result.data.username,
+            role: result.data.role,
+            name: result.data.name,
+            email: result.data.email,
+            picture: result.data.picture,
+            token: authToken,
+          })
+        )
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
+  }
+
   if (loading) {
     return <LoadingFn />
-  } else {
-    return (
-      <React.Fragment>
-        <CssBaseline />
-        <ToastContainer position="top-center" autoClose={1000} />
-        {/* Public */}
-        <Routes>
-          <Route
-            path="*"
-            element={
-              <NotFound text="The page you are looking for does not exist." />
-            }
-          />
-          <Route
-            path="/"
-            element={
-              <>
-                <ResponsiveAppBar />
-                <HomePage />
-              </>
-            }
-          />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          {/* Customer */}
-          <Route
-            path="/user/home"
-            element={
-              <UserRoute>
-                <HomeUser />
-              </UserRoute>
-            }
-          />
-          <Route path="/order/:id" element={<UserOrder />} />
-
-          {/* Admin */}
-          <Route
-            path="/admin/home"
-            element={
-              <AdminRoute>
-                <HomeAdmin />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/stock"
-            element={
-              <AdminRoute>
-                <ProductStock />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/daily-stock"
-            element={
-              <AdminRoute>
-                <DailyStock />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/daily-stock/create"
-            element={
-              <AdminRoute>
-                <DailyCreate />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/daily-stock/edit/:id"
-            element={
-              <AdminRoute>
-                <DailyEdit />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/search/customer"
-            element={
-              <AdminRoute>
-                <SearchCustomer />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/customer/edit/:id"
-            element={
-              <AdminRoute>
-                <CustomerEdit />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/search/order"
-            element={
-              <AdminRoute>
-                <SearchOrder />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/express"
-            element={
-              <AdminRoute>
-                <ExpressList />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/express/create"
-            element={
-              <AdminRoute>
-                <ExpressCreate />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/express/delete"
-            element={
-              <AdminRoute>
-                <ExpressDelete />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/checkout"
-            element={
-              <AdminRoute>
-                <AdminCheckout />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/sales"
-            element={
-              <AdminRoute>
-                <AdminSale />
-              </AdminRoute>
-            }
-          />
-          {/* Manage User */}
-          <Route
-            path="/admin/manage"
-            element={
-              <AdminRoute>
-                <ManageUser />
-              </AdminRoute>
-            }
-          />
-          {/* --------------- */}
-          <Route
-            path="/order"
-            element={
-              <AdminRoute>
-                <CustomerOrder />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/analysis"
-            element={
-              <AdminRoute>
-                <AnalysisReport />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/info"
-            element={
-              <AdminRoute>
-                <Info />
-              </AdminRoute>
-            }
-          />
-        </Routes>
-      </React.Fragment>
-    )
   }
+
+  return (
+    <React.Fragment>
+      <CssBaseline />
+      <ToastContainer position="top-center" autoClose={1000} />
+      {/* Public */}
+      <Routes>
+        <Route
+          path="*"
+          element={
+            <NotFound text="The page you are looking for does not exist." />
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <>
+              <ResponsiveAppBar />
+              <HomePage />
+            </>
+          }
+        />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        {/* Customer */}
+        <Route
+          path="/user/home"
+          element={
+            <UserRoute>
+              <HomeUser />
+            </UserRoute>
+          }
+        />
+        <Route path="/order/:id" element={<UserOrder />} />
+
+        {/* Admin */}
+        <Route
+          path="/admin/home"
+          element={
+            <AdminRoute>
+              <HomeAdmin />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/stock"
+          element={
+            <AdminRoute>
+              <ProductStock />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/daily-stock"
+          element={
+            <AdminRoute>
+              <DailyStock />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/daily-stock/create"
+          element={
+            <AdminRoute>
+              <DailyCreate />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/daily-stock/edit/:id"
+          element={
+            <AdminRoute>
+              <DailyEdit />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/search/customer"
+          element={
+            <AdminRoute>
+              <SearchCustomer />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/customer/edit/:id"
+          element={
+            <AdminRoute>
+              <CustomerEdit />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/search/order"
+          element={
+            <AdminRoute>
+              <SearchOrder />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/express"
+          element={
+            <AdminRoute>
+              <ExpressList />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/express/create"
+          element={
+            <AdminRoute>
+              <ExpressCreate />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/express/delete"
+          element={
+            <AdminRoute>
+              <ExpressDelete />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/checkout"
+          element={
+            <AdminRoute>
+              <AdminCheckout />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/sales"
+          element={
+            <AdminRoute>
+              <AdminSale />
+            </AdminRoute>
+          }
+        />
+        {/* Manage User */}
+        <Route
+          path="/admin/manage"
+          element={
+            <AdminRoute>
+              <ManageUser />
+            </AdminRoute>
+          }
+        />
+        {/* --------------- */}
+        <Route
+          path="/order"
+          element={
+            <AdminRoute>
+              <CustomerOrder />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/analysis"
+          element={
+            <AdminRoute>
+              <AnalysisReport />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/info"
+          element={
+            <AdminRoute>
+              <Info />
+            </AdminRoute>
+          }
+        />
+      </Routes>
+    </React.Fragment>
+  )
 }
 
 export default App

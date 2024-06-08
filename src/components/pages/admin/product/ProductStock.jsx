@@ -31,10 +31,14 @@ const Stock = () => {
   let [isOpenEdit, setOpenEdit] = useState(false)
   let [idEdit, setIdEdit] = useState('')
 
+  const token = localStorage.getItem('token')
+
   useEffect(() => {
     if (!isOpenEdit) {
       // เรียก fetch ข้อมูลอีกครั้งหลังจากปิดการแก้ไข
-      fetch(`${baseURL}/api/db/search?` + params)
+      fetch(`${baseURL}/api/product/search?` + params, {
+        headers: { Authorization: 'Bearer ' + token },
+      })
         .then((response) => response.json())
         .then((result) => {
           showData(result)
@@ -103,7 +107,7 @@ const Stock = () => {
                       </td>
                       <td>{doc.code}</td>
                       <td>{doc.name}</td>
-                      <td>{doc.stock}</td>
+                      <td>{doc.stock_quantity}</td>
                       <td>{p}</td>
                       <td>{c}</td>
                       <td>{df}</td>
@@ -200,10 +204,13 @@ const Stock = () => {
       return
     }
 
-    fetch(`${baseURL}/api/db/delete`, {
-      method: 'POST',
+    fetch(`${baseURL}/api/product/delete`, {
+      method: 'DELETE',
       body: JSON.stringify(fe),
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
     })
       .then((response) => response.json())
       .then((result) => {

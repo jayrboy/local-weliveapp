@@ -13,9 +13,15 @@ export default function ExpressList() {
   const maxprice = useRef()
   const whenfprice = useRef()
   const date_start = useRef()
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
-    fetch(`${baseURL}/api/ex/read`) //อ่านข้อมูลมาแสดงผล
+    fetch(`${baseURL}/api/ex/read`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    }) //อ่านข้อมูลมาแสดงผล
       .then((res) => res.json())
       .then((result) => {
         if (result.length > 0) {

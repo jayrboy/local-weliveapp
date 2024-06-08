@@ -1,13 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const url = 'https://vercel-server-weliveapp.vercel.app/api/db/read'
+const url = 'https://vercel-server-weliveapp.vercel.app/api/product'
+const token = localStorage.getItem('token')
 
 export const getProducts = createAsyncThunk(
   'product/getProducts',
   async (name, thunkAPI) => {
     try {
-      const resp = await axios(url)
+      const resp = await axios(url, {
+        headers: { Authorization: 'Bearer ' + token },
+      })
       return resp.data
     } catch (error) {
       return thunkAPI.rejectWithValue('something went wrong')
@@ -17,7 +20,7 @@ export const getProducts = createAsyncThunk(
 
 const initialState = {
   products: [],
-  stock: 0,
+  stock_quantity: 0,
   total: 0,
   isLoading: false,
 }
@@ -35,13 +38,13 @@ const modalSlice = createSlice({
       }
     },
     calTotals: (state) => {
-      let stock = 0
+      let stock_quantity = 0
       let total = 0
       state.products.forEach((item) => {
-        stock += item.stock
-        total += item.stock * item.price
+        stock_quantity += item.stock_quantity
+        total += item.stock_quantity * item.price
       })
-      state.stock = stock
+      state.stock_quantity = stock_quantity
       state.total = total
     },
   },

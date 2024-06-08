@@ -42,7 +42,9 @@ const ManageUser = () => {
   const loadData = async (authToken) => {
     await axios
       .get(`${baseURL}/api/users`, {
-        headers: { authToken },
+        headers: {
+          Authorization: 'Bearer ' + authToken,
+        },
       })
       .then((result) => {
         // console.log(result.data)
@@ -56,7 +58,9 @@ const ManageUser = () => {
       `${baseURL}/api/user/change-role`,
       { data },
       {
-        headers: { authToken },
+        headers: {
+          Authorization: 'Bearer ' + authToken,
+        },
       }
     )
   }

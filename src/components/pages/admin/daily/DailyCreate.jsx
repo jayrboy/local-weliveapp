@@ -41,25 +41,25 @@ const DailyCreate = () => {
 
     formEnt.products = products
     formEnt.price_total = total
-    // console.log(formEnt)
+    
+    console.log(formEnt)
 
-    // fetch(`http://localhost:8000/api/daily/create`, {
-    fetch(`${baseURL}/api/daily/create`, {
-      method: 'POST',
-      body: JSON.stringify(formEnt),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then((res) => res.text())
-      .then((result) => {
-        if (result === 'true') {
-          form.current.reset()
-          toast.success('ข้อมูลถูกจัดเก็บแล้ว')
-          navigate('/admin/daily-stock')
-        } else {
-          toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
-        }
-      })
-      .catch((e) => toast.error(e))
+    // fetch(`${baseURL}/api/daily/create`, {
+    //   method: 'POST',
+    //   body: JSON.stringify(formEnt),
+    //   headers: { 'Content-Type': 'application/json' },
+    // })
+    //   .then((res) => res.text())
+    //   .then((result) => {
+    //     if (result === 'true') {
+    //       form.current.reset()
+    //       toast.success('ข้อมูลถูกจัดเก็บแล้ว')
+    //       navigate('/admin/daily-stock')
+    //     } else {
+    //       toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
+    //     }
+    //   })
+    //   .catch((e) => toast.error(e))
   }
 
   const onEditClick = (e) => {
@@ -85,29 +85,7 @@ const DailyCreate = () => {
     }
 
     const idP = selectedInput.value
-
-    fetch(`${baseURL}/api/db/delete/${idP}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to delete product')
-        }
-        return response.json()
-      })
-      .then(() => {
-        toast.success('ข้อมูลถูกลบแล้ว')
-        // ลบสินค้าออกจาก Redux store
-        dispatch(deletedProduct(idP))
-        navigate('/admin/daily-stock/create')
-      })
-      .catch((error) => {
-        toast.error('เกิดข้อผิดพลาดในการลบข้อมูล')
-        console.error(error)
-      })
+    dispatch(deletedProduct(idP))
   }
 
   return (
@@ -180,7 +158,7 @@ const DailyCreate = () => {
                 </thead>
                 <tbody>
                   {products &&
-                    products.map((p) => {
+                    products.map((p, index) => {
                       return (
                         <tr key={p._id}>
                           <td>
@@ -193,7 +171,7 @@ const DailyCreate = () => {
                           </td>
                           <td>{p.code}</td>
                           <td>{p.name}</td>
-                          <td>{p.stock}</td>
+                          <td>{p.stock_quantity}</td>
                           <td>{p.limit}</td>
                           <td>{p.price}</td>
                           <td>{p.remaining}</td>
@@ -203,8 +181,8 @@ const DailyCreate = () => {
                   <tr>
                     <td>
                       <button
+                        type="button"
                         className="btn btn-sm btn-light border"
-                        // onClick={() => dispatch(deletedProduct(p._id))}
                         onClick={onDeleteClick}
                       >
                         <MdDelete color="red" />

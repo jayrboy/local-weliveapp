@@ -1,85 +1,44 @@
-import { baseURL } from '../../../../App'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateProduct } from '../../../../redux/dailyStockSlice'
 import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
 import { MdEdit } from 'react-icons/md'
 
 function DailyProductEdit(props) {
-  let { isOpenEdit, setOpenEdit, idEdit, idProduct } = props
+  let { setOpenEdit, index } = props
 
+  let { dailyStock } = useSelector((store) => store.dailyStock)
+  const dispatch = useDispatch()
   const form = useRef()
-  let code = useRef()
-  let name = useRef()
-  let cost = useRef()
-  let price = useRef()
-  let stock = useRef()
-  let limit = useRef()
-  let date_added = useRef()
-  let cf
-  let remaining_cf
-  let paid
-  let remaining
-
-  useEffect(() => {
-    fetch(`${baseURL}/api/daily/read/${idEdit}/product/${idProduct}`)
-      .then((res) => res.json())
-      .then((result) => {
-        // console.log(result)
-        code.current.value = result.code
-        name.current.value = result.name
-        price.current.value = result.price
-        cost.current.value = result.cost
-        stock.current.value = result.stock
-        limit.current.value = result.limit
-
-        let dt = new Date(Date.parse(result.date_added))
-        let y = dt.getFullYear()
-        let m = dt.getMonth() + 1
-        //ค่าที่จะกำหนดให้แก่อินพุตชนิด date ต้องเป็นรูปแบบ yyyy-mm-dd
-        //สำหรับเดือนและวันที่ หากเป็นเลขตัวเดียวต้องเติม 0 ข้างหน้า
-        m = m >= 10 ? m : '0' + m
-        let d = dt.getDate()
-        d = d >= 10 ? d : '0' + d
-        date_added.current.value = `${y}-${m}-${d}`
-
-        cf = result.cf
-        remaining_cf = result.remaining_cf
-        paid = result.paid
-        remaining = result.remaining
-      })
-      .catch((err) => toast.error(err))
-  }, [])
 
   const onSubmitForm = (event) => {
     event.preventDefault()
+
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
-    formEnt.idDaily = idEdit
-    formEnt.idProduct = idProduct
-    formEnt.cf = cf
-    formEnt.remaining_cf = remaining_cf
-    formEnt.paid = paid
-    formEnt.remaining = remaining
+
+    // แปลงข้อมูลที่เป็นตัวเลขให้เป็นตัวเลขแบบ integer ก่อนส่งไปยัง reducer
+    formEnt.price = parseInt(formEnt.price)
+    formEnt.cost = parseInt(formEnt.cost)
+    formEnt.stock_quantity = parseInt(formEnt.stock_quantity)
+    formEnt.limit = parseInt(formEnt.limit)
     // console.log(formEnt)
 
-    fetch(`${baseURL}/api/daily/update`, {
-      method: 'POST',
-      body: JSON.stringify(formEnt),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        // console.log(result)
-        if (result.error) {
-          toast.error(result.error)
-        } else {
-          toast.success('ข้อมูลถูกแก้ไขแล้ว')
-          setOpenEdit(false)
-        }
-      })
-      .catch((e) => toast.error(e))
+    // เรียกใช้ action updateProduct และส่งข้อมูลที่แก้ไขไปยัง reducer
+    dispatch(updateProduct({ index, formEnt }))
+
+    setOpenEdit(false)
+    toast.success('แก้ไขสินค้าสำเร็จ')
   }
+
+  let dt = new Date(Date.parse(dailyStock.products[index].date_added))
+  let df = (
+    <>
+      {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+    </>
+  )
 
   return (
     <div className="modal-product">
@@ -96,7 +55,7 @@ function DailyProductEdit(props) {
             <CloseIcon sx={{ color: 'red' }} />
           </button>
         </span>
-        <form onSubmit={onSubmitForm} ref={form} className="p-4">
+        <form ref={form} className="p-4">
           <div className="row">
             <div className="col-12 col-md-12 col-lg-12">
               <label className="form-label">รหัส CF</label>
@@ -104,8 +63,7 @@ function DailyProductEdit(props) {
                 type="text"
                 name="code"
                 className="form-control form-control-sm"
-                ref={code}
-                required
+                defaultValue={dailyStock.products[index].code}
               />
             </div>
             <div className="col-12 col-md-12 col-lg-12">
@@ -114,8 +72,7 @@ function DailyProductEdit(props) {
                 type="text"
                 name="name"
                 className="form-control form-control-sm"
-                ref={name}
-                required
+                defaultValue={dailyStock.products[index].name}
               />
             </div>
             <div className="col-6 col-md-6 col-lg-6">
@@ -125,11 +82,9 @@ function DailyProductEdit(props) {
                 name="price"
                 min="0"
                 className="form-control form-control-sm"
-                ref={price}
-                required
+                defaultValue={dailyStock.products[index].price}
               />
             </div>
-
             <div className="col-6 col-md-6 col-lg-6">
               <label className="form-label mt-2">ราคาต้นทุน</label>
               <input
@@ -137,20 +92,17 @@ function DailyProductEdit(props) {
                 name="cost"
                 min="0"
                 className="form-control form-control-sm"
-                ref={cost}
-                required
+                defaultValue={dailyStock.products[index].cost}
               />
             </div>
-
             <div className="col-4 col-md-4 col-lg-4">
               <label className="form-label mt-2">จำนวนสินค้า</label>
               <input
                 type="number"
-                name="stock"
+                name="stock_quantity"
                 min="0"
                 className="form-control form-control-sm"
-                ref={stock}
-                required
+                defaultValue={dailyStock.products[index].stock_quantity}
               />
             </div>
             <div className="col-4 col-md-4 col-lg-4">
@@ -160,25 +112,33 @@ function DailyProductEdit(props) {
                 name="limit"
                 min="0"
                 className="form-control form-control-sm"
-                ref={limit}
-                required
+                defaultValue={dailyStock.products[index].limit}
               />
             </div>
             <div className="col-4 col-md-4 col-lg-4">
               <label className="form-label mt-2">วันที่เพิ่มสินค้า</label>
-              <input
+              <span
                 type="date"
                 name="date_added"
                 className="form-control form-control-sm mb-3"
-                ref={date_added}
-              />
+              >
+                {df}
+              </span>
             </div>
-            <div className="d-flex justify-content-center ">
-              <button className="btn btn-light btn-sm border">
+            <div className="d-flex justify-content-center">
+              <button
+                type="submit"
+                onClick={onSubmitForm}
+                className="btn btn-light btn-sm border"
+              >
                 <MdEdit color="orange" /> แก้ไข
               </button>
               &nbsp;&nbsp;&nbsp;
-              <button className="btn btn-sm" onClick={() => setOpenEdit(false)}>
+              <button
+                type="button"
+                className="btn btn-sm"
+                onClick={() => setOpenEdit(false)}
+              >
                 ยกเลิก
               </button>
             </div>

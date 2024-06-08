@@ -15,6 +15,18 @@ export const getDaily = createAsyncThunk(
   }
 )
 
+export const getAll = createAsyncThunk(
+  'dailyStock/getAll',
+  async (thunkAPI) => {
+    try {
+      const resp = await axios(url + '/read')
+      return resp.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue('something went wrong')
+    }
+  }
+)
+
 export const deleteProduct = createAsyncThunk(
   'dailyStock/deleteProduct',
   async (productId, thunkAPI) => {
@@ -46,32 +58,36 @@ const modalSlice = createSlice({
   initialState,
   reducers: {
     deletedProduct: (state, action) => {
-      const productId = action.payload
-      const index = state.dailyStock.products.findIndex(
-        (product) => product._id === productId
-      )
-      if (index !== -1) {
-        state.dailyStock.products.splice(index, 1)
-      }
-    },
-    updateProductInState: (state, action) => {
-      const { productId, updatedProduct } = action.payload
-      const index = state.dailyStock.products.findIndex(
-        (product) => product._id === productId
-      )
-      if (index !== -1) {
-        state.dailyStock.products[index] = updatedProduct
-      }
+      const index = action.payload
+      state.dailyStock.products.splice(index, 1)
     },
     calTotals: (state) => {
-      let stock = 0
+      let stock_quantity = 0
       let total = 0
       state.dailyStock.products.map((item) => {
-        stock += item.stock
-        total += item.stock * item.price
+        stock_quantity += item.stock_quantity
+        total += item.stock_quantity * item.price
       })
-      state.stock = stock
+      state.stock_quantity = stock_quantity
       state.total = total
+    },
+    updateDailyStockStatus: (state, action) => {
+      state.dailyStock.status = action.payload // อัปเดตค่า status
+    },
+    updateProduct: (state, action) => {
+      const { index, formEnt } = action.payload
+
+      state.dailyStock.products = state.dailyStock.products.map((p, i) => {
+        if (i == index) {
+          const stock_quantity = formEnt.stock_quantity
+          p.remaining = stock_quantity - p.remaining_cf
+          return { ...p, ...formEnt } // คัดลอกข้อมูลเดิม และอัปเดตเฉพาะข้อมูลที่ต้องการ
+        }
+        return p // ใช้ข้อมูลสินค้าเดิมสำหรับตำแหน่งที่ไม่ได้ถูกอัปเดต
+      })
+    },
+    updatePriceTotal: (state, action) => {
+      state.dailyStock.price_total = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -90,5 +106,11 @@ const modalSlice = createSlice({
   },
 })
 
-export const { calTotals, deletedProduct } = modalSlice.actions
+export const {
+  calTotals,
+  deletedProduct,
+  updateDailyStockStatus,
+  updateProduct,
+  updatePriceTotal,
+} = modalSlice.actions
 export default modalSlice.reducer

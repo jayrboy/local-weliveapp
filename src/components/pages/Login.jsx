@@ -31,7 +31,8 @@ function Copyright(props) {
       {'Copyright © '}
       <Link to="/" className="text-primary text-decoration-none">
         WE Live App
-      </Link>{' '}
+      </Link>
+      {' 2023-'}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -66,7 +67,7 @@ const Login = () => {
     if (role === 'admin') {
       navigate('/admin/home')
     } else {
-      navigate('/user/home')
+      navigate('/admin/home')
     }
   }
 

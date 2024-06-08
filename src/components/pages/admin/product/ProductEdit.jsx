@@ -7,18 +7,21 @@ import { MdEdit } from 'react-icons/md'
 
 function ProductEdit(props) {
   let { isOpenEdit, setOpenEdit, idEdit } = props
+  const token = localStorage.getItem('token')
 
   const form = useRef()
   let code = useRef()
   let name = useRef()
   let cost = useRef()
   let price = useRef()
-  let stock = useRef()
+  let stock_quantity = useRef()
   let limit = useRef()
   let date_added = useRef()
 
   useEffect(() => {
-    fetch(`${baseURL}/api/db/read/${idEdit}`)
+    fetch(`${baseURL}/api/product/read/${idEdit}`, {
+      headers: { Authorization: 'Bearer ' + token },
+    })
       .then((res) => res.json())
       .then((result) => {
         // console.log(result)
@@ -26,7 +29,7 @@ function ProductEdit(props) {
         name.current.value = result.name
         price.current.value = result.price
         cost.current.value = result.cost
-        stock.current.value = result.stock
+        stock_quantity.current.value = result.stock_quantity
         limit.current.value = result.limit
 
         let dt = new Date(Date.parse(result.date_added))
@@ -49,10 +52,13 @@ function ProductEdit(props) {
     // formEnt._id = id
     formEnt._id = idEdit
 
-    fetch(`${baseURL}/api/db/update`, {
-      method: 'POST',
+    fetch(`${baseURL}/api/product`, {
+      method: 'PUT',
       body: JSON.stringify(formEnt),
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
     })
       .then((res) => res.text())
       .then((result) => {
@@ -132,10 +138,10 @@ function ProductEdit(props) {
               <label className="form-label mt-2">จำนวนสินค้า</label>
               <input
                 type="number"
-                name="stock"
+                name="stock_quantity"
                 min="0"
                 className="form-control form-control-sm"
-                ref={stock}
+                ref={stock_quantity}
                 required
               />
             </div>

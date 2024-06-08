@@ -26,7 +26,9 @@ const AdminRoute = ({ children }) => {
           `${baseURL}/api/current-admin`,
           {},
           {
-            headers: { authToken },
+            headers: {
+              Authorization: 'Bearer ' + authToken,
+            },
           }
         )
         .then((response) => {

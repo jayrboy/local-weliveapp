@@ -10,6 +10,8 @@ import {
   getDaily,
   calTotals,
   deletedProduct,
+  updateDailyStockStatus,
+  updatePriceTotal,
 } from '../../../../redux/dailyStockSlice'
 
 import { SiFacebooklive } from 'react-icons/si'
@@ -17,44 +19,47 @@ import { SiFacebooklive } from 'react-icons/si'
 import DailyProductEdit from '../daily/DailyProductEdit'
 
 const DailyEdit = () => {
-  let { dailyStock, total } = useSelector((store) => store.dailyStock)
-
-  const dispatch = useDispatch()
+  const { id } = useParams()
   const navigate = useNavigate()
 
   const form = useRef()
-  let [isOpenEdit, setOpenEdit] = useState(false)
-  let [idEdit, setIdEdit] = useState('')
-  let [idProduct, setIdProduct] = useState('')
-
+  const token = localStorage.getItem('token')
   let status = ['new', 'clear']
-  const { id } = useParams()
+
+  let { dailyStock, total } = useSelector((store) => store.dailyStock)
+  const dispatch = useDispatch()
+
+  let [isOpenEdit, setOpenEdit] = useState(false)
+  let [index, setIndex] = useState(0)
 
   useEffect(() => {
     dispatch(calTotals())
   }, [dailyStock])
 
   useEffect(() => {
-    if (!isOpenEdit) {
-      dispatch(getDaily(id))
-      setIdEdit(id)
-    }
-  }, [isOpenEdit])
+    dispatch(getDaily(id))
+  }, [])
+
+  useEffect(() => {
+    dispatch(updatePriceTotal(total))
+  }, [total])
 
   const onSubmitForm = (e) => {
     e.preventDefault()
-    const data = {
-      id: id,
-      total: total,
-    }
-    fetch(`${baseURL}/api/daily/update/total`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: { 'Content-Type': 'application/json' },
+
+    // console.log(dailyStock.price_total)
+
+    fetch(`${baseURL}/api/daily/update`, {
+      method: 'PUT',
+      body: JSON.stringify(dailyStock),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
     })
       .then((res) => res.json())
       .then((result) => {
-        toast.success('ข้อมูลถูกจัดเก็บแล้ว')
+        toast.success('แก้ไขข้อมูลสำเร็จ')
         navigate('/admin/daily-stock')
       })
       .catch((err) => toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก'))
@@ -62,41 +67,35 @@ const DailyEdit = () => {
 
   const onEditClick = (e) => {
     e.preventDefault()
-    const selectedInput = document.querySelector('input[name="_id"]:checked')
+
+    const selectedInput = document.querySelector('input[name="index"]:checked')
+
     if (selectedInput) {
       setOpenEdit(true)
-      const _id = selectedInput.value
-      setIdProduct(_id)
-      // navigate(`/product/edit/${id}`)
+      const index = selectedInput.value
+      setIndex(index)
     } else {
       toast.warning('กรุณาเลือกรายการที่ต้องการแก้ไข')
     }
   }
 
-  const onDeleteClick = (e) => {
-    e.preventDefault()
+  const onDeleteClick = () => {
+    const selectedInput = document.querySelector('input[name="index"]:checked')
 
-    const selectedInput = document.querySelector('input[name="_id"]:checked')
     if (!selectedInput) {
       toast.warning('กรุณาเลือกรายการที่ต้องการลบ')
       return
     }
 
-    const idP = selectedInput.value
-    // console.log(idP)
+    let index = selectedInput.value
+    dispatch(deletedProduct(index))
 
-    fetch(`${baseURL}/api/daily/delete/product/${idP}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.text())
-      .then((result) => {
-        toast.success(result)
-        dispatch(deletedProduct(idP))
-        navigate(`/admin/daily-stock/edit/${id}`)
-      })
+    console.log('delete selected')
+  }
+
+  const handleStatusChange = (e) => {
+    const newStatus = e.target.value
+    dispatch(updateDailyStockStatus(newStatus))
   }
 
   let dt = new Date(Date.parse(dailyStock.date_added))
@@ -114,16 +113,19 @@ const DailyEdit = () => {
             {/* Card Header */}
             <header className="card-header d-flex justify-content-start align-items-center p-3">
               วันที่:&nbsp;
-              <strong className="text-primary">{df}</strong>
+              <span className="text-primary" name="date_added">
+                {df}
+              </span>
             </header>
             <div className="container">
               <div className="row">
                 <div className="col-6 d-flex align-items-center">
                   Status:&nbsp;
                   <select
-                    className="btn btn-sm btn-light border text-capitalize"
                     name="status"
+                    className="btn btn-sm btn-light border text-capitalize"
                     defaultValue={dailyStock.status}
+                    onChange={handleStatusChange} // เพิ่มการจัดการการเปลี่ยนแปลง
                     style={{ height: '30px' }}
                   >
                     {status.map((item, i) => (
@@ -161,6 +163,7 @@ const DailyEdit = () => {
                   <tr>
                     <th>
                       <button
+                        type="button"
                         className="btn btn-sm btn-light border"
                         onClick={onEditClick}
                       >
@@ -169,10 +172,10 @@ const DailyEdit = () => {
                     </th>
                     <th>รหัส</th>
                     <th>สินค้า</th>
-                    <th>สินค้าที่มี</th>
+                    <th>จำนวน</th>
                     <th>limit</th>
                     <th>ราคา</th>
-                    <th>เหลือ</th>
+                    <th>คงเหลือ</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -180,18 +183,18 @@ const DailyEdit = () => {
                     dailyStock.products.map((p, index) => {
                       // console.log(p)
                       return (
-                        <tr key={index + 1}>
+                        <tr key={index}>
                           <td>
                             <input
                               type="radio"
-                              name="_id"
-                              defaultValue={p._id}
+                              name="index"
+                              defaultValue={index}
                               className="form-check-input"
                             />
                           </td>
                           <td>{p.code}</td>
                           <td>{p.name}</td>
-                          <td>{p.stock}</td>
+                          <td>{p.stock_quantity}</td>
                           <td>{p.limit}</td>
                           <td>{p.price}</td>
                           <td>{p.remaining}</td>
@@ -201,6 +204,7 @@ const DailyEdit = () => {
                   <tr>
                     <td>
                       <button
+                        type="button"
                         className="btn btn-sm btn-light border"
                         onClick={onDeleteClick}
                       >
@@ -240,8 +244,7 @@ const DailyEdit = () => {
         <DailyProductEdit
           isOpenEdit={isOpenEdit}
           setOpenEdit={setOpenEdit}
-          idEdit={idEdit}
-          idProduct={idProduct}
+          index={index}
         />
       )}
     </>

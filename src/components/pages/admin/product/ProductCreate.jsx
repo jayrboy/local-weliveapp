@@ -10,6 +10,7 @@ function ProductCreate(props) {
   let { isOpenCreate, setOpenCreate } = props
   const form = useRef()
   const navigate = useNavigate()
+  const token = localStorage.getItem('token')
 
   const {
     register,
@@ -26,10 +27,13 @@ function ProductCreate(props) {
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
-    fetch(`${baseURL}/api/db/create`, {
+    fetch(`${baseURL}/api/product`, {
       method: 'POST',
       body: JSON.stringify(formEnt),
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
     })
       .then((res) => res.text())
       .then((result) => {
@@ -109,10 +113,10 @@ function ProductCreate(props) {
           <label className="form-label mt-2">จำนวนสินค้า</label>
           <input
             type="number"
-            name="stock"
+            name="stock_quantity"
             min="0"
             className="form-control form-control-sm"
-            {...register('stock', {
+            {...register('stock_quantity', {
               validate: (value) => parseFloat(value) > 0,
             })}
           />

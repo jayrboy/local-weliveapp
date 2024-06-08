@@ -128,7 +128,7 @@ export default function DailyStock() {
                                 <tr key={index + 1}>
                                   <td>{p.code}</td>
                                   <td>{p.name}</td>
-                                  <td>{p.stock}</td>
+                                  <td>{p.stock_quantity}</td>
                                   <td>{p.limit}</td>
                                   <td>{p.price}</td>
                                   <td>{p.paid}</td>
