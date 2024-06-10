@@ -300,9 +300,9 @@ export default function CustomerOrder() {
             </TableContainer>
           </div>
         </div>
-        <div className="mt-3">
-          <div className="m-3 ms-5">
-            <div className="card">
+        <div className="mt-3 container">
+          <div className=" align-items-center m-3 ms-5">
+            <div className="card w-auto ">
               <div className="m-3">
                 <span>Order</span>
                 <span className="text-danger ms-3 ">#{formData.OrderID}</span>
