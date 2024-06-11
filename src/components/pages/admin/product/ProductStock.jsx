@@ -14,13 +14,11 @@ import { FaPlus } from 'react-icons/fa'
 import ProductCreate from './ProductCreate'
 import ProductEdit from './ProductEdit'
 
-//TODO: Product
 const Stock = () => {
   let [data, setData] = useState('')
   let [page, setPage] = useState([])
   const form = useRef()
 
-  //อ่านคีย์เวิร์ดจาก URL
   let qStr = window.location.search
   let params = new URLSearchParams(qStr)
   const location = useLocation()
@@ -35,7 +33,6 @@ const Stock = () => {
 
   useEffect(() => {
     if (!isOpenEdit) {
-      // เรียก fetch ข้อมูลอีกครั้งหลังจากปิดการแก้ไข
       fetch(`${baseURL}/api/product/search?` + params, {
         headers: { Authorization: 'Bearer ' + token },
       })
@@ -60,7 +57,6 @@ const Stock = () => {
           <div className="table-responsive px-2">
             <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
               <caption className="ms-3">
-                {' '}
                 {numDocs === 0 ? (
                   <>ไม่พบข้อมูล</>
                 ) : (
@@ -85,7 +81,6 @@ const Stock = () => {
               </thead>
               <tbody>
                 {result.docs.map((doc) => {
-                  //จัดรูปแบบวันเดือนปี ที่สามารถเข้าใจได้
                   let dt = new Date(Date.parse(doc.date_added))
                   let df = (
                     <>
@@ -102,10 +97,12 @@ const Stock = () => {
                           type="radio"
                           name="_id"
                           value={doc._id}
-                          className="form-check-input "
+                          className="form-check-input"
                         />
                       </td>
-                      <td>{doc.code}</td>
+                      <td>
+                        <Link to={`/product-graph/${doc._id}`}>{doc.code}</Link>
+                      </td>
                       <td>{doc.name}</td>
                       <td>{doc.stock_quantity}</td>
                       <td>{p}</td>
@@ -137,19 +134,12 @@ const Stock = () => {
     let q = params.get('q') || ''
     let url = `/admin/stock?q=${q}&page=`
 
-    //เนื่องจากจำนวนข้อมูลตัวอย่างมีไม่มาก
-    //จึงให้แสดงหมายเลขในช่วง -/+ 2 จากเพจปัจจุบัน
-
-    //ให้แสดง 2 หมายเลขก่อนเพจปัจจุบัน แต่ต้องไม่ต่ำกว่า 1
     let start = result.page - 2
     start = start < 1 ? 1 : start
 
-    //ถัดจากเพจปัจจุบัน ให้แสดงอีก 2 หมายเลข (ต้องไม่เกินจำนวนเพจทั้งหมด)
     let end = result.page + 2
     end = end < result.totalPages ? end : result.totalPages
 
-    //ถ้าช่วงหมายเลขเพจที่แสดง ยังสามารถเลื่อนกลับไปยังหมายเลขที่ตำ่กว่านี้ได้
-    //ให้แสดงลิงก์ '|<' เพื่อสำหรับคลิกย้อนกลับไป
     if (start > 1) {
       links.push(
         <li className="page-item" key="first-page">
@@ -178,8 +168,6 @@ const Stock = () => {
       }
     }
 
-    //ถ้าช่วงหมายเลขเพจที่แสดง ยังสามารถเลื่อนไปยังหมายเลขที่สูงกว่านี้ได้
-    //ให้แสดงลิงก์ '>|' เพื่อสำหรับคลิกย้อนไปยังเพจเหล่านั้น
     if (end < result.totalPages) {
       links.push(
         <li className="page-item" key="last-page">
@@ -230,7 +218,6 @@ const Stock = () => {
       setOpenEdit(true)
       const id = selectedInput.value
       setIdEdit(id)
-      // navigate(`/product/edit/${id}`)
     } else {
       toast.warning('กรุณาเลือกรายการที่ต้องการแก้ไข')
     }
@@ -255,7 +242,6 @@ const Stock = () => {
                 type="text"
                 name="q"
                 placeholder="พิมพ์ชื่อสินค้าที่จะค้นหา"
-                // defaultValue={params.get('q')}
                 defaultValue={q}
                 className="form-control form-control-sm"
               />

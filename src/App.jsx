@@ -23,10 +23,12 @@ import ProductStock from './components/pages/admin/product/ProductStock'
 import DailyStock from './components/pages/admin/daily/DailyStock'
 import DailyCreate from './components/pages/admin/daily/DailyCreate'
 import DailyEdit from './components/pages/admin/daily/DailyEdit'
+import ProductGraph from './components/pages/admin/product/ProductGraph'
 
 import AdminSale from './components/pages/admin/AdminSale'
 import AdminCheckout from './components/pages/admin/AdminCheckout'
 import CustomerOrder from './components/pages/admin/customer/CustomerOrder'
+import CustomerByOrder from './components/pages/admin/customer/CoustomerByOrder'
 import CustomerEdit from './components/pages/admin/customer/CustomerEdit'
 import SearchCustomer from './components/pages/admin/customer/SearchCustomer'
 import SearchOrder from './components/pages/admin/customer/SearchOrder'
@@ -126,7 +128,7 @@ function App() {
             </UserRoute>
           }
         />
-        <Route path="/order/:id" element={<UserOrder />} />
+        <Route path="/order/:id" element={<CustomerByOrder />} />
 
         {/* Admin */}
         <Route
@@ -145,6 +147,15 @@ function App() {
             </AdminRoute>
           }
         />
+        <Route
+          path="/admin/product-graph/:id"
+          element={
+            <AdminRoute>
+              <ProductGraph />
+            </AdminRoute>
+          }
+        />
+        
         <Route
           path="/admin/daily-stock"
           element={
