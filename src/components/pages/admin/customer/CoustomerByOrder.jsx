@@ -1,230 +1,232 @@
-// import React, { useEffect, useState } from 'react'
-// import { Checkbox } from '@mui/material'
-// import { Link, useNavigate, useLocation } from 'react-router-dom'
-// import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined'
-// import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined'
-// import PlagiarismOutlinedIcon from '@mui/icons-material/PlagiarismOutlined'
-// import CloseIcon from '@mui/icons-material/Close'
-// import axios from 'axios'
-// import { baseURL } from '../../../../App'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { baseURL } from '../../../../App'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
 
 export default function CustomerByOrder() {
+  const { id } = useParams()
+  const [alldata, setalldata] = useState([])
+  const token = localStorage.getItem('token')
+  const [formData, setFormData] = useState({
+    picture_payment: '',
+    address: '',
+    sub_district: '',
+    sub_area: '',
+    district: '',
+    postcode: '',
+    tel: '',
+    date_added: '',
+    _id: id,
+  })
 
-    
-//   const navigate = useNavigate()
-//   const location = useLocation()
-//   const { idFb } = location.state || {}
-//   const [orderDetails, setOrderDetails] = useState(null)
-//   const [loading, setLoading] = useState(true)
-//   const [error, setError] = useState(null)
-//   const token = localStorage.getItem('token')
+  useEffect(() => {
+    const fetchSaleOrder = async () => {
+      try {
+        const response = await axios.get(
+          `${baseURL}/api/sale-order/read/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        setalldata(response.data)
+      } catch (error) {
+        console.error('There was an error!', error)
+      }
+    }
 
-//   useEffect(() => {
-//     const fetchOrderDetails = async () => {
-//       try {
-//         const response = await axios.get(`${baseURL}/api/sale-order/${idFb}`, {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         })
-//         setOrderDetails(response.data)
-//         setLoading(false)
-//       } catch (error) {
-//         setError('Error fetching order details')
-//         setLoading(false)
-//       }
-//     }
+    if (token) {
+      fetchSaleOrder()
+    }
+  }, [token, id])
 
-//     if (idFb) {
-//       fetchOrderDetails()
-//     }
-//   }, [idFb, token])
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prevData) => ({ ...prevData, [name]: value }))
+  }
 
-//   if (loading) {
-//     return <div>Loading...</div>
-//   }
+  const handleImageChange = (e) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      picture_payment: e.target.files[0],
+    }))
+  }
 
-//   if (error) {
-//     return <div>{error}</div>
-//   }
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const formDataToSend = new FormData()
+    formDataToSend.append('picture_payment', formData.picture_payment)
+    formDataToSend.append('address', formData.address)
+    formDataToSend.append('sub_district', formData.sub_district)
+    formDataToSend.append('sub_area', formData.sub_area)
+    formDataToSend.append('district', formData.district)
+    formDataToSend.append('postcode', formData.postcode)
+    formDataToSend.append('tel', formData.tel)
+    formDataToSend.append('date_added', formData.date_added)
+    formDataToSend.append('_id', formData._id)
 
-//   if (!orderDetails) {
-//     return <div>No order details found</div>
-//   }
+    try {
+      const response = await axios.put(
+        `${baseURL}/api/sale-order`,
+        formDataToSend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      )
 
-//   return (
-//     <>
-//       <div className="row m-3">
-//         <div className="col-lg-12">
-//           <h3>
-//             <Link to="/admin/home" className="text-decoration-none">
-//               WE LIVE |
-//             </Link>{' '}
-//             <span className="text-success"> แก้ไขข้อมูลของลูกค้า</span>
-//           </h3>
-//         </div>
-//       </div>
+      return response.data
+    } catch (error) {
+      console.error('There was an error!', error)
+    }
+  }
 
-//       <div
-//         className="card shadow rounded mx-auto"
-//         style={{ width: '400px', background: '#fff' }}
-//       >
-//         <span className="card-header d-flex justify-content-between align-items-center">
-//           <h4>CUSTOMER / แก้ไขข้อมูลลูกค้า</h4>
-//           <button
-//             className="btn btn-sm"
-//             onClick={() => navigate('/search/customer')}
-//           >
-//             <CloseIcon sx={{ color: 'red' }} />
-//           </button>
-//         </span>
-//         <form className="p-4">
-//           <label className="form-label">ชื่อ</label>
-//           <input
-//             type="text"
-//             placeholder={orderDetails.name}
-//             name="fbname"
-//             className="form-control form-control-sm"
-//             required
-//           />
-//           <br />
-//           <label className="form-label">ชื่อลูกค้า</label>
-//           <input
-//             type="text"
-//             name="name"
-//             placeholder={orderDetails.customerName}
-//             className="form-control form-control-sm"
-//             required
-//           />
-//           <br />
-//           <label className="form-label">ที่อยู่</label>
-//           <textarea
-//             type="text"
-//             name="Hnumber"
-//             placeholder={orderDetails.address}
-//             className="form-control form-control-sm"
-//             required
-//           />
-//           <br />
-//           <label className="form-label">ตำบล</label>
-//           <input
-//             type="text"
-//             name="tb"
-//             placeholder={orderDetails.district}
-//             className="form-control form-control-sm"
-//             required
-//           />
-//           <br />
-//           <label className="form-label">จังหวัด</label>
-//           <input
-//             type="text"
-//             name="jw"
-//             placeholder={orderDetails.province}
-//             className="form-control form-control-sm"
-//             required
-//           />
-//           <br />
-//           <label className="form-label">รหัสไปรษณีย์</label>
-//           <input
-//             type="text"
-//             name="postID"
-//             placeholder={orderDetails.postcode}
-//             className="form-control form-control-sm"
-//           />
-//           <br />
-//           <label className="form-label">โทรศัพท์</label>
-//           <input
-//             type="number"
-//             name="phoneNumber"
-//             placeholder={orderDetails.phoneNumber}
-//             className="form-control form-control-sm"
-//             required
-//           />
-//           <br />
-//           <label className="form-label">เลขที่บัญชีของลูกค้า</label>
-//           <input
-//             type="number"
-//             name="bankNumber"
-//             placeholder={orderDetails.bankNumber}
-//             className="form-control form-control-sm"
-//             required
-//           />
-//           <br />
-//           <label className="form-label">เลขที่เสียภาษีของลูกค้า</label>
-//           <input
-//             type="number"
-//             name="taxNumber"
-//             placeholder={orderDetails.taxNumber}
-//             className="form-control form-control-sm"
-//             required
-//           />
-//           <br />
-//           <div>
-//             <label className="form-label">สถานะ :</label>
-//             <small className="text-success">
-//               <Checkbox checked={orderDetails.status === 'sent'} />
-//               ส่งแล้ว
-//             </small>
-//             <small className="text-danger">
-//               <Checkbox checked={orderDetails.status === 'not_sent'} />
-//               ยังไม่ส่ง
-//             </small>
-//             <small className="text-warning">
-//               <Checkbox checked={orderDetails.status === 'banned'} />
-//               ไม่โอน/Ban
-//             </small>
-//           </div>
-//           <div className="d-flex justify-content-center mt-2">
-//             <Link to="/search/customer" className="btn btn-secondary btn-sm">
-//               กลับหน้าหลัก
-//             </Link>
-//             &nbsp;&nbsp;
-//             <button className="btn btn-outline-success btn-sm">
-//               พิมพ์ข้อมูลนี้
-//             </button>
-//             &nbsp;&nbsp;
-//             <button className="btn btn-success btn-sm">บันทึกการแก้ไข</button>
-//           </div>
-//         </form>
-//       </div>
-
-//       <table className="table table-sm table-striped text-center table-bordered border-light caption-top">
-//         <caption className="ms-3">
-//           <small>ประวัติการซื้อขายของลูกค้า</small>
-//         </caption>
-//         <thead className="table-light">
-//           <tr>
-//             <th>#</th>
-//             <th>วันที่</th>
-//             <th>จำนวน</th>
-//             <th>จำนวนเงิน</th>
-//             <th className="ms-3">action 1</th>
-//             <th>action 2</th>
-//             <th>action 3</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {orderDetails.orders.map((order, index) => (
-//             <tr key={order.id}>
-//               <td>{index + 1}</td>
-//               <td>{order.date}</td>
-//               <td>{order.amount}</td>
-//               <td>{order.totalPrice}</td>
-//               <td className="ms-3">
-//                 <PlagiarismOutlinedIcon />
-//               </td>
-//               <td>
-//                 <PictureAsPdfOutlinedIcon />
-//               </td>
-//               <td>
-//                 <LocalPrintshopOutlinedIcon />
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//       <br />
-//       <br />
-//     </>
-//   )
+  return (
+    <div className="container position-relative mt-3 mx-auto">
+      <h3 className="text-start mb-3">
+        <span>We Live App</span>
+        <span className="text-success ms-2">| รายการสั่งซื้อ </span>
+      </h3>
+      <div className="card shadow">
+        <div className="text-center">
+          <br />
+          <span> Order :</span>
+          <span className="text-danger">#{id}</span> <br />
+          --------------------------------------------
+          <br />
+          <br />
+          พร้อมเพย์ 012-345-6789
+          <br />
+          KBANK 012-345-6789
+          <br />
+          ชื่อบัญชี นายเจษฎากร คุ้มเดช
+          <br />
+          <br />
+          --------------------------------------------
+          <br />
+          🙏 รบกวนขอความกรุณาลูกค้า 💢 โอนยอดบิลต่อบิลนะคะ
+          แล้วค่อยเอฟใหม่ได้คะ💢
+          <br /> 💢หากมียอดค้างหักลบยอดเอง โอนได้เลยคะ
+          รบกวนแนบรูปยอดค้างไว้ได้เลยคะ ขอบคุณมากค่ะ🙏
+          <br /> 🙏 ถ้าสินค้ามีตำหนิกรุณารีบแจ้ง รับเปลี่ยน
+          หรือคืนสินค้ามีตำหนิจากร้าน ส่งผิดสีผิดแบบ ผิดไซส์ เท่านั้นคะ
+          ขอบพระคุณมากคะ🙏
+          <br />
+          <br />
+        </div>
+      </div>
+      <div className="mt-4">
+        <Paper elevation={3} className="p-4">
+          <Typography variant="h6" gutterBottom>
+            แบบฟอร์มสำหรับกรอกข้อมูล
+          </Typography>
+          <form onSubmit={handleSubmit} encType="multipart/form-data">
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  type="date"
+                  name="date_added"
+                  value={formData.date_added}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="ที่อยู่"
+                  fullWidth
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  label="ตำบล"
+                  fullWidth
+                  name="district"
+                  value={formData.district}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  label="อำเภอ"
+                  fullWidth
+                  name="sub_area"
+                  value={formData.sub_area}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  label="จังหวัด"
+                  fullWidth
+                  name="sub_district"
+                  value={formData.sub_district}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="รหัสไปรษณีย์"
+                  fullWidth
+                  name="postcode"
+                  value={formData.postcode}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="เบอร์โทรศัพท์"
+                  fullWidth
+                  name="tel"
+                  value={formData.tel}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <input
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="image-upload"
+                  type="file"
+                  onChange={handleImageChange}
+                />
+                <label htmlFor="image-upload">
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    component="span"
+                    className="m-lg-2"
+                  >
+                    อัปโหลดรูปภาพ
+                  </Button>
+                  {formData.picture_payment && formData.picture_payment.name}
+                </label>
+              </Grid>
+              <Grid item xs={4}>
+                <Button type="submit" variant="contained" color="primary">
+                  ยืนยันการชำระเงิน
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        </Paper>
+      </div>
+    </div>
+  )
 }
