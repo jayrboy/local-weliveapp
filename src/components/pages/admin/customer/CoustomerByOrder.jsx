@@ -56,7 +56,7 @@ export default function CustomerByOrder() {
 
   const calculateTotalExpressPrice = () => {
     const totalQuantity = calculateTotalQuantity();
-  
+
     if (totalQuantity > 5 && totalQuantity <= 10) {
       return 100
     } else if (totalQuantity > 10) {
@@ -68,6 +68,7 @@ export default function CustomerByOrder() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
+    console.log(name,value)
     setFormData((prevData) => ({ ...prevData, [name]: value }))
   }
 
@@ -91,9 +92,9 @@ export default function CustomerByOrder() {
     formDataToSend.append('tel', formData.tel)
     formDataToSend.append('date_added', formData.date_added)
     formDataToSend.append('_id', id)
-    
+
     const formEnt = Object.fromEntries(formDataToSend.entries())
-    console.log("SEND THIS : " , formEnt)
+    console.log("SEND THIS : ", formEnt)
     try {
       const response = await axios.put(
         `${baseURL}/api/sale-order`,
@@ -109,6 +110,18 @@ export default function CustomerByOrder() {
       console.error('There was an error!', error)
     }
   }
+
+  const buffer = orders;
+
+  let dt = new Date(Date.parse(orders.data.date_added))
+  const a = (month) => {
+    if(month<10) return "0"+month
+    else return ""+month
+  }
+  let df = ""+dt.getFullYear()+"-"+(a(dt.getMonth()+1))+"-"+dt.getDate()
+  console.log(df)
+
+
 
   return (
     <div className="container position-relative mt-3 mx-auto">
@@ -163,7 +176,7 @@ export default function CustomerByOrder() {
               <TableRow>
                 <TableCell className='text-end'>  </TableCell>
                 <TableCell className='text-end'>ที่ต้องชำระ </TableCell>
-                <TableCell className='text-end'>{calculateTotalPrice()+calculateTotalExpressPrice()}</TableCell>
+                <TableCell className='text-end'>{calculateTotalPrice() + calculateTotalExpressPrice()}</TableCell>
                 <TableCell className='text-end'>บาท</TableCell>
               </TableRow>
             </TableBody>
@@ -199,113 +212,232 @@ export default function CustomerByOrder() {
         </div>
       </div>
 
-      <div className="mt-4">
-        <Paper elevation={3} className="p-4">
-          <Typography variant="h6" gutterBottom>
-            แบบฟอร์มสำหรับกรอกข้อมูล
-          </Typography>
-          <form onSubmit={handleSubmit} encType="multipart/form-data">
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  type="date"
-                  name="date_added"
-                  defaultValue={formData.date_added}
-                  onChange={handleChange}
-                  required
+      {orders.data.address == null ? <>
+        <div className="mt-4">
+          <Paper elevation={3} className="p-4">
+            <Typography variant="h6" gutterBottom>
+              แบบฟอร์มสำหรับกรอกข้อมูล
+            </Typography>
+            <form onSubmit={handleSubmit} encType="multipart/form-data">
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    type="date"
+                    name="date_added"
+                    defaultValue={formData.date_added}
+                    onChange={handleChange}
+                    required
 
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="ที่อยู่"
-                  fullWidth
-                  name="address"
-                  defaultValue={formData.address}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  label="ตำบล"
-                  fullWidth
-                  name="district"
-                  defaultValue={formData.district}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  label="อำเภอ"
-                  fullWidth
-                  name="sub_area"
-                  defaultValue={formData.sub_area}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  label="จังหวัด"
-                  fullWidth
-                  name="sub_district"
-                  defaultValue={formData.sub_district}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  label="รหัสไปรษณีย์"
-                  fullWidth
-                  name="postcode"
-                  defaultValue={formData.postcode}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  label="เบอร์โทรศัพท์"
-                  fullWidth
-                  name="tel"
-                  defaultValue={formData.tel}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <input
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  id="image-upload"
-                  type="file"
-                  onChange={handleImageChange}
-                />
-                <label htmlFor="image-upload">
-                  <Button
-                    variant="contained"
-                    color="warning"
-                    component="span"
-                    className="m-lg-2"
-                  >
-                    อัปโหลดรูปภาพ
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    name="address"
+                    defaultValue={formData.date_added}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    label="ตำบล"
+                    fullWidth
+                    name="district"
+                    defaultValue={formData.date_added}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    label="อำเภอ"
+                    fullWidth
+                    name="sub_area"
+                    defaultValue={formData.date_added}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    label="จังหวัด"
+                    fullWidth
+                    name="sub_district"
+                    defaultValue={formData.date_added}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="รหัสไปรษณีย์"
+                    fullWidth
+                    name="postcode"
+                    defaultValue={formData.date_added}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="เบอร์โทรศัพท์"
+                    fullWidth
+                    name="tel"
+                    defaultValue={formData.date_added}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <input
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    id="image-upload"
+                    type="file"
+                    onChange={handleImageChange}
+                  />
+                  <label htmlFor="image-upload">
+                    <Button
+                      variant="contained"
+                      color="warning"
+                      component="span"
+                      className="m-lg-2"
+                    >
+                      อัปโหลดรูปภาพ
+                    </Button>
+                    {formData.picture_payment && formData.picture_payment.name}
+                  </label>
+                </Grid>
+                <Grid item xs={4}>
+                  <Button type="submit" variant="contained" color="primary">
+                    ยืนยันการชำระเงิน
                   </Button>
-                  {formData.picture_payment && formData.picture_payment.name}
-                </label>
+                </Grid>
               </Grid>
-              <Grid item xs={4}>
-                <Button type="submit" variant="contained" color="primary">
-                  ยืนยันการชำระเงิน
-                </Button>
+            </form>
+          </Paper>
+        </div>
+      
+      
+      </> : <>
+      <p hidden>{orders.data.address}</p>
+        <div className="mt-4">
+          <Paper elevation={3} className="p-4">
+            <Typography variant="h6" gutterBottom>
+              แบบฟอร์มสำหรับกรอกข้อมูล
+            </Typography>
+            <form onSubmit={handleSubmit} encType="multipart/form-data">
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  
+                  <TextField
+                    fullWidth
+                    type="date"
+                    name="date_added"
+                    defaultValue={df}
+                    onChange={handleChange}
+                    required
+
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                 
+                  {buffer.data.address != null ? <>
+                    <TextField
+                    fullWidth
+                    name="address"
+                    defaultValue={buffer.data.address}
+                    onChange={handleChange}
+                    required
+                  /></>:<></>}
+                </Grid>
+                <Grid item xs={4}>
+              
+                  {buffer.data.address != null ? <>
+                    <TextField
+                    label="ตำบล"
+                    fullWidth
+                    name="district"
+                    defaultValue={"" + orders.data.district}
+                    onChange={handleChange}
+                    required
+                  /></>:<></>}
+                  
+                </Grid>
+                <Grid item xs={4}>
+                {buffer.data.address != null ? <>
+                  <TextField
+                    label="อำเภอ"
+                    fullWidth
+                    name="sub_area"
+                    defaultValue={"" + orders.data.sub_area}
+                    onChange={handleChange}
+                    required
+                  /></>:<></>}
+                  
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    label="จังหวัด"
+                    fullWidth
+                    name="sub_district"
+                    defaultValue={"" + orders.data.sub_district}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="รหัสไปรษณีย์"
+                    fullWidth
+                    name="postcode"
+                    defaultValue={"" + orders.data.postcode}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="เบอร์โทรศัพท์"
+                    fullWidth
+                    name="tel"
+                    defaultValue={"" + orders.data.tel}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <input
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    id="image-upload"
+                    type="file"
+                    onChange={handleImageChange}
+                  />
+                  <label htmlFor="image-upload">
+                    <Button
+                      variant="contained"
+                      color="warning"
+                      component="span"
+                      className="m-lg-2"
+                    >
+                      อัปโหลดรูปภาพ
+                    </Button>
+                    {formData.picture_payment && formData.picture_payment.name}
+                  </label>
+                </Grid>
+                <Grid item xs={4}>
+                  <Button type="submit" variant="contained" color="primary">
+                    ยืนยันการชำระเงิน
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-          </form>
-        </Paper>
-      </div>
+            </form>
+          </Paper>
+        </div>
+      </>}
     </div>
   )
 }
