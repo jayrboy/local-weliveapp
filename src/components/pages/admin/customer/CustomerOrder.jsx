@@ -103,7 +103,7 @@ export default function CustomerOrder() {
                     return(<TableRow key={order._id}>
                       <TableCell className='text-center'>{index + 1}</TableCell>
                       <TableCell className='text-center'>
-                        <Link to={`/order/${order.idFb}`} state={{ idFb: order.idFb }}>
+                        <Link to={`/order/${order._id}`} state={{ _id: order._id }}>
                           {order.name}
                         </Link>
                       </TableCell>

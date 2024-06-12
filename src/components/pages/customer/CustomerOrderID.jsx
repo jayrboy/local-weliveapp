@@ -30,7 +30,7 @@ export default function CustomerOrderID() {
         <div className="text-center">
           <br />
           <span> Order :</span>
-          <span className=" text-danger">#{'12160'}</span> <br />
+          <span className=" text-danger">#{id}</span> <br />
           <span> เลขที่บัญชี....</span>
           <br />
           เลขที่บัญชี

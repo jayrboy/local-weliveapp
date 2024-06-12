@@ -4,47 +4,68 @@ import { useParams } from 'react-router-dom'
 import { baseURL } from '../../../../App'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import { TableFooter } from '@mui/material'
 
 export default function CustomerByOrder() {
   const { id } = useParams()
-  const [alldata, setalldata] = useState([])
+  const expressName = ""
+  const [orders, setOrders] = useState({ data: { name: "kkkk", orders: [] } })
   const token = localStorage.getItem('token')
-  const [formData, setFormData] = useState({
-    picture_payment: '',
-    address: '',
-    sub_district: '',
-    sub_area: '',
-    district: '',
-    postcode: '',
-    tel: '',
-    date_added: '',
-    _id: id,
-  })
+  const [formData, setFormData] = useState([])
+
+  const fetchSaleOrder = async () => {
+    try {
+      const response = await axios.get(
+        `${baseURL}/api/sale-order/read/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      console.log("oo", response.data)
+      setOrders({ data: response.data })
+    } catch (error) {
+      console.error('There was an error!', error)
+    }
+  }
 
   useEffect(() => {
-    const fetchSaleOrder = async () => {
-      try {
-        const response = await axios.get(
-          `${baseURL}/api/sale-order/read/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        setalldata(response.data)
-      } catch (error) {
-        console.error('There was an error!', error)
-      }
-    }
-
     if (token) {
       fetchSaleOrder()
     }
   }, [token, id])
+
+  console.log("1.", orders)
+
+  const calculateTotalQuantity = () => {
+    return orders.data.orders.reduce((total, order) => total + order.quantity, 0)
+  }
+
+  const calculateTotalPrice = () => {
+    return orders.data.orders.reduce((total, order) => total + (order.price * order.quantity), 0)
+  }
+
+  const calculateTotalExpressPrice = () => {
+    const totalQuantity = calculateTotalQuantity();
+  
+    if (totalQuantity > 5 && totalQuantity <= 10) {
+      return 100
+    } else if (totalQuantity > 10) {
+      return 200
+    } else {
+      return 50
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -81,7 +102,6 @@ export default function CustomerByOrder() {
           },
         }
       )
-
       return response.data
     } catch (error) {
       console.error('There was an error!', error)
@@ -92,8 +112,62 @@ export default function CustomerByOrder() {
     <div className="container position-relative mt-3 mx-auto">
       <h3 className="text-start mb-3">
         <span>We Live App</span>
-        <span className="text-success ms-2">| รายการสั่งซื้อ </span>
+        <span className="text-success ms-2">| รายการสั่งซื้อของคุณ {orders.data.name} </span>
       </h3>
+      <div className='mt-3 mb-3'>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell className='text-center'>รายการที่</TableCell>
+                <TableCell className='text-center'>ชื่อสินค้า</TableCell>
+                <TableCell className='text-center'>จำนวน</TableCell>
+                <TableCell className='text-center'>ราคา</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orders.data.orders && orders.data.orders.length > 0 ? (
+                orders.data.orders.map((order, index) => (
+                  <TableRow key={order._id}>
+                    <TableCell className='text-center'>{index + 1}</TableCell>
+                    <TableCell className='text-center'>{order.name}</TableCell>
+                    <TableCell className='text-center'>{order.quantity} ชิ้น</TableCell>
+                    <TableCell className='text-center'>{order.price} บาท</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell className='text-center' colSpan={4}>กำลังโหลดข้อมูล</TableCell>
+                </TableRow>
+              )}
+              <TableRow>
+                <TableCell className='text-end'>  </TableCell>
+                <TableCell className='text-end'>จำนวนสินค้ารวม </TableCell>
+                <TableCell className='text-end'>{calculateTotalQuantity()}</TableCell>
+                <TableCell className='text-end'>ชิ้น</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className='text-end'>  </TableCell>
+                <TableCell className='text-end'>ราคาสินค้ารวม </TableCell>
+                <TableCell className='text-end'>{calculateTotalPrice()}</TableCell>
+                <TableCell className='text-end'>บาท</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className='text-end'> </TableCell>
+                <TableCell className='text-end'>ค่าขนส่ง</TableCell>
+                <TableCell className='text-end'>{calculateTotalExpressPrice()}</TableCell>
+                <TableCell className='text-end'>บาท</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className='text-end'>  </TableCell>
+                <TableCell className='text-end'>ราคาสินค้ารวมที่ต้องชำระ </TableCell>
+                <TableCell className='text-end'>{calculateTotalPrice()+calculateTotalExpressPrice()}</TableCell>
+                <TableCell className='text-end'>บาท</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
       <div className="card shadow">
         <div className="text-center">
           <br />
@@ -122,6 +196,7 @@ export default function CustomerByOrder() {
           <br />
         </div>
       </div>
+
       <div className="mt-4">
         <Paper elevation={3} className="p-4">
           <Typography variant="h6" gutterBottom>
