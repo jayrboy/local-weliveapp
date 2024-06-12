@@ -46,8 +46,8 @@ import LoadingFn from './components/functions/LoadingFn'
 import { useDispatch } from 'react-redux'
 import { login } from './redux/userSlice'
 
-export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
-// export const baseURL = 'http://localhost:8000'
+// export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
+export const baseURL = 'http://localhost:8000'
 
 function App() {
   const dispatch = useDispatch()

@@ -18,10 +18,9 @@ import { TableFooter } from '@mui/material'
 export default function CustomerByOrder() {
   const { id } = useParams()
   const expressName = ""
-  const [orders, setOrders] = useState({ data: { name: "kkkk", orders: [] } })
+  const [orders, setOrders] = useState({ data: { name: "loading", orders: [] } })
   const token = localStorage.getItem('token')
   const [formData, setFormData] = useState([])
-
   const fetchSaleOrder = async () => {
     try {
       const response = await axios.get(
@@ -80,6 +79,7 @@ export default function CustomerByOrder() {
   }
 
   const handleSubmit = async (e) => {
+    console.log(formData)
     e.preventDefault()
     const formDataToSend = new FormData()
     formDataToSend.append('picture_payment', formData.picture_payment)
@@ -90,8 +90,10 @@ export default function CustomerByOrder() {
     formDataToSend.append('postcode', formData.postcode)
     formDataToSend.append('tel', formData.tel)
     formDataToSend.append('date_added', formData.date_added)
-    formDataToSend.append('_id', formData._id)
-
+    formDataToSend.append('_id', id)
+    
+    const formEnt = Object.fromEntries(formDataToSend.entries())
+    console.log("SEND THIS : " , formEnt)
     try {
       const response = await axios.put(
         `${baseURL}/api/sale-order`,
@@ -160,7 +162,7 @@ export default function CustomerByOrder() {
               </TableRow>
               <TableRow>
                 <TableCell className='text-end'>  </TableCell>
-                <TableCell className='text-end'>ราคาสินค้ารวมที่ต้องชำระ </TableCell>
+                <TableCell className='text-end'>ที่ต้องชำระ </TableCell>
                 <TableCell className='text-end'>{calculateTotalPrice()+calculateTotalExpressPrice()}</TableCell>
                 <TableCell className='text-end'>บาท</TableCell>
               </TableRow>
@@ -209,8 +211,10 @@ export default function CustomerByOrder() {
                   fullWidth
                   type="date"
                   name="date_added"
-                  value={formData.date_added}
+                  defaultValue={formData.date_added}
                   onChange={handleChange}
+                  required
+
                 />
               </Grid>
               <Grid item xs={12}>
@@ -218,7 +222,7 @@ export default function CustomerByOrder() {
                   label="ที่อยู่"
                   fullWidth
                   name="address"
-                  value={formData.address}
+                  defaultValue={formData.address}
                   onChange={handleChange}
                   required
                 />
@@ -228,7 +232,7 @@ export default function CustomerByOrder() {
                   label="ตำบล"
                   fullWidth
                   name="district"
-                  value={formData.district}
+                  defaultValue={formData.district}
                   onChange={handleChange}
                   required
                 />
@@ -238,7 +242,7 @@ export default function CustomerByOrder() {
                   label="อำเภอ"
                   fullWidth
                   name="sub_area"
-                  value={formData.sub_area}
+                  defaultValue={formData.sub_area}
                   onChange={handleChange}
                   required
                 />
@@ -248,7 +252,7 @@ export default function CustomerByOrder() {
                   label="จังหวัด"
                   fullWidth
                   name="sub_district"
-                  value={formData.sub_district}
+                  defaultValue={formData.sub_district}
                   onChange={handleChange}
                   required
                 />
@@ -258,7 +262,7 @@ export default function CustomerByOrder() {
                   label="รหัสไปรษณีย์"
                   fullWidth
                   name="postcode"
-                  value={formData.postcode}
+                  defaultValue={formData.postcode}
                   onChange={handleChange}
                   required
                 />
@@ -268,7 +272,7 @@ export default function CustomerByOrder() {
                   label="เบอร์โทรศัพท์"
                   fullWidth
                   name="tel"
-                  value={formData.tel}
+                  defaultValue={formData.tel}
                   onChange={handleChange}
                   required
                 />
