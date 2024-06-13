@@ -99,7 +99,7 @@ function App() {
   return (
     <React.Fragment>
       <CssBaseline />
-      <ToastContainer position="top-center" autoClose={1000} />
+      <ToastContainer position="top-center" autoClose={3000} />
       {/* Public */}
       <Routes>
         <Route

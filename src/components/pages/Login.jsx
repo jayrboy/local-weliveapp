@@ -72,19 +72,19 @@ const Login = () => {
   }
 
   //TODO: Login Main App
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
-    axios({
+    return await axios({
       method: 'POST',
       url: `${baseURL}/api/login`,
       data: formEnt,
       headers: { 'Content-Type': 'application/json' },
     })
       .then((result) => {
-        // console.log(result.data)
+        console.log(result.data)
         toast.success(result.data.payload.user.username + ' login successfully')
         dispatch(
           login({
@@ -106,9 +106,12 @@ const Login = () => {
 
   //TODO: Login Facebook
   async function responseFacebook(response) {
-    // console.log(response)
+    console.log(response)
+    console.log('Access Token :', response.accessToken)
 
-    await axios
+    localStorage.setItem('accessToken', response.accessToken)
+
+    return await axios
       .post(`${baseURL}/api/login-facebook`, response)
       .then((result) => {
         // console.log(result.data)
@@ -212,14 +215,14 @@ const Login = () => {
             {/* Facebook Login : autoLoad={true} login auto)*/}
 
             <FacebookLogin
-              appId="1375567326455411"
+              appId="1164205974620414"
               autoLoad={false}
               fields="name,email,picture"
               scope="public_profile"
               callback={responseFacebook}
               render={(renderProps) => (
                 <Button
-                  type="submit"
+                  type="button"
                   fullWidth
                   variant="contained"
                   sx={{ mb: 2 }}

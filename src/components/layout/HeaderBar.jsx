@@ -65,6 +65,7 @@ export default function HeaderBar() {
           {firstLoad ? (
             <>
               <RiLiveFill color="red" />
+              {/* Set Interval for Real-time  */}
               <GetComments />
             </>
           ) : (
