@@ -1,41 +1,96 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { baseURL } from '../../../../App';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { baseURL } from '../../../../App'
+import { useParams } from 'react-router-dom'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemAvatar from '@mui/material/ListItemAvatar'
+import Avatar from '@mui/material/Avatar'
+import ShowChartIcon from '@mui/icons-material/ShowChart'
+import InventoryIcon from '@mui/icons-material/Inventory'
+export default function ProductGraph() {
+  const { id } = useParams()
+  const [totalPrice, setTotalPrice] = useState(0)
+  const [totalQuantity, setTotalQuantity] = useState(0)
+  const [Product, setProduct] = useState({})
 
-const ProductGraph = () => {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
-    fetch(`${baseURL}/api/product/${id}`, {
-      headers: { Authorization: 'Bearer ' + token },
-    })
-      .then((response) => response.json())
-      .then((result) => setProduct(result))
-      .catch((err) => toast.error(err));
-  }, [id, token]);
+    const fetchSaleOrder = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/api/sale-order/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        console.log('Fetched Data: ', response.data)
+        const data = response.data
+        let priceSum = 0
+        let quantitySum = 0
 
-  if (!product) {
-    return <div>Loading...</div>;
-  }
+        data.forEach((x) => {
+          console.log('x: ', x)
+
+          if (x.complete === true) {
+            x.orders.forEach((y) => {
+              if (y._id === id) {
+                console.log('y: ', y)
+                priceSum += y.price
+                quantitySum += y.quantity
+                setProduct(y)
+              }
+            })
+          }
+        })
+
+        setTotalPrice(priceSum)
+        setTotalQuantity(quantitySum)
+      } catch (error) {
+        console.error('There was an error!', error)
+      }
+    }
+
+    if (token) {
+      fetchSaleOrder()
+    }
+  }, [token, id])
+
+  console.log('Product', Product)
+  console.log('Total Price: ', totalPrice)
+  console.log('Total Quantity: ', totalQuantity)
 
   return (
-    <div className="container">
-      <h3>Product Details</h3>
-      <p><strong>Product Code:</strong> {product.code}</p>
-      <p><strong>Product Name:</strong> {product.name}</p>
-      <p><strong>Stock Quantity:</strong> {product.stock_quantity}</p>
-      <p><strong>Price:</strong> {product.price}</p>
-      <p><strong>Cost:</strong> {product.cost}</p>
-      <p><strong>Date Added:</strong> {new Date(product.date_added).toLocaleDateString()}</p>
-      <p><strong>CF:</strong> {product.cf}</p>
-      <p><strong>Paid:</strong> {product.paid}</p>
-      <p><strong>Remaining:</strong> {product.remaining}</p>
-      {/* Add more product details and graphs as needed */}
+    <div className=" d-flex justify-content-center mt-5">
+      <List
+        sx={{
+          width: '100%',
+          maxWidth: 360,
+          bgcolor: 'background.paper',
+          borderRadius: '30px',
+        }}
+      >
+        <card>
+          <p className="text-center">สินค้า {Product.name}</p>
+        </card>
+        <ListItem>
+          <ListItemAvatar>
+            <Avatar>
+              <ShowChartIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText primary="ยอดขาย" secondary={totalPrice} />
+        </ListItem>
+        <ListItem>
+          <ListItemAvatar>
+            <Avatar>
+              <InventoryIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText primary="จำนวน" secondary={totalQuantity} />
+        </ListItem>
+      </List>
     </div>
-  );
-};
-
-export default ProductGraph;
+  )
+}

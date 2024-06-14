@@ -13,25 +13,22 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import { TableFooter } from '@mui/material'
 
 export default function CustomerByOrder() {
   const { id } = useParams()
-  const expressName = ""
-  const [orders, setOrders] = useState({ data: { name: "loading", orders: [] } })
+  const [orders, setOrders] = useState({
+    data: { name: 'loading', orders: [] },
+  })
   const token = localStorage.getItem('token')
   const [formData, setFormData] = useState([])
   const fetchSaleOrder = async () => {
     try {
-      const response = await axios.get(
-        `${baseURL}/api/sale-order/read/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      console.log("oo", response.data)
+      const response = await axios.get(`${baseURL}/api/sale-order/read/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      console.log('oo', response.data)
       setOrders({ data: response.data })
     } catch (error) {
       console.error('There was an error!', error)
@@ -44,18 +41,24 @@ export default function CustomerByOrder() {
     }
   }, [token, id])
 
-  console.log("1.", orders)
+  console.log('1.', orders)
 
   const calculateTotalQuantity = () => {
-    return orders.data.orders.reduce((total, order) => total + order.quantity, 0)
+    return orders.data.orders.reduce(
+      (total, order) => total + order.quantity,
+      0
+    )
   }
 
   const calculateTotalPrice = () => {
-    return orders.data.orders.reduce((total, order) => total + (order.price * order.quantity), 0)
+    return orders.data.orders.reduce(
+      (total, order) => total + order.price * order.quantity,
+      0
+    )
   }
 
   const calculateTotalExpressPrice = () => {
-    const totalQuantity = calculateTotalQuantity();
+    const totalQuantity = calculateTotalQuantity()
 
     if (totalQuantity > 5 && totalQuantity <= 10) {
       return 100
@@ -64,11 +67,11 @@ export default function CustomerByOrder() {
     } else {
       return 50
     }
-  };
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    console.log(name,value)
+    console.log(name, value)
     setFormData((prevData) => ({ ...prevData, [name]: value }))
   }
 
@@ -94,7 +97,7 @@ export default function CustomerByOrder() {
     formDataToSend.append('_id', id)
 
     const formEnt = Object.fromEntries(formDataToSend.entries())
-    console.log("SEND THIS : ", formEnt)
+    console.log('SEND THIS : ', formEnt)
     try {
       const response = await axios.put(
         `${baseURL}/api/sale-order`,
@@ -111,73 +114,88 @@ export default function CustomerByOrder() {
     }
   }
 
-  const buffer = orders;
+  const buffer = orders
 
   let dt = new Date(Date.parse(orders.data.date_added))
   const a = (month) => {
-    if(month<10) return "0"+month
-    else return ""+month
+    if (month < 10) return '0' + month
+    else return '' + month
   }
-  let df = ""+dt.getFullYear()+"-"+(a(dt.getMonth()+1))+"-"+dt.getDate()
+  let df =
+    '' + dt.getFullYear() + '-' + a(dt.getMonth() + 1) + '-' + dt.getDate()
   console.log(df)
-
-
 
   return (
     <div className="container position-relative mt-3 mx-auto">
       <h3 className="text-start mb-3">
         <span>We Live App</span>
-        <span className="text-success ms-2">| รายการสั่งซื้อของคุณ {orders.data.name} </span>
+        <span className="text-success ms-2">
+          | รายการสั่งซื้อของคุณ {orders.data.name}{' '}
+        </span>
       </h3>
-      <div className='mt-3 mb-3'>
+      <div className="mt-3 mb-3">
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell className='text-center'>รายการที่</TableCell>
-                <TableCell className='text-center'>ชื่อสินค้า</TableCell>
-                <TableCell className='text-center'>จำนวน</TableCell>
-                <TableCell className='text-center'>ราคา</TableCell>
+                <TableCell className="text-center">รายการที่</TableCell>
+                <TableCell className="text-center">ชื่อสินค้า</TableCell>
+                <TableCell className="text-center">จำนวน</TableCell>
+                <TableCell className="text-center">ราคา</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {orders.data.orders && orders.data.orders.length > 0 ? (
                 orders.data.orders.map((order, index) => (
                   <TableRow key={order._id}>
-                    <TableCell className='text-center'>{index + 1}</TableCell>
-                    <TableCell className='text-center'>{order.name}</TableCell>
-                    <TableCell className='text-center'>{order.quantity} ชิ้น</TableCell>
-                    <TableCell className='text-center'>{order.price} บาท</TableCell>
+                    <TableCell className="text-center">{index + 1}</TableCell>
+                    <TableCell className="text-center">{order.name}</TableCell>
+                    <TableCell className="text-center">
+                      {order.quantity} ชิ้น
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {order.price} บาท
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell className='text-center' colSpan={4}>กำลังโหลดข้อมูล</TableCell>
+                  <TableCell className="text-center" colSpan={4}>
+                    กำลังโหลดข้อมูล
+                  </TableCell>
                 </TableRow>
               )}
               <TableRow>
-                <TableCell className='text-end'>  </TableCell>
-                <TableCell className='text-end'>จำนวนสินค้ารวม </TableCell>
-                <TableCell className='text-end'>{calculateTotalQuantity()}</TableCell>
-                <TableCell className='text-end'>ชิ้น</TableCell>
+                <TableCell className="text-end"> </TableCell>
+                <TableCell className="text-end">จำนวนสินค้ารวม </TableCell>
+                <TableCell className="text-end">
+                  {calculateTotalQuantity()}
+                </TableCell>
+                <TableCell className="text-end">ชิ้น</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className='text-end'>  </TableCell>
-                <TableCell className='text-end'>ราคาสินค้ารวม </TableCell>
-                <TableCell className='text-end'>{calculateTotalPrice()}</TableCell>
-                <TableCell className='text-end'>บาท</TableCell>
+                <TableCell className="text-end"> </TableCell>
+                <TableCell className="text-end">ราคาสินค้ารวม </TableCell>
+                <TableCell className="text-end">
+                  {calculateTotalPrice()}
+                </TableCell>
+                <TableCell className="text-end">บาท</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className='text-end'> </TableCell>
-                <TableCell className='text-end'>ค่าขนส่ง</TableCell>
-                <TableCell className='text-end'>{calculateTotalExpressPrice()}</TableCell>
-                <TableCell className='text-end'>บาท</TableCell>
+                <TableCell className="text-end"> </TableCell>
+                <TableCell className="text-end">ค่าขนส่ง</TableCell>
+                <TableCell className="text-end">
+                  {calculateTotalExpressPrice()}
+                </TableCell>
+                <TableCell className="text-end">บาท</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className='text-end'>  </TableCell>
-                <TableCell className='text-end'>ที่ต้องชำระ </TableCell>
-                <TableCell className='text-end'>{calculateTotalPrice() + calculateTotalExpressPrice()}</TableCell>
-                <TableCell className='text-end'>บาท</TableCell>
+                <TableCell className="text-end"> </TableCell>
+                <TableCell className="text-end">ที่ต้องชำระ </TableCell>
+                <TableCell className="text-end">
+                  {calculateTotalPrice() + calculateTotalExpressPrice()}
+                </TableCell>
+                <TableCell className="text-end">บาท</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -212,232 +230,244 @@ export default function CustomerByOrder() {
         </div>
       </div>
 
-      {orders.data.address == null ? <>
-        <div className="mt-4">
-          <Paper elevation={3} className="p-4">
-            <Typography variant="h6" gutterBottom>
-              แบบฟอร์มสำหรับกรอกข้อมูล
-            </Typography>
-            <form onSubmit={handleSubmit} encType="multipart/form-data">
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    type="date"
-                    name="date_added"
-                    defaultValue={formData.date_added}
-                    onChange={handleChange}
-                    required
-
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    name="address"
-                    defaultValue={formData.date_added}
-                    onChange={handleChange}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    label="ตำบล"
-                    fullWidth
-                    name="district"
-                    defaultValue={formData.date_added}
-                    onChange={handleChange}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    label="อำเภอ"
-                    fullWidth
-                    name="sub_area"
-                    defaultValue={formData.date_added}
-                    onChange={handleChange}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    label="จังหวัด"
-                    fullWidth
-                    name="sub_district"
-                    defaultValue={formData.date_added}
-                    onChange={handleChange}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    label="รหัสไปรษณีย์"
-                    fullWidth
-                    name="postcode"
-                    defaultValue={formData.date_added}
-                    onChange={handleChange}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    label="เบอร์โทรศัพท์"
-                    fullWidth
-                    name="tel"
-                    defaultValue={formData.date_added}
-                    onChange={handleChange}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <input
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    id="image-upload"
-                    type="file"
-                    onChange={handleImageChange}
-                  />
-                  <label htmlFor="image-upload">
-                    <Button
-                      variant="contained"
-                      color="warning"
-                      component="span"
-                      className="m-lg-2"
-                    >
-                      อัปโหลดรูปภาพ
-                    </Button>
-                    {formData.picture_payment && formData.picture_payment.name}
-                  </label>
-                </Grid>
-                <Grid item xs={4}>
-                  <Button type="submit" variant="contained" color="primary">
-                    ยืนยันการชำระเงิน
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-          </Paper>
-        </div>
-      
-      
-      </> : <>
-      <p hidden>{orders.data.address}</p>
-        <div className="mt-4">
-          <Paper elevation={3} className="p-4">
-            <Typography variant="h6" gutterBottom>
-              แบบฟอร์มสำหรับกรอกข้อมูล
-            </Typography>
-            <form onSubmit={handleSubmit} encType="multipart/form-data">
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  
-                  <TextField
-                    fullWidth
-                    type="date"
-                    name="date_added"
-                    defaultValue={df}
-                    onChange={handleChange}
-                    required
-
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                 
-                  {buffer.data.address != null ? <>
+      {orders.data.address == null ? (
+        <>
+          <div className="mt-4">
+            <Paper elevation={3} className="p-4">
+              <Typography variant="h6" gutterBottom>
+                แบบฟอร์มสำหรับกรอกข้อมูล
+              </Typography>
+              <form onSubmit={handleSubmit} encType="multipart/form-data">
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
                     <TextField
-                    fullWidth
-                    name="address"
-                    defaultValue={buffer.data.address}
-                    onChange={handleChange}
-                    required
-                  /></>:<></>}
-                </Grid>
-                <Grid item xs={4}>
-              
-                  {buffer.data.address != null ? <>
+                      fullWidth
+                      type="date"
+                      name="date_added"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
                     <TextField
-                    label="ตำบล"
-                    fullWidth
-                    name="district"
-                    defaultValue={"" + orders.data.district}
-                    onChange={handleChange}
-                    required
-                  /></>:<></>}
-                  
-                </Grid>
-                <Grid item xs={4}>
-                {buffer.data.address != null ? <>
-                  <TextField
-                    label="อำเภอ"
-                    fullWidth
-                    name="sub_area"
-                    defaultValue={"" + orders.data.sub_area}
-                    onChange={handleChange}
-                    required
-                  /></>:<></>}
-                  
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    label="จังหวัด"
-                    fullWidth
-                    name="sub_district"
-                    defaultValue={"" + orders.data.sub_district}
-                    onChange={handleChange}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    label="รหัสไปรษณีย์"
-                    fullWidth
-                    name="postcode"
-                    defaultValue={"" + orders.data.postcode}
-                    onChange={handleChange}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    label="เบอร์โทรศัพท์"
-                    fullWidth
-                    name="tel"
-                    defaultValue={"" + orders.data.tel}
-                    onChange={handleChange}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <input
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    id="image-upload"
-                    type="file"
-                    onChange={handleImageChange}
-                  />
-                  <label htmlFor="image-upload">
-                    <Button
-                      variant="contained"
-                      color="warning"
-                      component="span"
-                      className="m-lg-2"
-                    >
-                      อัปโหลดรูปภาพ
+                      fullWidth
+                      name="address"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      label="ตำบล"
+                      fullWidth
+                      name="district"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      label="อำเภอ"
+                      fullWidth
+                      name="sub_area"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      label="จังหวัด"
+                      fullWidth
+                      name="sub_district"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="รหัสไปรษณีย์"
+                      fullWidth
+                      name="postcode"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="เบอร์โทรศัพท์"
+                      fullWidth
+                      name="tel"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <input
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      id="image-upload"
+                      type="file"
+                      onChange={handleImageChange}
+                    />
+                    <label htmlFor="image-upload">
+                      <Button
+                        variant="contained"
+                        color="warning"
+                        component="span"
+                        className="m-lg-2"
+                      >
+                        อัปโหลดรูปภาพ
+                      </Button>
+                      {formData.picture_payment &&
+                        formData.picture_payment.name}
+                    </label>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Button type="submit" variant="contained" color="primary">
+                      ยืนยันการชำระเงิน
                     </Button>
-                    {formData.picture_payment && formData.picture_payment.name}
-                  </label>
+                  </Grid>
                 </Grid>
-                <Grid item xs={4}>
-                  <Button type="submit" variant="contained" color="primary">
-                    ยืนยันการชำระเงิน
-                  </Button>
+              </form>
+            </Paper>
+          </div>
+        </>
+      ) : (
+        <>
+          <p hidden>{orders.data.address}</p>
+          <div className="mt-4">
+            <Paper elevation={3} className="p-4">
+              <Typography variant="h6" gutterBottom>
+                แบบฟอร์มสำหรับกรอกข้อมูล
+              </Typography>
+              <form onSubmit={handleSubmit} encType="multipart/form-data">
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      type="date"
+                      name="date_added"
+                      defaultValue={df}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    {buffer.data.address != null ? (
+                      <>
+                        <TextField
+                          fullWidth
+                          name="address"
+                          defaultValue={buffer.data.address}
+                          onChange={handleChange}
+                          required
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </Grid>
+                  <Grid item xs={4}>
+                    {buffer.data.address != null ? (
+                      <>
+                        <TextField
+                          label="ตำบล"
+                          fullWidth
+                          name="district"
+                          defaultValue={'' + orders.data.district}
+                          onChange={handleChange}
+                          required
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </Grid>
+                  <Grid item xs={4}>
+                    {buffer.data.address != null ? (
+                      <>
+                        <TextField
+                          label="อำเภอ"
+                          fullWidth
+                          name="sub_area"
+                          defaultValue={'' + orders.data.sub_area}
+                          onChange={handleChange}
+                          required
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      label="จังหวัด"
+                      fullWidth
+                      name="sub_district"
+                      defaultValue={'' + orders.data.sub_district}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="รหัสไปรษณีย์"
+                      fullWidth
+                      name="postcode"
+                      defaultValue={'' + orders.data.postcode}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="เบอร์โทรศัพท์"
+                      fullWidth
+                      name="tel"
+                      defaultValue={'' + orders.data.tel}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <input
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      id="image-upload"
+                      type="file"
+                      onChange={handleImageChange}
+                    />
+                    <label htmlFor="image-upload">
+                      <Button
+                        variant="contained"
+                        color="warning"
+                        component="span"
+                        className="m-lg-2"
+                      >
+                        อัปโหลดรูปภาพ
+                      </Button>
+                      {formData.picture_payment &&
+                        formData.picture_payment.name}
+                    </label>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Button type="submit" variant="contained" color="primary">
+                      ยืนยันการชำระเงิน
+                    </Button>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </form>
-          </Paper>
-        </div>
-      </>}
+              </form>
+            </Paper>
+          </div>
+        </>
+      )}
     </div>
   )
 }
