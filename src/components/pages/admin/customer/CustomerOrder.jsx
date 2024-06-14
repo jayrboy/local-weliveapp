@@ -64,18 +64,24 @@ export default function CustomerOrder() {
 
   // ฟังก์ชันคำนวณจำนวนสินค้าและราคารวมในแต่ละออเดอร์
   const calculateTotals = (orders) => {
-    return orders.map(order => {
-      const totalQuantity = order.orders.reduce((total, item) => total + item.quantity, 0);
-      const totalPrice = order.orders.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return orders.map((order) => {
+      const totalQuantity = order.orders.reduce(
+        (total, item) => total + item.quantity,
+        0
+      )
+      const totalPrice = order.orders.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      )
       return {
         ...order,
         totalQuantity,
-        totalPrice
-      };
-    });
-  };
+        totalPrice,
+      }
+    })
+  }
 
-  const ordersWithTotals = calculateTotals(orders);
+  const ordersWithTotals = calculateTotals(orders)
 
   return (
     <div className="position-relative mt-5">
@@ -89,28 +95,57 @@ export default function CustomerOrder() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell className='text-center'>รายการที่</TableCell>
-                    <TableCell className='text-center'>ชื่อลูกค้า</TableCell>
-                    <TableCell className='text-center'>จำนวนสินค้า</TableCell>
-                    <TableCell className='text-center'>ราคารวม</TableCell>
-                    <TableCell className='text-center'>สถานะ</TableCell>
+                    <TableCell className="text-center">รายการที่</TableCell>
+                    <TableCell className="text-center">ชื่อลูกค้า</TableCell>
+                    <TableCell className="text-center">จำนวนสินค้า</TableCell>
+                    <TableCell className="text-center">ราคารวม</TableCell>
+                    <TableCell className="text-center">สถานะ</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {ordersWithTotals.map((order, index) => {
                     console.log(index)
                     console.log(order)
-                    return(<TableRow key={order._id}>
-                      <TableCell className='text-center'>{index + 1}</TableCell>
-                      <TableCell className='text-center'>
-                        <Link to={`/order/${order._id}`} state={{ _id: order._id }}>
-                          {order.name}
-                        </Link>
-                      </TableCell>
-                      <TableCell className='text-center'>{order.totalQuantity}</TableCell>
-                      <TableCell className='text-center'>{order.totalPrice}</TableCell>
-                      <TableCell className='text-center'>{order.complete ? 'ชำระเงินแล้ว' : 'ยังไม่ชำระเงิน'}</TableCell>
-                    </TableRow>)
+                    return (
+                      <TableRow key={order._id}>
+                        <TableCell className="text-center">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Link
+                            to={`/order/${order._id}`}
+                            state={{ _id: order._id }}
+                          >
+                            {order.name}
+                          </Link>
+                        </TableCell>
+
+                        <TableCell className="text-center">
+                          {order.totalQuantity}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {order.totalPrice}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {order.complete == false ? (
+                            <div>
+                              <button className="btn btn-sm btn-success">
+                                ยืนยันออเดอร์
+                              </button>
+                            </div>
+                          ) : (
+                            <div>
+                              <button className="btn btn-sm btn-warning">
+                                จัดส่งแล้ว
+                              </button>
+                              <button className="btn btn-sm btn-danger ms-3">
+                                ยกเลิกออเดอร์
+                              </button>
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    )
                   })}
                 </TableBody>
               </Table>

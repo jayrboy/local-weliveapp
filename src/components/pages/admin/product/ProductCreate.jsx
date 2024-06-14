@@ -122,6 +122,7 @@ function ProductCreate(props) {
             type="number"
             name="stock_quantity"
             min="0"
+            max="99"
             className="form-control form-control-sm"
             {...register('stock_quantity', {
               validate: (value) => parseFloat(value) > 0,
