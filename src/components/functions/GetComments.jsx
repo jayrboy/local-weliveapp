@@ -6,9 +6,9 @@ import { firstLoadContext } from '../../routes/AdminRoute'
 import { toast } from 'react-toastify'
 
 //! ต้องมีสิทธ์การอนุญาต publish_video
-//ฟังก์ชัน เปิด Live Video บน User
-export async function openLiveVideo() {
-  return await axios
+// ฟังก์ชัน เปิด Live Video บน User
+function openLiveVideo() {
+  return axios
     .post('https://graph.facebook.com/v20.0/me/live_video', {
       params: {
         status: 'LIVE_NOW',
@@ -21,9 +21,8 @@ export async function openLiveVideo() {
     .catch((err) => console.log(err))
 }
 
-//TODO: Comments from Graph API
-export async function getCommentsGraphAPI(liveVideoId) {
-  // const liveVideoId = import.meta.env.VITE_LIVE_VIDEO_ID // v1
+// (1) Comments from Graph API
+async function getCommentsGraphAPI(liveVideoId) {
   const url = `https://graph.facebook.com/v19.0/${liveVideoId}/comments`
   const params = {
     access_token: import.meta.env.VITE_ACCESS_TOKEN,
@@ -37,7 +36,7 @@ export async function getCommentsGraphAPI(liveVideoId) {
   }
 }
 
-//TODO: ฟังก์ชันอ่านเฉพาะ comment ใหม่
+// (2) ฟังก์ชันอ่านเฉพาะ comment ใหม่
 /*
   วนลูป newComment แต่ละแถว แล้วตรวจสอบ oldComment มันมี
   id ตรงกับ id ของ newComment ของแถวนี้ไหม
@@ -57,27 +56,47 @@ function latestComment(oldComment, newComment) {
   })
 }
 
-// Check Message Code
-function checkMessageCode(comment) {
-  let thisComment = comment.message
+// (3) Check Message Code
+async function checkMessageCode(comment) {
+  try {
+    let thisComment = comment.message.trim().toLowerCase() // นำ message ที่มาช่องว่างมา trim แล้วเปลี่ยนเป็น lowercase กรณีเจออักษรพิมพ์ใหญ่
 
-  if (thisComment && thisComment.includes('=')) {
-    let parts = thisComment.split('=') // ตัดข้อความก่อนและหลังเครื่องหมาย =
-    console.log('Have message code :', parts) // ข้อความทั้งหมดที่อยู่ใน parts
+    if (thisComment && thisComment.includes('=')) {
+      let parts = thisComment.split('=') // split "t1=5" into an array["t1", "5"]
 
-    return axios(`${baseURL}/api/daily/new-status`)
-      .then((result) => {
-        result.data.products.map((p) => {
-          if (parts[0].toLowerCase() == p.code.toLowerCase()) {
-            console.log('Facebook :', comment.from.name)
-            console.log('Sale Order :', p.name)
-            console.log('ราคา :', p.price)
-            console.log('จำนวน :', parts[1])
-            console.log('ยอดรวม :', p.price * parts[1])
-          }
-        })
+      console.log('Have message code :', parts) // ข้อความทั้งหมดที่อยู่ใน parts
+      let code = parts[0] // รหัสสินค้า
+      let quantity = parseInt(parts[1]) // จำนวนสินค้า
+
+      let dailyStock = await axios.get(`${baseURL}/api/daily/new-status`)
+
+      dailyStock.data.products.forEach((p) => {
+        if (code === p.code.toLowerCase()) {
+          console.log('ชื่อสินค้า :', p.name)
+          console.log('จำนวนที่สั่ง :', quantity)
+          p.cf = p.cf + quantity
+          p.remaining_cf = p.remaining_cf - p.cf
+        }
       })
-      .catch(() => console.log('check message code error :', err))
+
+      // อัปเดต dailyStock ในฐานข้อมูล
+      await axios
+        .put(`${baseURL}/api/daily/update`, dailyStock.data)
+        .then((resp) => console.log('Document daily stock updated'))
+        .catch((err) => console.log(err))
+    }
+
+    // if (thisComment && thisComment.startsWith('CF')) {
+    //   let parts = thisComment.split(' ') // split "cf a2=2" into an array ["cf","a2=2"]
+    //   console.log('Have message "CF" :', parts)
+    // }
+
+    // if (thisComment && thisComment.startsWith('CC')) {
+    //   let parts = thisComment.split(' ')
+    //   console.log('Have message "CC" :', thisComment)
+    // }
+  } catch (e) {
+    console.log('checked message code error :', e)
   }
 }
 
@@ -86,19 +105,20 @@ const GetComments = () => {
   let [firstLoad, setFirstLoad] = useContext(firstLoadContext)
   useEffect(() => {
     let firstRound = true
-    let comments = []
-    const liveVideoId = localStorage.getItem('liveVideoId')
+    let tempComment = []
+    let liveVideoId = localStorage.getItem('liveVideoId')
 
     const realTime = setInterval(async () => {
       try {
         const newComment = await getCommentsGraphAPI(liveVideoId)
         if (firstRound) {
           console.log('Initial comments', newComment)
-          comments = newComment
+          tempComment = newComment
+          tempComment.map((cm, index) => checkMessageCode(cm))
           firstRound = false
         } else {
           //TODO: New comments
-          comments = await latestComment(comments, newComment)
+          tempComment = await latestComment(tempComment, newComment)
         }
       } catch (error) {
         console.error('เกิดข้อผิดพลาดในการดึงข้อมูล comments:', error)

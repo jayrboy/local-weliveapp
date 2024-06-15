@@ -45,9 +45,10 @@ import LoadingFn from './components/functions/LoadingFn'
 
 import { useDispatch } from 'react-redux'
 import { login } from './redux/userSlice'
+import DailyStockHistory from './components/pages/admin/daily/DailyStockHistory'
 
-export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
-// export const baseURL = 'http://localhost:8000'
+// export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
+export const baseURL = 'http://localhost:8000'
 
 function App() {
   const dispatch = useDispatch()
@@ -155,7 +156,7 @@ function App() {
             </AdminRoute>
           }
         />
-        
+
         <Route
           path="/admin/daily-stock"
           element={
@@ -177,6 +178,14 @@ function App() {
           element={
             <AdminRoute>
               <DailyEdit />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/daily-stock/history"
+          element={
+            <AdminRoute>
+              <DailyStockHistory />
             </AdminRoute>
           }
         />

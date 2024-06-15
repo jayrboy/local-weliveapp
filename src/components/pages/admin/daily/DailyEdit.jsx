@@ -1,9 +1,10 @@
 import { baseURL } from '../../../../App'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import { MdEdit, MdDelete } from 'react-icons/md'
+import CloseIcon from '@mui/icons-material/Close'
 
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -20,7 +21,6 @@ import DailyProductEdit from '../daily/DailyProductEdit'
 
 const DailyEdit = () => {
   const { id } = useParams()
-  const navigate = useNavigate()
 
   const form = useRef()
   const token = localStorage.getItem('token')
@@ -28,6 +28,7 @@ const DailyEdit = () => {
 
   let { dailyStock, total } = useSelector((store) => store.dailyStock)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   let [isOpenEdit, setOpenEdit] = useState(false)
   let [index, setIndex] = useState(0)
@@ -89,8 +90,12 @@ const DailyEdit = () => {
 
     let index = selectedInput.value
     dispatch(deletedProduct(index))
-
     console.log('delete selected')
+
+    const radioButtons = document.querySelectorAll('input[name="index"]')
+    radioButtons.forEach((radio) => {
+      radio.checked = false
+    })
   }
 
   const handleStatusChange = (e) => {
@@ -107,16 +112,35 @@ const DailyEdit = () => {
 
   return (
     <>
-      <div className="px-1 mt-1">
-        <div className="card shadow mx-auto rounded" style={{ width: '100%' }}>
+      <div className="row m-3">
+        <div className="col-lg-6">
+          <h3 className="text-start">
+            <Link to="/admin/home" className="  text-decoration-none">
+              DAILY STOCK |
+            </Link>
+            <span className="text-success"> รายการขายสินค้า / แก้ไข</span>
+          </h3>
+        </div>
+
+        <div
+          className="card shadow mx-auto rounded px-1 mt-1"
+          style={{ width: '100%' }}
+        >
           <form ref={form} onSubmit={onSubmitForm}>
             {/* Card Header */}
-            <header className="card-header d-flex justify-content-start align-items-center p-3">
-              วันที่:&nbsp;
-              <span className="text-primary" name="date_added">
-                {df}
-              </span>
-            </header>
+            <div className="card-header d-flex justify-content-between align-items-center p-3">
+              <div>
+                วันที่:&nbsp;
+                <strong className="text-primary">{df}</strong>
+              </div>
+              <button
+                className="btn btn-light btn-sm float-end border"
+                onClick={() => navigate('/admin/daily-stock')}
+              >
+                <CloseIcon sx={{ color: 'red' }} />
+              </button>
+            </div>
+
             <div className="container">
               <div className="row">
                 <div className="col-6 d-flex align-items-center">
@@ -161,21 +185,22 @@ const DailyEdit = () => {
                 </caption>
                 <thead className="table-light">
                   <tr>
-                    <th>
+                    <th style={{ width: '80px' }}>
                       <button
                         type="button"
                         className="btn btn-sm btn-light border"
                         onClick={onEditClick}
                       >
                         <MdEdit color="orange" />
+                        แก้ไข
                       </button>
                     </th>
                     <th>รหัส</th>
-                    <th>สินค้า</th>
+                    <th>ชื่อสินค้า</th>
+                    <th>ราคา</th>
                     <th>จำนวน</th>
                     <th>limit</th>
-                    <th>ราคา</th>
-                    <th>คงเหลือ</th>
+                    <th>จ่ายแล้ว/เหลือ</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -184,7 +209,7 @@ const DailyEdit = () => {
                       // console.log(p)
                       return (
                         <tr key={index}>
-                          <td>
+                          <td className="text-center">
                             <input
                               type="radio"
                               name="index"
@@ -194,10 +219,10 @@ const DailyEdit = () => {
                           </td>
                           <td>{p.code}</td>
                           <td>{p.name}</td>
+                          <td>{p.price}</td>
                           <td>{p.stock_quantity}</td>
                           <td>{p.limit}</td>
-                          <td>{p.price}</td>
-                          <td>{p.remaining}</td>
+                          <td>{p.paid}/{p.remaining_cf}</td>
                         </tr>
                       )
                     })}
@@ -208,7 +233,7 @@ const DailyEdit = () => {
                         className="btn btn-sm btn-light border"
                         onClick={onDeleteClick}
                       >
-                        <MdDelete color="red" />
+                        <MdDelete color="red" /> ลบ
                       </button>
                     </td>
                   </tr>
@@ -226,15 +251,15 @@ const DailyEdit = () => {
             </div>
             {/* Footer Button */}
             <footer className="d-flex justify-content-center p-4">
-              <button type="submit" className="btn btn-light btn-sm border">
-                ยืนยัน
-              </button>
-              &nbsp;&nbsp;&nbsp;
               <button
                 className="btn btn-sm"
                 onClick={() => navigate('/admin/daily-stock')}
               >
                 ยกเลิก
+              </button>
+              &nbsp;&nbsp;&nbsp;
+              <button type="submit" className="btn btn-primary btn-sm border">
+                บันทึก
               </button>
             </footer>
           </form>

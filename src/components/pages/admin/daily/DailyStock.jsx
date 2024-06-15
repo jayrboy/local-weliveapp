@@ -1,5 +1,5 @@
-import { baseURL } from '../../../../App'
 import { useState, useRef, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, Link } from 'react-router-dom'
 
 import { MdEdit, MdDelete } from 'react-icons/md'
@@ -8,14 +8,21 @@ import { SiFacebooklive } from 'react-icons/si'
 
 import { toast } from 'react-toastify'
 
+import { baseURL } from '../../../../App'
+
 export default function DailyStock() {
+  let { dailyStock } = useSelector((state) => state.dailyStock)
+  console.log(dailyStock)
   let [data, setData] = useState('')
-  const [status, setStatus] = useState(['new', 'clear'])
+  let [status, setStatus] = useState(['new', 'clear'])
   const navigate = useNavigate()
   const form = useRef()
 
+  let [refreshData, setRefreshData] = useState(false) // เพิ่ม state refreshData
+
+  useEffect(() => {}, [])
+
   useEffect(() => {
-    // อัพเดทข้อมูลเมื่อ status เปลี่ยนแปลง
     fetch(`${baseURL}/api/daily/read`)
       .then((response) => response.json())
       .then((docs) => {
@@ -26,27 +33,7 @@ export default function DailyStock() {
         }
       })
       .catch((err) => toast.error(err))
-  }, [status]) // เพิ่ม status เป็น dependency
-
-  const onChangeRole = (id, event) => {
-    // อัพเดทสถานะ
-    const newRole = {
-      id: id,
-      status: event.target.value,
-    }
-    fetch(`${baseURL}/api/daily/change-role`, {
-      method: 'POST',
-      body: JSON.stringify(newRole),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then((res) => res.text())
-      .then((result) => {
-        toast.success(result)
-        // เปลี่ยนแปลงสถานะเพื่อ trigger useEffect
-        setStatus((prevStatus) => [...prevStatus])
-      })
-      .catch((err) => toast.error(err))
-  }
+  }, [status, refreshData]) // เพิ่ม status และ refreshData เป็น dependency
 
   const showData = (result) => {
     let r = (
@@ -72,7 +59,7 @@ export default function DailyStock() {
               return (
                 <div
                   key={doc._id}
-                  className="col-12 col-sm-12 col-md-6 col-lg-6 mt-3"
+                  className="col-12 col-sm-12 col-md-12 col-lg-12 mt-3"
                 >
                   {doc && doc.status === 'new' ? (
                     <div className="card shadow">
@@ -82,6 +69,7 @@ export default function DailyStock() {
                         <Link to={`/admin/daily-stock/edit/${doc._id}`}>
                           <button className="btn btn-light btn-sm float-end border">
                             <MdEdit color="orange" />
+                            &nbsp;แก้ไข
                           </button>
                         </Link>
                       </div>
@@ -111,28 +99,30 @@ export default function DailyStock() {
                         </div>
                         {/* Table */}
                         <div className="table-responsive">
-                          <table className="table table-sm table-striped table-bordered border-light table-hover">
+                          <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
                             <thead className="table-light">
                               <tr>
-                                <th>รหัส</th>
                                 <th>สินค้า</th>
-                                <th>จำนวน</th>
-                                <th>limit</th>
                                 <th>ราคา</th>
-                                <th>Paid</th>
-                                <th>เหลือ</th>
+                                <th className="text-success">จำนวน</th>
+                                <th>limit</th>
+                                <th>CF</th>
+                                <th className="text-danger">จ่ายแล้ว/เหลือ</th>
                               </tr>
                             </thead>
                             <tbody>
                               {doc.products.map((p, index) => (
                                 <tr key={index + 1}>
-                                  <td>{p.code}</td>
-                                  <td>{p.name}</td>
+                                  <td>
+                                    {p.code}&nbsp;{p.name}
+                                  </td>
+                                  <td>{p.price}</td>
                                   <td>{p.stock_quantity}</td>
                                   <td>{p.limit}</td>
-                                  <td>{p.price}</td>
-                                  <td>{p.paid}</td>
-                                  <td>{p.remaining}</td>
+                                  <td>{p.cf}</td>
+                                  <td>
+                                    {p.paid}/{p.remaining_cf}
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
@@ -237,15 +227,35 @@ export default function DailyStock() {
       .catch((err) => toast.error(err))
   }
 
+  const onChangeRole = (id, event) => {
+    // อัพเดทสถานะ
+    const newRole = {
+      id: id,
+      status: event.target.value,
+    }
+    fetch(`${baseURL}/api/daily/change-role`, {
+      method: 'POST',
+      body: JSON.stringify(newRole),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((res) => res.text())
+      .then((result) => {
+        toast.success(result)
+        // เปลี่ยนแปลงสถานะเพื่อ trigger useEffect
+        setStatus((prevStatus) => [...prevStatus])
+      })
+      .catch((err) => toast.error(err))
+  }
+
   return (
     <>
       <div className="row m-3">
         <div className="col-lg-6">
           <h3 className="text-start">
             <Link to="/admin/home" className="  text-decoration-none">
-              WE LIVE |
+              DAILY STOCK |
             </Link>
-            <span className="text-success"> รายการไลฟ์สด</span>
+            <span className="text-success"> รายการขายสินค้า</span>
           </h3>
         </div>
         <div className="col-lg-6 mt-1">
@@ -254,7 +264,15 @@ export default function DailyStock() {
             onClick={() => navigate('/admin/daily-stock/create')}
           >
             <FaPlus color="blue" />
-            &nbsp;เพิ่ม
+            &nbsp;เพิ่ม Daily Stock
+          </button>
+          &nbsp;
+          <button
+            className="btn btn-light btn-sm border"
+            onClick={() => navigate('/admin/daily-stock/history')}
+          >
+            <FaHistory color="red" />
+            &nbsp;ประวัติย้อนหลัง
           </button>
         </div>
       </div>

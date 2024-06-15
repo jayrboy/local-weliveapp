@@ -29,13 +29,17 @@ const productSlice = createSlice({
   name: 'product',
   initialState,
   reducers: {
-    deletedProduct: (state, action) => {
+    deletedProductId: (state, action) => {
       return {
         ...state,
         products: state.products.filter(
           (product) => product._id !== action.payload
         ),
       }
+    },
+    deletedProduct: (state, action) => {
+      const index = action.payload
+      state.products.splice(index, 1)
     },
     calTotals: (state) => {
       let stock_quantity = 0
@@ -46,6 +50,18 @@ const productSlice = createSlice({
       })
       state.stock_quantity = stock_quantity
       state.total = total
+    },
+    updateProduct: (state, action) => {
+      const { index, formEnt } = action.payload
+
+      state.products = state.products.map((p, i) => {
+        if (i == index) {
+          const stock_quantity = formEnt.stock_quantity
+          p.remaining = stock_quantity - p.remaining_cf
+          return { ...p, ...formEnt } // คัดลอกข้อมูลเดิม และอัปเดตเฉพาะข้อมูลที่ต้องการ
+        }
+        return p // ใช้ข้อมูลสินค้าเดิมสำหรับตำแหน่งที่ไม่ได้ถูกอัปเดต
+      })
     },
   },
   extraReducers: (builder) => {
@@ -64,5 +80,5 @@ const productSlice = createSlice({
   },
 })
 
-export const { calTotals, deletedProduct } = productSlice.actions
+export const { calTotals, deletedProduct, updateProduct } = productSlice.actions
 export default productSlice.reducer
