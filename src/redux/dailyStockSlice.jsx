@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-// const url = 'https://vercel-server-weliveapp.vercel.app/api/daily'
-const url = 'http://localhost:8000/api/daily'
+const url = 'https://vercel-server-weliveapp.vercel.app/api/daily'
+// const url = 'http://localhost:8000/api/daily'
 
 const initialState = {
   dailyStock: [],
