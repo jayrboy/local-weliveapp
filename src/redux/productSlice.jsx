@@ -57,7 +57,7 @@ const productSlice = createSlice({
       state.products = state.products.map((p, i) => {
         if (i == index) {
           const stock_quantity = formEnt.stock_quantity
-          p.remaining = stock_quantity - p.remaining_cf
+          p.remaining = p.remaining_cf - stock_quantity
           return { ...p, ...formEnt } // คัดลอกข้อมูลเดิม และอัปเดตเฉพาะข้อมูลที่ต้องการ
         }
         return p // ใช้ข้อมูลสินค้าเดิมสำหรับตำแหน่งที่ไม่ได้ถูกอัปเดต

@@ -22,7 +22,9 @@ export default function DailyStockHistory() {
         if (docs.length > 0) {
           showData(docs)
         } else {
-          setData(<>ไม่มีรายการข้อมูล</>)
+          setData(
+            <p className="text-center">ประวัติย้อนหลัง ไม่มีรายการข้อมูล</p>
+          )
         }
       })
       .catch((err) => toast.error(err))
@@ -109,6 +111,21 @@ export default function DailyStockHistory() {
                       {/* Table */}
                       <div className="table-responsive">
                         <table className="table table-sm table-striped table-bordered border-light table-hover">
+                          <caption className="ms-3">
+                            {doc.length === 0 ? (
+                              <>ไม่พบข้อมูล</>
+                            ) : (
+                              <>
+                                <small>
+                                  พบข้อมูลทั้งหมด{' '}
+                                  {doc.products.length
+                                    ? doc.products.length
+                                    : 0}{' '}
+                                  รายการ
+                                </small>
+                              </>
+                            )}
+                          </caption>
                           <thead className="table-light">
                             <tr>
                               <th>รหัส</th>

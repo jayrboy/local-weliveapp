@@ -1,15 +1,14 @@
 import { useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { updateProduct } from '../../../../redux/dailyStockSlice'
+import { addProduct } from '../../../../redux/dailyStockSlice'
 import { toast } from 'react-toastify'
+import { nanoid } from 'nanoid'
 
 import CloseIcon from '@mui/icons-material/Close'
 import { MdEdit } from 'react-icons/md'
 
-function DailyProductEdit(props) {
-  let { setOpenEdit, index } = props
-
-  let { daily } = useSelector((store) => store.dailyStock)
+function DailyProductAdd(props) {
+  let { setOpenAdd } = props
   const dispatch = useDispatch()
   const form = useRef()
 
@@ -20,25 +19,24 @@ function DailyProductEdit(props) {
     const formEnt = Object.fromEntries(formData.entries())
 
     // แปลงข้อมูลที่เป็นตัวเลขให้เป็นตัวเลขแบบ integer ก่อนส่งไปยัง reducer
+    formEnt._id = nanoid()
     formEnt.price = parseInt(formEnt.price)
-    formEnt.cost = parseInt(formEnt.cost)
     formEnt.stock_quantity = parseInt(formEnt.stock_quantity)
     formEnt.limit = parseInt(formEnt.limit)
-    // console.log(formEnt)
+    formEnt.cost = parseInt(formEnt.cost)
+    formEnt.cf = 0
+    formEnt.remaining_cf = parseInt(formEnt.stock_quantity)
+    formEnt.paid = 0
+    formEnt.remaining = parseInt(formEnt.stock_quantity)
+
+    console.log(formEnt)
 
     // เรียกใช้ action updateProduct และส่งข้อมูลที่แก้ไขไปยัง reducer
-    dispatch(updateProduct({ index, formEnt }))
+    dispatch(addProduct(formEnt))
 
-    setOpenEdit(false)
-    toast('แก้ไขสินค้าสำเร็จ')
+    setOpenAdd(false)
+    toast('เพิ่มสินค้าสำเร็จ')
   }
-
-  let dt = new Date(Date.parse(daily.products[index].date_added))
-  let df = (
-    <>
-      {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-    </>
-  )
 
   return (
     <div className="modal-product">
@@ -50,7 +48,7 @@ function DailyProductEdit(props) {
           <h4>PRODUCT / แก้ไขสินค้า</h4>
           <button
             className="btn btn-sm border"
-            onClick={() => setOpenEdit(false)}
+            onClick={() => setOpenAdd(false)}
           >
             <CloseIcon sx={{ color: 'red' }} />
           </button>
@@ -63,7 +61,6 @@ function DailyProductEdit(props) {
                 type="text"
                 name="code"
                 className="form-control form-control-sm"
-                defaultValue={daily.products[index].code}
               />
             </div>
             <div className="col-12 col-md-12 col-lg-12">
@@ -72,7 +69,6 @@ function DailyProductEdit(props) {
                 type="text"
                 name="name"
                 className="form-control form-control-sm"
-                defaultValue={daily.products[index].name}
               />
             </div>
             <div className="col-6 col-md-6 col-lg-6">
@@ -82,7 +78,6 @@ function DailyProductEdit(props) {
                 name="price"
                 min="0"
                 className="form-control form-control-sm"
-                defaultValue={daily.products[index].price}
               />
             </div>
             <div className="col-6 col-md-6 col-lg-6">
@@ -92,23 +87,15 @@ function DailyProductEdit(props) {
                 name="cost"
                 min="0"
                 className="form-control form-control-sm"
-                defaultValue={daily.products[index].cost}
               />
             </div>
             <div className="col-4 col-md-4 col-lg-4">
               <label className="form-label mt-2">จำนวนสินค้า</label>
               <input
                 type="number"
-                name="stock_quantity_disable"
+                name="stock_quantity"
                 min="0"
                 className="form-control form-control-sm"
-                value={daily.products[index].stock_quantity}
-                disabled
-              />
-              <input
-                type="hidden"
-                name="stock_quantity"
-                value={daily.products[index].stock_quantity}
               />
             </div>
             <div className="col-4 col-md-4 col-lg-4">
@@ -118,18 +105,15 @@ function DailyProductEdit(props) {
                 name="limit"
                 min="0"
                 className="form-control form-control-sm"
-                defaultValue={daily.products[index].limit}
               />
             </div>
             <div className="col-4 col-md-4 col-lg-4">
               <label className="form-label mt-2">วันที่เพิ่มสินค้า</label>
-              <span
+              <input
                 type="date"
                 name="date_added"
                 className="form-control form-control-sm mb-3"
-              >
-                {df}
-              </span>
+              />
             </div>
             <div className="d-flex justify-content-center">
               <button
@@ -143,7 +127,7 @@ function DailyProductEdit(props) {
               <button
                 type="button"
                 className="btn btn-sm"
-                onClick={() => setOpenEdit(false)}
+                onClick={() => setOpenAdd(false)}
               >
                 ยกเลิก
               </button>
@@ -154,4 +138,4 @@ function DailyProductEdit(props) {
     </div>
   )
 }
-export default DailyProductEdit
+export default DailyProductAdd

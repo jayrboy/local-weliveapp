@@ -25,13 +25,13 @@ function DailyProductCreate(props) {
     formEnt.stock_quantity = parseInt(formEnt.stock_quantity)
     formEnt.limit = parseInt(formEnt.limit)
 
-    console.log(formEnt)
+    // console.log(formEnt)
 
     dispatch(updateProduct({ index, formEnt }))
 
     setOpenEdit(false)
 
-    toast.success('แก้ไขสินค้าสำเร็จ')
+    toast('แก้ไขสินค้าสำเร็จ')
   }
 
   let dt = new Date(Date.parse(products[index].date_added))

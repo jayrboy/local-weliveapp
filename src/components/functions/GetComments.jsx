@@ -4,6 +4,8 @@ import { baseURL } from '../../App'
 import { useContext } from 'react'
 import { firstLoadContext } from '../../routes/AdminRoute'
 import { toast } from 'react-toastify'
+import { useDispatch } from 'react-redux'
+import { getAllDaily } from '../../redux/dailyStockSlice'
 
 //! ต้องมีสิทธ์การอนุญาต publish_video
 // ฟังก์ชัน เปิด Live Video บน User
@@ -36,73 +38,11 @@ async function getCommentsGraphAPI(liveVideoId) {
   }
 }
 
-// (2) ฟังก์ชันอ่านเฉพาะ comment ใหม่
-/*
-  วนลูป newComment แต่ละแถว แล้วตรวจสอบ oldComment มันมี
-  id ตรงกับ id ของ newComment ของแถวนี้ไหม
-  ถ้ามี id: '514878379814006_514885169813327' มันจะไม่ 'undefined'
-  ถ้ามี 'undefined' คือไม่มี ก็คือ newComment ใหม่
-*/
-function latestComment(oldComment, newComment) {
-  return new Promise((resolve) => {
-    newComment.forEach((comment) => {
-      if (oldComment.find((cm) => cm.id === comment.id) === undefined) {
-        console.log('New comment :', comment)
-        // function check message code
-        checkMessageCode(comment)
-      }
-    })
-    resolve(newComment)
-  })
-}
-
-// (3) Check Message Code
-async function checkMessageCode(comment) {
-  try {
-    let thisComment = comment.message.trim().toLowerCase() // นำ message ที่มาช่องว่างมา trim แล้วเปลี่ยนเป็น lowercase กรณีเจออักษรพิมพ์ใหญ่
-
-    if (thisComment && thisComment.includes('=')) {
-      let parts = thisComment.split('=') // split "t1=5" into an array["t1", "5"]
-
-      console.log('Have message code :', parts) // ข้อความทั้งหมดที่อยู่ใน parts
-      let code = parts[0] // รหัสสินค้า
-      let quantity = parseInt(parts[1]) // จำนวนสินค้า
-
-      let dailyStock = await axios.get(`${baseURL}/api/daily/new-status`)
-
-      dailyStock.data.products.forEach((p) => {
-        if (code === p.code.toLowerCase()) {
-          console.log('ชื่อสินค้า :', p.name)
-          console.log('จำนวนที่สั่ง :', quantity)
-          p.cf = p.cf + quantity
-          p.remaining_cf = p.remaining_cf - p.cf
-        }
-      })
-
-      // อัปเดต dailyStock ในฐานข้อมูล
-      await axios
-        .put(`${baseURL}/api/daily/update`, dailyStock.data)
-        .then((resp) => console.log('Document daily stock updated'))
-        .catch((err) => console.log(err))
-    }
-
-    // if (thisComment && thisComment.startsWith('CF')) {
-    //   let parts = thisComment.split(' ') // split "cf a2=2" into an array ["cf","a2=2"]
-    //   console.log('Have message "CF" :', parts)
-    // }
-
-    // if (thisComment && thisComment.startsWith('CC')) {
-    //   let parts = thisComment.split(' ')
-    //   console.log('Have message "CC" :', thisComment)
-    // }
-  } catch (e) {
-    console.log('checked message code error :', e)
-  }
-}
-
-// Main Component
+//TODO: Main Component
 const GetComments = () => {
   let [firstLoad, setFirstLoad] = useContext(firstLoadContext)
+  const dispatch = useDispatch()
+
   useEffect(() => {
     let firstRound = true
     let tempComment = []
@@ -134,6 +74,86 @@ const GetComments = () => {
 
     return () => clearInterval(realTime)
   }, [])
+
+  // (2) ฟังก์ชันอ่านเฉพาะ comment ใหม่
+  /*
+  วนลูป newComment แต่ละแถว แล้วตรวจสอบ oldComment มันมี
+  id ตรงกับ id ของ newComment ของแถวนี้ไหม
+  ถ้ามี id: '514878379814006_514885169813327' มันจะไม่ 'undefined'
+  ถ้ามี 'undefined' คือไม่มี ก็คือ newComment ใหม่
+*/
+  function latestComment(oldComment, newComment) {
+    return new Promise((resolve) => {
+      newComment.forEach((comment) => {
+        if (oldComment.find((cm) => cm.id === comment.id) === undefined) {
+          console.log('New comment :', comment)
+          // function check message code
+          checkMessageCode(comment)
+        }
+      })
+      resolve(newComment)
+    })
+  }
+
+  // (3) Check Message Code
+  async function checkMessageCode(comment) {
+    try {
+      let thisComment = comment.message.trim().toLowerCase() // นำ message ที่มาช่องว่างมา trim แล้วเปลี่ยนเป็น lowercase กรณีเจออักษรพิมพ์ใหญ่
+
+      if (thisComment && thisComment.includes('=')) {
+        let parts = thisComment.split('=') // split "t2=5" into an array["t2", "5"]
+        console.log('Have message code :', parts) // ข้อความทั้งหมดที่อยู่ใน parts
+
+        let code = parts[0] // รหัสสินค้า
+        let quantity = parseInt(parts[1]) // จำนวนสินค้า
+
+        let dailyStock = await axios.get(`${baseURL}/api/daily/new-status`)
+
+        dailyStock.data.products.forEach((p) => {
+          if (code === p.code.toLowerCase()) {
+            console.log('ชื่อสินค้า :', p.name)
+            console.log('จำนวนที่สั่ง :', quantity)
+
+            // ตรวจสอบว่า quantity ไม่เกิน remaining_cf หรือไม่เกิน limit ที่กำหนด
+            if (quantity <= p.remaining_cf) {
+              p.cf += quantity
+              p.remaining_cf -= quantity
+            } else if (quantity > p.remaining_cf && p.limit > 0) {
+              // ตรวจสอบว่า remaining_cf ที่จะติดลบไม่เกิน limit
+              let newRemainingCf = p.remaining_cf - quantity
+              if (newRemainingCf >= -p.limit) {
+                p.cf += quantity
+                p.remaining_cf -= quantity
+              }
+            }
+          }
+        })
+
+        // อัปเดต dailyStock ในฐานข้อมูล
+        await axios
+          .put(`${baseURL}/api/daily/update`, dailyStock.data)
+          .then((resp) => {
+            // เรียก getAllDaily เพื่ออัปเดต Redux state
+            dispatch(getAllDaily())
+
+            console.log('Document daily stock updated')
+          })
+          .catch((err) => console.log(err))
+      }
+
+      if (thisComment && thisComment.startsWith('CF')) {
+        let parts = thisComment.split(' ') // split "cf a2=2" into an array ["cf","a2=2"]
+        console.log('Have message "CF" :', parts)
+      }
+
+      if (thisComment && thisComment.startsWith('CC')) {
+        let parts = thisComment.split(' ')
+        console.log('Have message "CC" :', thisComment)
+      }
+    } catch (e) {
+      console.log('checked message code error :', e)
+    }
+  }
 }
 
 export default GetComments

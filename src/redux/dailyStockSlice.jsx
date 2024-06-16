@@ -1,13 +1,24 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const url = 'https://vercel-server-weliveapp.vercel.app/api/daily'
+// const url = 'https://vercel-server-weliveapp.vercel.app/api/daily'
+const url = 'http://localhost:8000/api/daily'
 
-export const getDaily = createAsyncThunk(
-  'dailyStock/getDaily',
-  async (id, thunkAPI) => {
+const initialState = {
+  dailyStock: [],
+  daily: {
+    products: [],
+  },
+  stock: 0,
+  total: 0,
+  isLoading: false,
+}
+
+export const getAllDaily = createAsyncThunk(
+  'dailyStock/getAllDaily',
+  async (thunkAPI) => {
     try {
-      const resp = await axios(url + `/read/${id}`)
+      const resp = await axios(url + '/read')
       return resp.data
     } catch (error) {
       return thunkAPI.rejectWithValue('something went wrong')
@@ -15,11 +26,11 @@ export const getDaily = createAsyncThunk(
   }
 )
 
-export const getAll = createAsyncThunk(
-  'dailyStock/getAll',
-  async (thunkAPI) => {
+export const getDaily = createAsyncThunk(
+  'dailyStock/getDaily',
+  async (id, thunkAPI) => {
     try {
-      const resp = await axios(url + '/read')
+      const resp = await axios(url + `/read/${id}`)
       return resp.data
     } catch (error) {
       return thunkAPI.rejectWithValue('something went wrong')
@@ -44,14 +55,17 @@ export const deleteProduct = createAsyncThunk(
   }
 )
 
-const initialState = {
-  dailyStock: {
-    products: [],
-  },
-  stock: 0,
-  total: 0,
-  isLoading: false,
-}
+// export const updateDailyStock = createAsyncThunk(
+//   'dailyStock/updateDailyStock',
+//   async (dailyStock, thunkAPI) => {
+//     try {
+//       const resp = await axios.put(url + '/update', dailyStock)
+//       return resp.data
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue('something went wrong')
+//     }
+//   }
+// )
 
 const dailyStockSlice = createSlice({
   name: 'dailyStock',
@@ -59,17 +73,23 @@ const dailyStockSlice = createSlice({
   reducers: {
     deletedProduct: (state, action) => {
       const index = action.payload
-      state.dailyStock.products.splice(index, 1)
+      state.daily.products.splice(index, 1)
     },
     calTotals: (state) => {
       let stock_quantity = 0
       let total = 0
-      state.dailyStock.products.map((item) => {
+      state.daily.products.map((item) => {
         stock_quantity += item.stock_quantity
         total += item.stock_quantity * item.price
       })
       state.stock_quantity = stock_quantity
       state.total = total
+    },
+    getDailyStock: (state, action) => {
+      state.dailyStock = action.payload
+    },
+    addProduct: (state, action) => {
+      state.daily.products.push(action.payload)
     },
     updateDailyStockStatus: (state, action) => {
       state.dailyStock.status = action.payload // อัปเดตค่า status
@@ -77,32 +97,52 @@ const dailyStockSlice = createSlice({
     updateProduct: (state, action) => {
       const { index, formEnt } = action.payload
 
-      state.dailyStock.products = state.dailyStock.products.map((p, i) => {
+      state.daily.products = state.daily.products.map((p, i) => {
         if (i == index) {
-          const stock_quantity = formEnt.stock_quantity
-          p.remaining = stock_quantity - p.remaining_cf
           return { ...p, ...formEnt } // คัดลอกข้อมูลเดิม และอัปเดตเฉพาะข้อมูลที่ต้องการ
         }
         return p // ใช้ข้อมูลสินค้าเดิมสำหรับตำแหน่งที่ไม่ได้ถูกอัปเดต
       })
     },
+    addQuantityProduct: (state, action) => {
+      const { index, formEnt } = action.payload
+
+      state.daily.products = state.daily.products.map((p, i) => {
+        if (i == index) {
+          // เพิ่มจำนวนสินค้าใหม่
+          p.stock_quantity += formEnt.stock_quantity
+
+          // คำนวณจำนวนสินค้าที่เหลือ (remaining_cf)
+          p.remaining_cf += formEnt.stock_quantity
+
+          return { ...p }
+        }
+        return p
+      })
+    },
     updatePriceTotal: (state, action) => {
-      state.dailyStock.price_total = action.payload
+      state.daily.price_total = action.payload
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getDaily.pending, (state) => {
+      .addCase(getAllDaily.pending, (state) => {
         state.isLoading = true
       })
-      .addCase(getDaily.fulfilled, (state, action) => {
+      .addCase(getAllDaily.fulfilled, (state, action) => {
         // console.log(action);
         state.dailyStock = action.payload
       })
-      .addCase(getDaily.rejected, (state, action) => {
+      .addCase(getAllDaily.rejected, (state, action) => {
         console.log(action)
         state.isLoading = false
       })
+      .addCase(getDaily.fulfilled, (state, action) => {
+        state.daily = action.payload
+      })
+    // .addCase(updateDailyStock.fulfilled, (state, action) => {
+    //   state.dailyStock = action.payload
+    // })
   },
 })
 
@@ -112,5 +152,7 @@ export const {
   updateDailyStockStatus,
   updateProduct,
   updatePriceTotal,
+  addProduct,
+  addQuantityProduct,
 } = dailyStockSlice.actions
 export default dailyStockSlice.reducer

@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
 import { MdEdit, MdDelete } from 'react-icons/md'
+import { FaPlus, FaHistory } from 'react-icons/fa'
 
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -14,6 +15,7 @@ import {
 } from '../../../../redux/productSlice'
 
 import DailyProductCreate from '../daily/DailyProductCreate'
+import DailyProductAdd from './DailyProductAdd'
 
 const DailyCreate = () => {
   let { products, total } = useSelector((store) => store.product)
@@ -23,6 +25,7 @@ const DailyCreate = () => {
   const form = useRef()
   let [isOpenEdit, setOpenEdit] = useState(false)
   let [index, setIndex] = useState(0)
+  let [isOpenAdd, setOpenAdd] = useState(false)
 
   useEffect(() => {
     dispatch(calTotals())
@@ -41,7 +44,7 @@ const DailyCreate = () => {
     formEnt.products = products
     formEnt.price_total = total
 
-    // console.log(formEnt)
+    console.log(formEnt)
 
     fetch(`${baseURL}/api/daily/create`, {
       method: 'POST',
@@ -66,7 +69,7 @@ const DailyCreate = () => {
 
     if (selectedInput) {
       const index = selectedInput.value
-      console.log(index)
+      // console.log(index)
 
       setIndex(index)
       setOpenEdit(true)
@@ -108,7 +111,7 @@ const DailyCreate = () => {
       <div className="card shadow m-3">
         <form ref={form} onSubmit={onSubmitForm}>
           <div className="row p-4">
-            <div className="col-sm-4" style={{ width: '150px' }}>
+            <div className="col-sm-3">
               <label className="form-label">วันที่</label>
               <input
                 type="date"
@@ -117,8 +120,8 @@ const DailyCreate = () => {
               />
             </div>
 
-            <div className="col-sm-4" style={{ width: '150px' }}>
-              <label className="form-label">สถานะ</label>
+            <div className="col-sm-3">
+              <label className="form-label">Status</label>
               <select
                 name="status"
                 defaultValue="new"
@@ -128,7 +131,8 @@ const DailyCreate = () => {
                 <option value="clear">Clear</option>
               </select>
             </div>
-            <div className="col-sm-4" style={{ width: '150px' }}>
+
+            <div className="col-sm-3">
               <label className="form-label">Chanel</label>
               <select
                 name="chanel"
@@ -138,10 +142,47 @@ const DailyCreate = () => {
                 <option value="facebook">Facebook</option>
               </select>
             </div>
+
+            <div className="col-sm-3">
+              <div className="text-end">
+                <button
+                  className="btn btn-light btn-sm border"
+                  onClick={() => navigate('/admin/daily-stock')}
+                >
+                  <CloseIcon sx={{ color: 'red' }} />
+                </button>
+              </div>
+            </div>
+
+            <div className="col-12">
+              <button
+                type="button"
+                className="btn btn-sm btn-light border"
+                onClick={() => navigate('/admin/stock')}
+              >
+                <FaPlus color="blue" /> เพิ่มสินค้า
+              </button>
+              &nbsp;&nbsp;
+              {/* <button
+                type="button"
+                className="btn btn-sm btn-light border"
+                onClick={() => setOpenAdd(true)}
+              >
+                <FaPlus color="blue" /> เพิ่มสินค้าเฉพาะในรายการนี้
+              </button>
+              &nbsp;&nbsp; */}
+              <button
+                type="button"
+                className="btn btn-sm btn-light border"
+                onClick={onDeleteClick}
+              >
+                <MdDelete color="red" /> ลบรายการที่เลือก
+              </button>
+            </div>
           </div>
           {/* Table */}
           <div className="table-responsive px-2">
-            <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
+            <table className="table table-sm table-striped text-start table-bordered border-light table-hover">
               <thead className="table-light">
                 <tr>
                   <th style={{ width: '80px' }}>
@@ -153,12 +194,11 @@ const DailyCreate = () => {
                       <MdEdit color="orange" /> แก้ไข
                     </button>
                   </th>
-                  <th>รหัส</th>
-                  <th>ชื่อสินค้า</th>
+                  <th>สินค้า</th>
                   <th>ราคา</th>
-                  <th>จำนวน</th>
+                  <th className="text-success">จำนวน</th>
                   <th>limit</th>
-                  <th>เหลือ</th>
+                  <th className="text-danger">*เหลือ</th>
                 </tr>
               </thead>
               <tbody>
@@ -174,27 +214,22 @@ const DailyCreate = () => {
                             className="form-check-input"
                           />
                         </td>
-                        <td>{p.code}</td>
-                        <td>{p.name}</td>
-                        <td>{p.price}</td>
+                        <td>
+                          <code style={{ fontSize: '20px' }}>{p.code}</code>
+                          &nbsp;&nbsp;{p.name}
+                        </td>
+                        <td>
+                          {p.price
+                            .toFixed(0)
+                            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                        </td>
                         <td>{p.stock_quantity}</td>
                         <td>{p.limit}</td>
+                        {/* สินค้าคงเหลือของ Product Master */}
                         <td>{p.remaining}</td>
                       </tr>
                     )
                   })}
-                <tr>
-                  <td className="text-center">
-                    <button
-                      style={{ width: '70px' }}
-                      type="button"
-                      className="btn btn-sm btn-light border"
-                      onClick={onDeleteClick}
-                    >
-                      <MdDelete color="red" /> ลบ
-                    </button>
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
@@ -233,6 +268,7 @@ const DailyCreate = () => {
           index={index}
         />
       )}
+      {/* {isOpenAdd && <DailyProductAdd setOpenAdd={setOpenAdd} />} */}
     </>
   )
 }
