@@ -1,6 +1,7 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { json, useParams } from 'react-router-dom'
 import { baseURL } from '../../../../App'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
@@ -13,9 +14,19 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-
+import Editor from './Editer'
+import Quill from 'quill'
 export default function CustomerByOrder() {
+  const Delta = Quill.import('delta');
+  const [range, setRange] = useState();
+  let { user } = useSelector((store) => store.user)
+  console.log("USER : ", user)
+  const dispatch = useDispatch()
+  const [lastChange, setLastChange] = useState();
+  const [readOnly, setReadOnly] = useState(false);
+  const quillRef = useRef();
   const { id } = useParams()
+  const [image, setImage] = useState(new Delta().insert(''));
   const [orders, setOrders] = useState({
     data: { name: 'loading', orders: [] },
   })
@@ -28,8 +39,10 @@ export default function CustomerByOrder() {
           Authorization: `Bearer ${token}`,
         },
       })
-      console.log('oo', response.data.getDate())
+      console.log('oo', response.data)
       setOrders({ data: response.data })
+      setFormData(response.data)
+      setImage(JSON.parse(response.data.picture_payment))
     } catch (error) {
       console.error('There was an error!', error)
     }
@@ -41,7 +54,7 @@ export default function CustomerByOrder() {
     }
   }, [token, id])
 
-  console.log('1.', orders , "DATE ORDER : ", orders.getDate())
+  console.log('1.', orders, "DATE ORDER : ", orders)
 
   const calculateTotalQuantity = () => {
     return orders.data.orders.reduce(
@@ -83,10 +96,12 @@ export default function CustomerByOrder() {
   }
 
   const handleSubmit = async (e) => {
+    console.log(orders)
     console.log(formData)
     e.preventDefault()
     const formDataToSend = new FormData()
-    formDataToSend.append('picture_payment', formData.picture_payment)
+    formDataToSend.append('picture_payment', JSON.stringify(quillRef.current?.getContents()))
+    formDataToSend.append('name', formData.name)
     formDataToSend.append('address', formData.address)
     formDataToSend.append('sub_district', formData.sub_district)
     formDataToSend.append('sub_area', formData.sub_area)
@@ -112,6 +127,7 @@ export default function CustomerByOrder() {
     } catch (error) {
       console.error('There was an error!', error)
     }
+    
   }
 
   const buffer = orders
@@ -125,6 +141,9 @@ export default function CustomerByOrder() {
     '' + dt.getFullYear() + '-' + a(dt.getMonth() + 1) + '-' + dt.getDate()
   console.log(df)
 
+  function OrderForm({ order, handleChange, handleSubmit, handleImageChange, buffer, orders, df, formData }) {
+    const isDisabled = order.complete;
+  }
   return (
     <div className="container position-relative mt-3 mx-auto">
       <h3 className="text-start mb-3">
@@ -347,6 +366,7 @@ export default function CustomerByOrder() {
               <Typography variant="h6" gutterBottom>
                 แบบฟอร์มสำหรับกรอกข้อมูล
               </Typography>
+
               <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
@@ -359,7 +379,23 @@ export default function CustomerByOrder() {
                       required
                     />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={4}>
+                    {buffer.data.address != null ? (
+                      <>
+                        <TextField
+                          label="ชื่อ-นามสกุล"
+                          fullWidth
+                          name="name"
+                          defaultValue={'' + orders.data.name}
+                          onChange={handleChange}
+                          required
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </Grid>
+                  <Grid item xs={8}>
                     {buffer.data.address != null ? (
                       <>
                         <TextField
@@ -390,6 +426,7 @@ export default function CustomerByOrder() {
                       <></>
                     )}
                   </Grid>
+
                   <Grid item xs={4}>
                     {buffer.data.address != null ? (
                       <>
@@ -437,37 +474,49 @@ export default function CustomerByOrder() {
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <input
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      id="image-upload"
-                      type="file"
-                      onChange={handleImageChange}
+                    <Editor
+                      ref={quillRef}
+                      readOnly={readOnly}
+                      // JSON.parse(orders.data.picture_payment)
+                      onSelectionChange={setRange}
+                      onTextChange={setLastChange}
+                      defaultValue={image}
                     />
-                    <label htmlFor="image-upload">
-                      <Button
-                        variant="contained"
-                        color="warning"
-                        component="span"
-                        className="m-lg-2"
-                      >
-                        อัปโหลดรูปภาพ
+                  </Grid>
+                  {user.role == "admin" && <>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="expressID"
+                        fullWidth
+                        name="expressID"
+                        defaultValue={'' + orders.data.tel}
+                        onChange={handleChange}
+                        required
+                      />
+                    </Grid>
+
+                    <Grid item xs={4}>
+                      <Button type="submit" variant="contained" color="primary">
+                        ส่งแบบฟอร์มชำระเงิน
                       </Button>
-                      {formData.picture_payment &&
-                        formData.picture_payment.name}
-                    </label>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Button type="submit" variant="contained" color="primary">
-                      ยืนยันการชำระเงิน
-                    </Button>
-                  </Grid>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Button type="button" variant="contained" color="warning">
+                        ยืนยันการชำระเงิน
+                      </Button>
+                    </Grid>
+                  </>}
+
                 </Grid>
               </form>
             </Paper>
           </div>
+          <div>
+
+          </div>
         </>
       )}
     </div>
+
   )
 }

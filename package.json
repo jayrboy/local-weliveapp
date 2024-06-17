@@ -27,6 +27,7 @@
     "facebook-login-react": "^1.0.6",
     "moment": "^2.30.1",
     "nanoid": "^5.0.6",
+    "quill": "^2.0.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.1",
     "react-chartjs-2": "^5.2.0",
