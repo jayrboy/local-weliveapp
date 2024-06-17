@@ -28,7 +28,7 @@ export default function CustomerByOrder() {
           Authorization: `Bearer ${token}`,
         },
       })
-      console.log('oo', response.data)
+      console.log('oo', response.data.getDate())
       setOrders({ data: response.data })
     } catch (error) {
       console.error('There was an error!', error)
@@ -41,7 +41,7 @@ export default function CustomerByOrder() {
     }
   }, [token, id])
 
-  console.log('1.', orders)
+  console.log('1.', orders , "DATE ORDER : ", orders.getDate())
 
   const calculateTotalQuantity = () => {
     return orders.data.orders.reduce(
