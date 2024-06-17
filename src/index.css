@@ -115,3 +115,24 @@ IconButton,
   transform: translate(-50%, -50%);
   z-index: 10; /* ให้มีค่า z-index สูงกว่าเนื้อหาหลักของเว็บ */
 }
+
+.controls {
+  display: flex;
+  border: 1px solid #ccc;
+  border-top: 0;
+  padding: 10px;
+}
+
+.controls-right {
+  margin-left: auto;
+}
+
+.state {
+  margin: 10px 0;
+  font-family: monospace;
+}
+
+.state-title {
+  color: #999;
+  text-transform: uppercase;
+}

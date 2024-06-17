@@ -100,6 +100,7 @@ export default function CustomerOrder() {
                     <TableCell className="text-center">จำนวนสินค้า</TableCell>
                     <TableCell className="text-center">ราคารวม</TableCell>
                     <TableCell className="text-center">สถานะ</TableCell>
+
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -126,24 +127,12 @@ export default function CustomerOrder() {
                         <TableCell className="text-center">
                           {order.totalPrice}
                         </TableCell>
-                        <TableCell className="text-center">
-                          {order.complete == false ? (
-                            <div>
-                              <button className="btn btn-sm btn-success">
-                                ยืนยันออเดอร์
-                              </button>
-                            </div>
-                          ) : (
-                            <div>
-                              <button className="btn btn-sm btn-warning">
-                                จัดส่งแล้ว
-                              </button>
-                              <button className="btn btn-sm btn-danger ms-3">
-                                ยกเลิกออเดอร์
-                              </button>
-                            </div>
-                          )}
-                        </TableCell>
+                        <TableCell> {order.complete == false ? <>ยังไม่ถูกชำระ</>: <>
+                          ชำระเงินแล้ว
+                        </>
+            
+                        }</TableCell>
+
                       </TableRow>
                     )
                   })}
