@@ -170,13 +170,23 @@ export default function DailyStock() {
                                 </code>
                                 &nbsp;&nbsp;{p.name}
                               </td>
-                              <td>{p.price}</td>
+                              <td>
+                                {p.price
+                                  .toFixed(0)
+                                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                              </td>
                               <td>{p.stock_quantity}</td>
                               <td>{p.limit}</td>
                               <td>{p.cf}</td>
-                              <td>
-                                {p.paid} / {p.remaining_cf}
-                              </td>
+                              {p.remaining_cf < 0 ? (
+                                <td className="text-danger">
+                                  {p.paid} / {p.remaining_cf}
+                                </td>
+                              ) : (
+                                <td>
+                                  {p.paid} / {p.remaining_cf}
+                                </td>
+                              )}
                             </tr>
                           ))}
                         </tbody>

@@ -23,6 +23,7 @@ const DailyCreate = () => {
   const navigate = useNavigate()
 
   const form = useRef()
+  const submitButton = useRef()
   let [isOpenEdit, setOpenEdit] = useState(false)
   let [index, setIndex] = useState(0)
   let [isOpenAdd, setOpenAdd] = useState(false)
@@ -35,8 +36,11 @@ const DailyCreate = () => {
     dispatch(getProducts())
   }, [])
 
-  const onSubmitForm = (e) => {
+  const onSubmitForm = async (e) => {
     e.preventDefault()
+
+    // Disable the submit button
+    submitButton.current.disabled = true
 
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
@@ -254,7 +258,12 @@ const DailyCreate = () => {
               ยกเลิก
             </button>
             &nbsp;&nbsp;&nbsp;
-            <button type="submit" className="btn btn-primary btn-sm border">
+            <button
+              ref={submitButton}
+              type="submit"
+              className="btn btn-primary btn-sm border"
+              disabled={false}
+            >
               บันทึก
             </button>
           </footer>

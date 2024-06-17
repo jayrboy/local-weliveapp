@@ -6,8 +6,9 @@ import { firstLoadContext } from '../../routes/AdminRoute'
 import { toast } from 'react-toastify'
 import { useDispatch } from 'react-redux'
 import { getAllDaily } from '../../redux/dailyStockSlice'
+import { getOrders } from '../../redux/saleOrderSlice'
 
-//! ต้องมีสิทธ์การอนุญาต publish_video
+//! ต้องมีสิทธ์การอนุญาต publish_video (บัญชีธุรกิจ)
 // ฟังก์ชัน เปิด Live Video บน User
 function openLiveVideo() {
   return axios
@@ -23,6 +24,7 @@ function openLiveVideo() {
     .catch((err) => console.log(err))
 }
 
+//! ต้องมีสิทธ์การอนุญาต public_profile, user_videos (บัญชีผู้บริโภค)
 // (1) Comments from Graph API
 async function getCommentsGraphAPI(liveVideoId) {
   const url = `https://graph.facebook.com/v19.0/${liveVideoId}/comments`
@@ -98,10 +100,13 @@ const GetComments = () => {
   // (3) Check Message Code
   async function checkMessageCode(comment) {
     try {
-      let thisComment = comment.message.trim().toLowerCase() // นำ message ที่มาช่องว่างมา trim แล้วเปลี่ยนเป็น lowercase กรณีเจออักษรพิมพ์ใหญ่
+      let commentFb = comment.message.trim().toLowerCase() // นำ message ที่มาช่องว่างมา trim แล้วเปลี่ยนเป็น lowercase กรณีเจออักษรพิมพ์ใหญ่
+      let idFb = comment.from.id
+      let nameFb = comment.from.name
 
-      if (thisComment && thisComment.includes('=')) {
-        let parts = thisComment.split('=') // split "t2=5" into an array["t2", "5"]
+      //TODO: check Confirm (cf)
+      if (commentFb && commentFb.includes('=')) {
+        let parts = commentFb.split('=') // split "t2=5" into an array["t2", "5"]
         console.log('Have message code :', parts) // ข้อความทั้งหมดที่อยู่ใน parts
 
         let code = parts[0] // รหัสสินค้า
@@ -114,41 +119,75 @@ const GetComments = () => {
             console.log('ชื่อสินค้า :', p.name)
             console.log('จำนวนที่สั่ง :', quantity)
 
-            // ตรวจสอบว่า quantity ไม่เกิน remaining_cf หรือไม่เกิน limit ที่กำหนด
             if (quantity <= p.remaining_cf) {
+              // จำนวนสินค้าที่สั่งเข้ามา น้อยกว่า สินค้าคงเหลือ
               p.cf += quantity
               p.remaining_cf -= quantity
-            } else if (quantity > p.remaining_cf && p.limit > 0) {
-              // ตรวจสอบว่า remaining_cf ที่จะติดลบไม่เกิน limit
+            }
+            // จำนวนสินค้าที่สั่งเข้ามา มากกว่า สินค้าคงเหลือ จะสั่งได้ แต่ต้องไม่เกิน limit ที่กำหนดเอาไว้
+            else if (quantity > p.remaining_cf && p.limit > 0) {
               let newRemainingCf = p.remaining_cf - quantity
-              if (newRemainingCf >= -p.limit) {
+
+              // ถ้า (สินค้าคงเหลือ - จำนวนลูกค้าสั่งมาลบ) >= -(limit + สินค้าคงเหลือ) สมมุติ : 10 >= -(10 + 10)
+              if (newRemainingCf >= -(p.limit + p.stock_quantity)) {
                 p.cf += quantity
                 p.remaining_cf -= quantity
               }
             }
+
+            // จัดรูปข้อมูลสำหรับการส่ง API
+            let orderData = {
+              idFb: idFb,
+              name: nameFb,
+              email: '',
+              picture_profile: [],
+              orders: [
+                {
+                  id: p._id,
+                  name: p.name,
+                  quantity: quantity,
+                  price: p.price,
+                },
+              ],
+              picture_payment: '',
+              address: '',
+              sub_district: '',
+              sub_area: '',
+              district: '',
+              postcode: '',
+              tel: '',
+              complete: false,
+              date_added: new Date().toISOString(),
+            }
+
+            axios
+              .post(`${baseURL}/api/sale-order`, orderData)
+              .then((resp) => {
+                console.log('Document sales order saved')
+
+                // เรียก getOrders เพื่ออัปเดต Redux state
+                dispatch(getOrders())
+              })
+              .catch((err) => console.log(err))
           }
         })
 
         // อัปเดต dailyStock ในฐานข้อมูล
-        await axios
+        axios
           .put(`${baseURL}/api/daily/update`, dailyStock.data)
           .then((resp) => {
+            console.log('Document daily stock updated')
+
             // เรียก getAllDaily เพื่ออัปเดต Redux state
             dispatch(getAllDaily())
-
-            console.log('Document daily stock updated')
           })
           .catch((err) => console.log(err))
       }
 
-      if (thisComment && thisComment.startsWith('CF')) {
-        let parts = thisComment.split(' ') // split "cf a2=2" into an array ["cf","a2=2"]
-        console.log('Have message "CF" :', parts)
-      }
-
-      if (thisComment && thisComment.startsWith('CC')) {
-        let parts = thisComment.split(' ')
-        console.log('Have message "CC" :', thisComment)
+      //TODO: check Cancel (cc)
+      if (commentFb && commentFb.startsWith('CC')) {
+        let parts = commentFb.split(' ') // split "cf a2=2" into an array ["cf","a2=2"]
+        console.log('Have message "cc or CC" :', commentFb)
       }
     } catch (e) {
       console.log('checked message code error :', e)
