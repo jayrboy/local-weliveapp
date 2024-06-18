@@ -127,10 +127,15 @@ export default function CustomerOrder() {
                         <TableCell className="text-center">
                           {order.totalPrice}
                         </TableCell>
-                        <TableCell> {order.complete == false ? <>ยังไม่ถูกชำระ</>: <>
-                          ชำระเงินแล้ว
-                        </>
-            
+                        <TableCell> {order.complete == true ? 
+                          <>
+                            <p className='text-success text-center'>ชำระเงินแล้ว</p>
+                          </>
+                          :
+                          <>
+                            <p className='text-danger text-center'>ยังไม่ชำระเงิน</p>
+                          </>
+
                         }</TableCell>
 
                       </TableRow>

@@ -78,8 +78,18 @@ const Stock = () => {
                     console.log(product)
                     return (
                       <TableRow key={product._id}>
+                      
                         <TableCell className="text-center">
-                          {index + 1}
+                        
+                          {index + 1} | 
+
+                          <input
+                            type="radio"
+                            name="_id"
+                            value={product._id}
+                            className="ms-2 form-check-input"
+                          />
+                          
                         </TableCell>
                         <TableCell className="text-center">
                           <Link
@@ -286,7 +296,7 @@ const Stock = () => {
             <Link to="/admin/home" className="text-decoration-none">
               WE LIVE |
             </Link>
-            <span className="text-success">&nbsp; สินค้า</span>
+            <span className="text-success">&nbsp; สินค้าทั้งหมด</span>
           </h3>
         </div>
 
@@ -335,7 +345,8 @@ const Stock = () => {
       <div className="d-flex justify-content-center">
         <ul className="pagination pagination-sm">
           {page.map((p, i) => (
-            <React.Fragment key={i + 1}>{p}</React.Fragment>
+            <React.Fragment key={i + 1}>
+              {p}</React.Fragment>
           ))}
         </ul>
       </div>
