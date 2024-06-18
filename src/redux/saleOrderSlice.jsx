@@ -6,6 +6,7 @@ const url = 'https://vercel-server-weliveapp.vercel.app/api/sale-order'
 
 const initialState = {
   orders: [],
+  order: {},
   isLoading: true,
 }
 
@@ -13,10 +14,22 @@ export const getOrders = createAsyncThunk(
   'saleOrder/getOrders',
   async (thunkAPI) => {
     try {
-      const token = localStorage.getItem('token')
       const resp = await axios(url, {
         method: 'GET',
-        headers: { Authorization: 'Bearer ' + token },
+      })
+      return resp.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue('something went wrong')
+    }
+  }
+)
+
+export const getOrder = createAsyncThunk(
+  'saleOrder/getOrder',
+  async (id, thunkAPI) => {
+    try {
+      const resp = await axios(`${url}/read/${id}`, {
+        method: 'GET',
       })
       return resp.data
     } catch (error) {
@@ -46,6 +59,9 @@ const saleOrderSlice = createSlice({
       .addCase(getOrders.rejected, (state, action) => {
         console.log(action)
         state.isLoading = false
+      })
+      .addCase(getOrder.fulfilled, (state, action) => {
+        state.order = action.payload
       })
   },
 })

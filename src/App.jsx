@@ -27,14 +27,13 @@ import ProductGraph from './components/pages/admin/product/ProductGraph'
 
 import AdminSale from './components/pages/admin/AdminSale'
 import AdminCheckout from './components/pages/admin/AdminCheckout'
-import CustomerOrder from './components/pages/admin/customer/CustomerOrder'
+import CustomerOrderList from './components/pages/admin/customer/CustomerOrderList'
 import CustomerByOrder from './components/pages/admin/customer/CustomerByOrder'
 import CustomerEdit from './components/pages/admin/customer/CustomerEdit'
 import SearchCustomer from './components/pages/admin/customer/SearchCustomer'
 import SearchOrder from './components/pages/admin/customer/SearchOrder'
 
 import ResponsiveAppBar from './components/layout/ResponsiveAppBar'
-import UserOrder from './components/pages/customer/CustomerOrderID'
 
 import ExpressList from './components/pages/admin/ExpressList'
 import ExpressCreate from './components/pages/admin/ExpressCreate'
@@ -267,7 +266,7 @@ function App() {
           path="/order"
           element={
             <AdminRoute>
-              <CustomerOrder />
+              <CustomerOrderList />
             </AdminRoute>
           }
         />

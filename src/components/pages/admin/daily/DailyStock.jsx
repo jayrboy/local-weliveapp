@@ -153,38 +153,37 @@ export default function DailyStock() {
                         </caption>
                         <thead className="table-light">
                           <tr>
-                            <th className='text-center'>สินค้า</th>
-                            <th className='text-center'>ราคา</th>
-                            <th className="text-center text-success">จำนวน</th>
-                            <th className='text-center'>limit</th>
-                            <th className='text-center'>CF</th>
-                            <th className="text-center text-danger">จ่ายแล้ว/เหลือ</th>
+                            <th>สินค้า</th>
+                            <th>ราคา</th>
+                            <th className="text-success">จำนวน</th>
+                            <th>limit</th>
+                            <th>CF</th>
+                            <th className="text-danger">จ่ายแล้ว/เหลือ</th>
                           </tr>
                         </thead>
                         <tbody>
                           {doc.products.map((p, index) => (
                             <tr key={index + 1}>
-                              <td className='text-center'>
+                              <td>
                                 <code style={{ fontSize: '20px' }}>
-                                 รหัส {p.code} |
-
+                                  รหัส {p.code} |
                                 </code>
                                 &nbsp;&nbsp;{p.name}
                               </td>
-                              <td className='text-center'>
+                              <td>
                                 {p.price
                                   .toFixed(0)
                                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                              </td  >
-                              <td className='text-center'>{p.stock_quantity}</td>
-                              <td className='text-center'>{p.limit}</td>
-                              <td className='text-center'>{p.cf}</td>
+                              </td>
+                              <td>{p.stock_quantity}</td>
+                              <td>{p.limit}</td>
+                              <td>{p.cf}</td>
                               {p.remaining_cf < 0 ? (
                                 <td className="text-center text-danger">
                                   {p.paid} / {p.remaining_cf}
                                 </td>
                               ) : (
-                                <td className='text-center'>
+                                <td>
                                   {p.paid} / {p.remaining_cf}
                                 </td>
                               )}
