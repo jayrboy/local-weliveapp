@@ -16,6 +16,8 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Editor from './Editer'
 import Quill from 'quill'
+import CreditScoreIcon from '@mui/icons-material/CreditScore';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 export default function CustomerByOrder() {
   const Delta = Quill.import('delta');
   const [range, setRange] = useState();
@@ -32,6 +34,43 @@ export default function CustomerByOrder() {
   })
   const token = localStorage.getItem('token')
   const [formData, setFormData] = useState([])
+
+  const confirmpayment = async () => {
+    try {
+      const response = await axios.put(`${baseURL}/api/sale-order/complete/${id}`, {
+        orders: orders.data.orders.map(order => ({
+          order_id: order._id,
+          quantity: order.quantity
+        }))
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+  
+      alert("อัพเดตสถานะแล้ว");
+      window.location.reload();
+    } catch (error) {
+      console.error('There was an error!', error);
+    }
+  };
+  const confirmsended = async () => {
+    try {
+      const response = await axios.put(`${baseURL}/api/sale-order/sended/${id}`, {
+        express: formData.express,  // Add this line to send the express value
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("อัพเดตสถานะแล้ว");
+      window.location.reload();
+    } catch (error) {
+      console.error('There was an error!', error);
+    }
+  };
+
   const fetchSaleOrder = async () => {
     try {
       const response = await axios.get(`${baseURL}/api/sale-order/read/${id}`, {
@@ -43,6 +82,7 @@ export default function CustomerByOrder() {
       setOrders({ data: response.data })
       setFormData(response.data)
       setImage(JSON.parse(response.data.picture_payment))
+
     } catch (error) {
       console.error('There was an error!', error)
     }
@@ -108,6 +148,7 @@ export default function CustomerByOrder() {
     formDataToSend.append('district', formData.district)
     formDataToSend.append('postcode', formData.postcode)
     formDataToSend.append('tel', formData.tel)
+    formDataToSend.append('express', formData.express)
     formDataToSend.append('date_added', formData.date_added)
     formDataToSend.append('_id', id)
 
@@ -127,7 +168,7 @@ export default function CustomerByOrder() {
     } catch (error) {
       console.error('There was an error!', error)
     }
-    
+
   }
 
   const buffer = orders
@@ -141,15 +182,26 @@ export default function CustomerByOrder() {
     '' + dt.getFullYear() + '-' + a(dt.getMonth() + 1) + '-' + dt.getDate()
   console.log(df)
 
-  function OrderForm({ order, handleChange, handleSubmit, handleImageChange, buffer, orders, df, formData }) {
-    const isDisabled = order.complete;
-  }
+
   return (
     <div className="container position-relative mt-3 mx-auto">
       <h3 className="text-start mb-3">
         <span>We Live App</span>
         <span className="text-success ms-2">
           | รายการสั่งซื้อของคุณ {orders.data.name}{' '}
+          {orders.data.complete == true &&
+            <>
+              <p className='mt-3 text-success'>
+                <CreditScoreIcon /> ชำระเงินแล้ว
+              </p>
+              {orders.data.sended == true &&
+                <>
+                  <p className='mt-3 text-warning'>
+                    <LocalShippingIcon /> จัดส่งแล้ว
+                  </p>
+                </>
+              }
+            </>}
         </span>
       </h3>
       <div className="mt-3 mb-3">
@@ -483,29 +535,93 @@ export default function CustomerByOrder() {
                       defaultValue={image}
                     />
                   </Grid>
-                  {user.role == "admin" && <>
-                    <Grid item xs={12}>
-                      <TextField
-                        label="expressID"
-                        fullWidth
-                        name="expressID"
-                        defaultValue={'' + orders.data.tel}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Grid>
 
-                    <Grid item xs={4}>
-                      <Button type="submit" variant="contained" color="primary">
-                        ส่งแบบฟอร์มชำระเงิน
-                      </Button>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Button type="button" variant="contained" color="warning">
-                        ยืนยันการชำระเงิน
-                      </Button>
-                    </Grid>
-                  </>}
+                  {user.role == "admin" ? <>
+
+
+
+                    {orders.data.complete == false ?
+                      <>
+                        <Grid item xs={6}>
+                          <Button type="onSubmit" variant="contained" color="primary"
+                            onClick={confirmpayment}
+                          >
+                            ส่งแบบฟอร์มการชำระเงิน
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Button type="button" variant="contained" color="warning"
+                            onClick={confirmpayment}
+                          >
+                            ยืนยันการชำระเงิน
+                          </Button>
+                        </Grid>
+
+                      </>
+                      :
+                      <>
+                        <Grid item xs={6}>
+                          <Button type="button" variant="contained" color="error"
+                            onClick={confirmpayment}
+                          >
+                            ปฎิเสธการชำระเงิน
+                          </Button>
+                        </Grid>
+                        {orders.data.sended == false ?
+                          <>
+                            <Grid item xs={12}>
+                              <TextField
+                                label="express"
+                                fullWidth
+                                name="express"
+                                defaultValue={'' + orders.data.express}
+                                onChange={handleChange}
+                                required
+                              />
+                            </Grid>
+                            <Grid item xs={6}>
+                              <Button type="button" variant="contained" color="warning"
+                                onClick={confirmsended}
+                              >
+                                ยืนยันการส่งสินค้า
+                              </Button>
+                            </Grid>
+                          </>
+                          :
+                          <>
+                            <Grid item xs={12}>
+                              <TextField
+                                label="expressID"
+                                fullWidth
+                                name="expressID"
+                                defaultValue={'' + orders.data.express}
+                                onChange={handleChange}
+                                disabled
+                              />
+                            </Grid>
+                            <Grid item xs={6}>
+                              <Button type="button" variant="contained" color="error"
+                                onClick={confirmsended}
+                              >
+                                ยกเลิกสถานะการจัดส่ง
+                              </Button>
+                            </Grid>
+                          </>}
+                      </>}
+                  </> :
+                    <>
+                      <Grid item xs={12}>
+                        <TextField
+                          label="expressID"
+                          fullWidth
+                          name="expressID"
+                          defaultValue={'' + orders.data.express}
+                          onChange={handleChange}
+                          disabled
+                        />
+                      </Grid>
+
+                    </>}
 
                 </Grid>
               </form>
