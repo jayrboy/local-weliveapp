@@ -38,16 +38,23 @@ export default function CustomerByOrder() {
   const confirmpayment = async () => {
     try {
       const response = await axios.put(`${baseURL}/api/sale-order/complete/${id}`, {
+        orders: orders.data.orders.map(order => ({
+          order_id: order._id,
+          quantity: order.quantity
+        }))
+      }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      })
+      });
+      
+  
       alert("อัพเดตสถานะแล้ว");
       window.location.reload();
     } catch (error) {
-      console.error('There was an error!', error)
+      console.error('There was an error!', error);
     }
-  }
+  };
   const confirmsended = async () => {
     try {
       const response = await axios.put(`${baseURL}/api/sale-order/sended/${id}`, {
@@ -175,9 +182,7 @@ export default function CustomerByOrder() {
     '' + dt.getFullYear() + '-' + a(dt.getMonth() + 1) + '-' + dt.getDate()
   console.log(df)
 
-  function OrderForm({ order, handleChange, handleSubmit, handleImageChange, buffer, orders, df, formData }) {
-    const isDisabled = order.complete;
-  }
+
   return (
     <div className="container position-relative mt-3 mx-auto">
       <h3 className="text-start mb-3">
