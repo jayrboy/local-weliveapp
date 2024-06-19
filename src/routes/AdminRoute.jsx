@@ -1,12 +1,12 @@
 import { baseURL } from '../App'
 import { Box } from '@mui/material'
-import SideBar from '../components/layout/SideBar'
-import HeaderBar from '../components/layout/HeaderBar'
+import SideBar from '../layout/SideBar'
+import HeaderBar from '../layout/HeaderBar'
 import { useEffect, useState, createContext, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
-import NotFound from '../components/pages/NotFound'
-import LiveVideoModal from '../components/functions/LiveVideoModal'
+import NotFound from '../views/NotFound'
+import LiveVideoModal from '../components/LiveVideoModal'
 
 export const firstLoadContext = createContext()
 export const commentContext = createContext()

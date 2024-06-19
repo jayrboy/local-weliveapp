@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
-import NotFound from '../components/pages/NotFound'
-import ResponsiveAppBar from '../components/layout/ResponsiveAppBar'
+import NotFound from '../views/NotFound'
+import ResponsiveAppBar from '../layout/ResponsiveAppBar'
 
 const UserRoute = ({ children }) => {
   // Check User

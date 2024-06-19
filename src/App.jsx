@@ -7,44 +7,48 @@ import { CssBaseline } from '@mui/material'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-import Register from './components/pages/Register'
-import Login from './components/pages/Login'
+import ResponsiveAppBar from './layout/ResponsiveAppBar'
+
+import Register from './views/Register'
+import Login from './views/Login'
+
 import AdminRoute from './routes/AdminRoute'
 import UserRoute from './routes/UserRoute'
 
-import HomePage from './components/pages/HomePage'
-import NotFound from './components/pages/NotFound'
+import HomePage from './views/HomePage'
+import NotFound from './views/NotFound'
 
-import HomeUser from './components/pages/user/HomeUser'
-import HomeAdmin from './components/pages/admin/HomeAdmin'
-import ManageUser from './components/pages/admin/ManageUser'
+import UserHome from './views/user/UserHome'
+import UserManage from './views/user/UserManage'
 
-import ProductStock from './components/pages/admin/product/ProductStock'
-import DailyStock from './components/pages/admin/daily/DailyStock'
-import DailyCreate from './components/pages/admin/daily/DailyCreate'
-import DailyEdit from './components/pages/admin/daily/DailyEdit'
-import ProductGraph from './components/pages/admin/product/ProductGraph'
+import ProductStock from './views/product/ProductStock'
+import ProductGraph from './views/product/ProductGraph'
 
-import AdminSale from './components/pages/admin/AdminSale'
-import AdminCheckout from './components/pages/admin/AdminCheckout'
-import CustomerOrderList from './components/pages/admin/customer/CustomerOrderList'
-import CustomerByOrder from './components/pages/admin/customer/CustomerByOrder'
-import CustomerEdit from './components/pages/admin/customer/CustomerEdit'
-import SearchCustomer from './components/pages/admin/customer/SearchCustomer'
-import SearchOrder from './components/pages/admin/customer/SearchOrder'
+import DailyStock from './views/daily/DailyStock'
+import DailyCreate from './views/daily/DailyCreate'
+import DailyEdit from './views/daily/DailyEdit'
+import DailyStockHistory from './views/daily/DailyStockHistory'
 
-import ResponsiveAppBar from './components/layout/ResponsiveAppBar'
+import SaleOrderList from './views/order/SaleOrderList'
+import SaleOrder from './views/order/SaleOrder'
+import SaleOrderSearch from './views/order/SaleOrderSearch'
+import SaleOrderCheckout from './views/order/SaleOrderCheckout'
+import SaleOrderReport from './views/order/SaleOrderReport'
 
-import ExpressList from './components/pages/admin/ExpressList'
-import ExpressCreate from './components/pages/admin/ExpressCreate'
-import ExpressDelete from './components/pages/admin/ExpressDelete'
-import AnalysisReport from './components/pages/admin/AnalysisReport'
-import Info from './components/pages/admin/Info'
-import LoadingFn from './components/functions/LoadingFn'
+import CustomerByOrder from './views/customer/CustomerByOrder'
+import CustomerEdit from './views/customer/CustomerEdit'
+import CustomerSearch from './views/customer/CustomerSearch'
+
+import ExpressList from './views/express/ExpressList'
+import ExpressCreate from './views/express/ExpressCreate'
+import ExpressDelete from './views/express/ExpressDelete'
+
+import LoadingFn from './components/LoadingFn'
+
+import Info from './views/Info'
 
 import { useDispatch } from 'react-redux'
 import { login } from './redux/userSlice'
-import DailyStockHistory from './components/pages/admin/daily/DailyStockHistory'
 
 export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 // export const baseURL = 'http://localhost:8000'
@@ -119,15 +123,6 @@ function App() {
         />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        {/* Customer */}
-        <Route
-          path="/user/home"
-          element={
-            <UserRoute>
-              <HomeUser />
-            </UserRoute>
-          }
-        />
         <Route path="/order/:id" element={<CustomerByOrder />} />
 
         {/* Admin */}
@@ -135,7 +130,7 @@ function App() {
           path="/admin/home"
           element={
             <AdminRoute>
-              <HomeAdmin />
+              <UserHome />
             </AdminRoute>
           }
         />
@@ -192,7 +187,7 @@ function App() {
           path="/search/customer"
           element={
             <AdminRoute>
-              <SearchCustomer />
+              <CustomerSearch />
             </AdminRoute>
           }
         />
@@ -208,7 +203,7 @@ function App() {
           path="/search/order"
           element={
             <AdminRoute>
-              <SearchOrder />
+              <SaleOrderSearch />
             </AdminRoute>
           }
         />
@@ -240,7 +235,7 @@ function App() {
           path="/admin/checkout"
           element={
             <AdminRoute>
-              <AdminCheckout />
+              <SaleOrderCheckout />
             </AdminRoute>
           }
         />
@@ -248,7 +243,7 @@ function App() {
           path="/admin/sales"
           element={
             <AdminRoute>
-              <AdminSale />
+              <SaleOrder />
             </AdminRoute>
           }
         />
@@ -257,7 +252,7 @@ function App() {
           path="/admin/manage"
           element={
             <AdminRoute>
-              <ManageUser />
+              <UserManage />
             </AdminRoute>
           }
         />
@@ -266,7 +261,7 @@ function App() {
           path="/order"
           element={
             <AdminRoute>
-              <CustomerOrderList />
+              <SaleOrderList />
             </AdminRoute>
           }
         />
@@ -274,7 +269,7 @@ function App() {
           path="/analysis"
           element={
             <AdminRoute>
-              <AnalysisReport />
+              <SaleOrderReport />
             </AdminRoute>
           }
         />
