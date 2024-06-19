@@ -45,6 +45,38 @@ const saleOrderSlice = createSlice({
     clearOrders: (state) => {
       state.orders = []
     },
+    calculateTotalQuantity: (state) => {
+      let total = 0
+      state.order.orders.map((item) => {
+        total += item.stock_quantity * item.price
+      })
+      state.total = total
+    },
+    calculateTotalPrice: (state) => {
+      let total = 0
+      if (state.order.orders && state.order.orders.length > 0) {
+        for (let i = 0; i < state.order.orders.length; i++) {
+          total += state.order.orders[i].price * state.order.orders[i].quantity
+        }
+      }
+      state.totalPrice = total
+    },
+    calculateTotalExpressPrice: (state) => {
+      let totalQuantity = 0
+      if (state.order.orders && state.order.orders.length > 0) {
+        for (let i = 0; i < state.order.orders.length; i++) {
+          totalQuantity += state.order.orders[i].quantity
+        }
+      }
+
+      if (totalQuantity > 5 && totalQuantity <= 10) {
+        state.totalExpressPrice = 100
+      } else if (totalQuantity > 10) {
+        state.totalExpressPrice = 200
+      } else {
+        state.totalExpressPrice = 50
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -66,6 +98,11 @@ const saleOrderSlice = createSlice({
   },
 })
 
-export const { clearOrders } = saleOrderSlice.actions
+export const {
+  clearOrders,
+  calculateTotalQuantity,
+  calculateTotalPrice,
+  calculateTotalExpressPrice,
+} = saleOrderSlice.actions
 
 export default saleOrderSlice.reducer

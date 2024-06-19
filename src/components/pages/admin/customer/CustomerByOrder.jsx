@@ -1,11 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-
-import { baseURL } from '../../../../App'
 import axios from 'axios'
+import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
-
+import { useDispatch, useSelector } from 'react-redux'
+import { json, useParams } from 'react-router-dom'
+import { baseURL } from '../../../../App'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
@@ -17,49 +15,30 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import CreditScoreIcon from '@mui/icons-material/CreditScore'
-import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 import Editor from './Editer'
 import Quill from 'quill'
-
+import CreditScoreIcon from '@mui/icons-material/CreditScore'
+import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 export default function CustomerByOrder() {
-  let Delta = Quill.import('delta')
-  let [range, setRange] = useState()
+  const Delta = Quill.import('delta')
+  const [range, setRange] = useState()
   let { user } = useSelector((store) => store.user)
-  // console.log('USER : ', user)
-  const navigate = useNavigate()
-
-  let [lastChange, setLastChange] = useState()
-  let [readOnly, setReadOnly] = useState(false)
-  let quillRef = useRef()
+  console.log('USER : ', user)
+  const dispatch = useDispatch()
+  const [lastChange, setLastChange] = useState()
+  const [readOnly, setReadOnly] = useState(false)
+  const quillRef = useRef()
   const { id } = useParams()
-  let [image, setImage] = useState(new Delta().insert(''))
-  let [orders, setOrders] = useState({
+  const [image, setImage] = useState(new Delta().insert(''))
+  const [orders, setOrders] = useState({
     data: { name: 'loading', orders: [] },
   })
   const token = localStorage.getItem('token')
   const [formData, setFormData] = useState([])
-  const submitButton = useRef()
-
-  useEffect(() => {
-    fetchSaleOrder()
-  }, [])
-
-  const fetchSaleOrder = async () => {
-    try {
-      const response = await axios.get(`${baseURL}/api/sale-order/read/${id}`)
-      // console.log('oo', response.data)
-      setOrders({ data: response.data })
-      setFormData(response.data)
-      setImage(JSON.parse(response.data.picture_payment))
-    } catch (error) {
-      console.error('There was an error!', error)
-    }
-  }
 
   const confirmPayment = async () => {
-    return await axios
-      .put(
+    try {
+      const response = await axios.put(
         `${baseURL}/api/sale-order/complete/${id}`,
         {
           orders: orders.data.orders.map((order) => ({
@@ -73,19 +52,16 @@ export default function CustomerByOrder() {
           },
         }
       )
-      .then((response) => {
-        // Disable the submit button
-        submitButton.current.disabled = true
 
-        toast.success('อัปเดตสำเร็จ')
-        window.location.reload()
-      })
-      .catch((error) => console.error('There was an error!', error))
+      toast.success('อัพเดตสถานะแล้ว')
+      window.location.reload()
+    } catch (error) {
+      console.error('There was an error!', error)
+    }
   }
-
   const confirmSended = async () => {
-    return await axios
-      .put(
+    try {
+      const response = await axios.put(
         `${baseURL}/api/sale-order/sended/${id}`,
         {
           express: formData.express, // Add this line to send the express value
@@ -96,18 +72,36 @@ export default function CustomerByOrder() {
           },
         }
       )
-      .then((response) => {
-        // Disable the submit button
-        submitButton.current.disabled = true
-
-        console.log(response.data)
-        toast.success('อัพเดตสถานะแล้ว')
-        window.location.reload()
-      })
-      .catch((error) => console.error('There was an error!', error))
+      toast.success('อัพเดตสถานะแล้ว')
+      window.location.reload()
+    } catch (error) {
+      console.error('There was an error!', error)
+    }
   }
 
-  // console.log('1.', orders, 'DATE ORDER : ', orders)
+  const fetchSaleOrder = async () => {
+    try {
+      const response = await axios.get(`${baseURL}/api/sale-order/read/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      console.log('oo', response.data)
+      setOrders({ data: response.data })
+      setFormData(response.data)
+      setImage(JSON.parse(response.data.picture_payment))
+    } catch (error) {
+      console.error('There was an error!', error)
+    }
+  }
+
+  useEffect(() => {
+    if (token) {
+      fetchSaleOrder()
+    }
+  }, [token, id])
+
+  console.log('1.', orders, 'DATE ORDER : ', orders)
 
   const calculateTotalQuantity = () => {
     return orders.data.orders.reduce(
@@ -137,7 +131,7 @@ export default function CustomerByOrder() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    // console.log(name, value)
+    console.log(name, value)
     setFormData((prevData) => ({ ...prevData, [name]: value }))
   }
 
@@ -149,8 +143,8 @@ export default function CustomerByOrder() {
   }
 
   const handleSubmit = async (e) => {
-    // console.log(orders)
-    // console.log(formData)
+    console.log(orders)
+    console.log(formData)
     e.preventDefault()
     const formDataToSend = new FormData()
     formDataToSend.append(
@@ -186,16 +180,15 @@ export default function CustomerByOrder() {
     }
   }
 
-  let dt = new Date(Date.parse(orders.data.date_added))
+  const buffer = orders
 
+  let dt = new Date(Date.parse(orders.data.date_added))
   const a = (month) => {
     if (month < 10) return '0' + month
     else return '' + month
   }
-
   let df =
     '' + dt.getFullYear() + '-' + a(dt.getMonth() + 1) + '-' + dt.getDate()
-
   console.log(df)
 
   let sum = calculateTotalPrice() + calculateTotalExpressPrice()
@@ -335,7 +328,116 @@ export default function CustomerByOrder() {
         </TableContainer>
       </div>
 
-      {orders.data.address && (
+      {orders.data.address == null ? (
+        <>
+          <div className="mt-4">
+            <Paper elevation={3} className="p-4">
+              <Typography variant="h6" gutterBottom>
+                แบบฟอร์มสำหรับกรอกข้อมูล
+              </Typography>
+              <form onSubmit={handleSubmit} encType="multipart/form-data">
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      type="date"
+                      name="date_added"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      name="address"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      label="ตำบล"
+                      fullWidth
+                      name="district"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      label="อำเภอ"
+                      fullWidth
+                      name="sub_area"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      label="จังหวัด"
+                      fullWidth
+                      name="sub_district"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="รหัสไปรษณีย์"
+                      fullWidth
+                      name="postcode"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="เบอร์โทรศัพท์"
+                      fullWidth
+                      name="tel"
+                      defaultValue={formData.date_added}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <input
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      id="image-upload"
+                      type="file"
+                      onChange={handleImageChange}
+                    />
+                    <label htmlFor="image-upload">
+                      <Button
+                        variant="contained"
+                        color="warning"
+                        component="span"
+                        className="m-lg-2"
+                      >
+                        อัปโหลดรูปภาพ
+                      </Button>
+                      {formData.picture_payment &&
+                        formData.picture_payment.name}
+                    </label>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Button type="submit" variant="contained" color="primary">
+                      ยืนยันการชำระเงิน
+                    </Button>
+                  </Grid>
+                </Grid>
+              </form>
+            </Paper>
+          </div>
+        </>
+      ) : (
         <>
           <p hidden>{orders.data.address}</p>
           <div className="mt-4">
@@ -349,7 +451,6 @@ export default function CustomerByOrder() {
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
-                      style={{ width: '200px' }}
                       type="date"
                       name="date_added"
                       defaultValue={df}
@@ -357,46 +458,69 @@ export default function CustomerByOrder() {
                       required
                     />
                   </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      label="ชื่อ-นามสกุล"
-                      fullWidth
-                      name="name"
-                      defaultValue={'' + orders.data.name}
-                      onChange={handleChange}
-                      required
-                    />
+                  <Grid item xs={4}>
+                    {buffer.data.address != null ? (
+                      <>
+                        <TextField
+                          label="ชื่อ-นามสกุล"
+                          fullWidth
+                          name="name"
+                          defaultValue={'' + orders.data.name}
+                          onChange={handleChange}
+                          required
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      label="ที่อยู่"
-                      name="address"
-                      defaultValue={orders.data.address}
-                      onChange={handleChange}
-                      required
-                    />
+                  <Grid item xs={8}>
+                    {buffer.data.address != null ? (
+                      <>
+                        <TextField
+                          fullWidth
+                          name="address"
+                          defaultValue={buffer.data.address}
+                          onChange={handleChange}
+                          required
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </Grid>
                   <Grid item xs={4}>
-                    <TextField
-                      label="ตำบล"
-                      fullWidth
-                      name="district"
-                      defaultValue={'' + orders.data.district}
-                      onChange={handleChange}
-                      required
-                    />
+                    {buffer.data.address != null ? (
+                      <>
+                        <TextField
+                          label="ตำบล"
+                          fullWidth
+                          name="district"
+                          defaultValue={'' + orders.data.district}
+                          onChange={handleChange}
+                          required
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </Grid>
 
                   <Grid item xs={4}>
-                    <TextField
-                      label="อำเภอ"
-                      fullWidth
-                      name="sub_area"
-                      defaultValue={'' + orders.data.sub_area}
-                      onChange={handleChange}
-                      required
-                    />
+                    {buffer.data.address != null ? (
+                      <>
+                        <TextField
+                          label="อำเภอ"
+                          fullWidth
+                          name="sub_area"
+                          defaultValue={'' + orders.data.sub_area}
+                          onChange={handleChange}
+                          required
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </Grid>
                   <Grid item xs={4}>
                     <TextField
@@ -444,38 +568,38 @@ export default function CustomerByOrder() {
                       {orders.data.complete == false ? (
                         <>
                           <Grid item xs={6}>
-                            <button
-                              type="button"
+                            <Button
+                              type="onSubmit"
+                              variant="contained"
+                              color="primary"
                               onClick={confirmPayment}
-                              ref={submitButton}
-                              className="btn btn-primary"
                             >
                               ส่งแบบฟอร์มการชำระเงิน
-                            </button>
+                            </Button>
                           </Grid>
                           <Grid item xs={6}>
-                            <button
+                            <Button
                               type="button"
+                              variant="contained"
+                              color="warning"
                               onClick={confirmPayment}
-                              ref={submitButton}
-                              className="btn btn-primary"
                             >
                               ยืนยันการชำระเงิน
-                            </button>
+                            </Button>
                           </Grid>
                         </>
                       ) : (
                         <>
-                          <div className="m-3 mx-auto">
-                            <button
+                          <Grid item xs={6}>
+                            <Button
                               type="button"
+                              variant="contained"
+                              color="error"
                               onClick={confirmPayment}
-                              ref={submitButton}
-                              className="btn btn-danger"
                             >
                               ปฎิเสธการชำระเงิน
-                            </button>
-                          </div>
+                            </Button>
+                          </Grid>
                           {orders.data.sended == false ? (
                             <>
                               <Grid item xs={12}>
@@ -488,16 +612,16 @@ export default function CustomerByOrder() {
                                   required
                                 />
                               </Grid>
-                              <div className="mx-auto m-3">
-                                <button
+                              <Grid item xs={6}>
+                                <Button
                                   type="button"
+                                  variant="contained"
+                                  color="warning"
                                   onClick={confirmSended}
-                                  className="btn btn-warning"
-                                  ref={submitButton}
                                 >
                                   ยืนยันการส่งสินค้า
-                                </button>
-                              </div>
+                                </Button>
+                              </Grid>
                             </>
                           ) : (
                             <>
@@ -511,16 +635,16 @@ export default function CustomerByOrder() {
                                   disabled
                                 />
                               </Grid>
-                              <div className="mx-auto m-3">
-                                <button
+                              <Grid item xs={6}>
+                                <Button
                                   type="button"
+                                  variant="contained"
+                                  color="error"
                                   onClick={confirmSended}
-                                  className="btn btn-danger"
-                                  ref={submitButton}
                                 >
                                   ยกเลิกสถานะการจัดส่ง
-                                </button>
-                              </div>
+                                </Button>
+                              </Grid>
                             </>
                           )}
                         </>
@@ -544,6 +668,7 @@ export default function CustomerByOrder() {
               </form>
             </Paper>
           </div>
+          <div></div>
         </>
       )}
     </div>
