@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 //TODO:
 const initialState = {
   user: [],
+  userFB: {},
 }
 
 export const userSlice = createSlice({
@@ -12,6 +13,15 @@ export const userSlice = createSlice({
     login: (state, action) => {
       state.user = action.payload
     },
+    loginFB: (state, action) => {
+      state.userFB = {
+        accessToken: action.payload.accessToken,
+        id: action.payload.id,
+        name: action.payload.name,
+        picture: action.payload.picture.data.url,
+        email: action.payload.email,
+      }
+    },
     logout: (state) => {
       state.user = []
       localStorage.clear()
@@ -19,5 +29,5 @@ export const userSlice = createSlice({
   },
 })
 // Action creators are generated for each case reducer function
-export const { login, logout } = userSlice.actions
+export const { login, logout, loginFB } = userSlice.actions
 export default userSlice.reducer

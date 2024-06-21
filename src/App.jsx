@@ -50,6 +50,8 @@ import Info from './views/Info'
 import { useDispatch } from 'react-redux'
 import { login } from './redux/userSlice'
 
+import FacebookLoginReact from './test/FacebookLoginReact'
+
 export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 // export const baseURL = 'http://localhost:8000'
 
@@ -106,6 +108,7 @@ function App() {
       <ToastContainer position="top-center" autoClose={3000} />
       {/* Public */}
       <Routes>
+        <Route path="/test" element={<FacebookLoginReact />} />
         <Route
           path="*"
           element={
