@@ -1,12 +1,19 @@
 import React from 'react'
+import { baseURL } from '../App'
 
 const FacebookLoginSDK = () => {
   function login() {
     window.FB.login(
       (response) => {
         if (response.status === 'connected') {
-          console.log(response)
+          // console.log(response)
           console.log(response.authResponse.accessToken)
+
+          fetch(
+            `${baseURL}/graph-api?token=${response.authResponse.accessToken}`
+          )
+            .then((response) => response.json())
+            .then((data) => console.log('Data :', data))
         } else {
           console.log('User not authenticated')
         }

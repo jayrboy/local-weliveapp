@@ -54,8 +54,8 @@ import { Helmet } from 'react-helmet'
 import FacebookLoginReact from './test/FacebookLoginReact'
 import FacebookLoginSDK from './test/FacebookLoginSDK'
 
-export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
-// export const baseURL = 'http://localhost:8000'
+// export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
+export const baseURL = 'http://localhost:8000'
 
 function App() {
   const dispatch = useDispatch()
@@ -66,7 +66,7 @@ function App() {
     window.fbAsyncInit = function () {
       if (window.FB) {
         window.FB.init({
-          appId: '1164205974620414',
+          appId: import.meta.env.VITE_APP_ID,
           xfbml: true,
           version: 'v20.0',
         })

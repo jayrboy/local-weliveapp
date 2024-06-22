@@ -54,7 +54,7 @@ function App() {
 }
 ```
 
-### โหลดและกำหนดค่า Facebook SDK
+### สร้าง Component สำหรับปุ่ม Facebook Login SDK
 
 3. สร้างไฟล์ `FacebookLoginSDK.jsx` เพิ่มโค้ดเพื่อโหลดฟังก์ชันและกำหนดค่า SDK
 
@@ -88,7 +88,7 @@ const FacebookLoginSDK = () => {
 export default FacebookLoginSDK
 ```
 
-#### Response Facebook
+# Response Facebook
 
 ```json
 {
@@ -101,5 +101,26 @@ export default FacebookLoginSDK
     "data_access_expiration_time": 1726836900
   },
   "status": "connected"
+}
+```
+
+## รับ App Access Token โดยการส่ง GET ไปขอที่ Web Server
+
+- Add fetch data to login() `FacebookLoginSDK.jsx`
+
+```js
+function login() {
+  window.FB.login(
+    (response) => {
+      if (response.status === 'connected') {
+        fetch(`${baseURL}/graph-api?token=${response.authResponse.accessToken}`)
+          .then((response) => response.json())
+          .then((data) => console.log('Data :', data))
+      } else {
+        console.log('User not authenticated')
+      }
+    },
+    { scope: 'public_profile' }
+  )
 }
 ```
