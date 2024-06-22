@@ -4,7 +4,7 @@ import { Routes, Route } from 'react-router-dom'
 import axios from 'axios'
 
 import { CssBaseline } from '@mui/material'
-import { ToastContainer } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import ResponsiveAppBar from './layout/ResponsiveAppBar'
@@ -47,10 +47,12 @@ import LoadingFn from './components/LoadingFn'
 
 import Info from './views/Info'
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { login } from './redux/userSlice'
 
+import { Helmet } from 'react-helmet'
 import FacebookLoginReact from './test/FacebookLoginReact'
+import FacebookLoginSDK from './test/FacebookLoginSDK'
 
 export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 // export const baseURL = 'http://localhost:8000'
@@ -58,45 +60,54 @@ export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 function App() {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(true)
-  const userToken = localStorage.getItem('token')
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
-    if (userToken) {
-      axiosFetch(userToken)
+    window.fbAsyncInit = function () {
+      if (window.FB) {
+        window.FB.init({
+          appId: '1164205974620414',
+          xfbml: true,
+          version: 'v20.0',
+        })
+        console.log({ message: 'FB SDK Initialized' })
+      } else {
+        console.log({ error: 'FB SDK not initialized' })
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (token) {
+      fetch(`${baseURL}/api/current-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          dispatch(
+            login({
+              username: result.username,
+              role: result.role,
+              name: result.name,
+              email: result.email,
+              picture: result.picture,
+              token: token,
+            })
+          )
+          setLoading(false)
+        })
+        .catch((err) => {
+          toast.error('token หมดอายุ :', err)
+          setLoading(false)
+        })
     } else {
       setLoading(false)
     }
   }, [dispatch])
-
-  const axiosFetch = async (authToken) => {
-    return await axios
-      .post(
-        `${baseURL}/api/current-user`,
-        {},
-        {
-          headers: {
-            Authorization: 'Bearer ' + authToken,
-          },
-        }
-      )
-      .then((result) => {
-        dispatch(
-          login({
-            username: result.data.username,
-            role: result.data.role,
-            name: result.data.name,
-            email: result.data.email,
-            picture: result.data.picture,
-            token: authToken,
-          })
-        )
-        setLoading(false)
-      })
-      .catch((err) => {
-        console.error(err)
-        setLoading(false)
-      })
-  }
 
   if (loading) {
     return <LoadingFn />
@@ -108,7 +119,8 @@ function App() {
       <ToastContainer position="top-center" autoClose={3000} />
       {/* Public */}
       <Routes>
-        <Route path="/test" element={<FacebookLoginReact />} />
+        <Route path="/test/fb-login" element={<FacebookLoginReact />} />
+        <Route path="/test/fb-sdk" element={<FacebookLoginSDK />} />
         <Route
           path="*"
           element={
@@ -285,6 +297,15 @@ function App() {
           }
         />
       </Routes>
+      {/* Add Facebook SDK for JavaScript */}
+      <Helmet>
+        <script
+          async
+          defer
+          crossorigin="anonymous"
+          src="https://connect.facebook.net/en_US/sdk.js"
+        />
+      </Helmet>
     </React.Fragment>
   )
 }
