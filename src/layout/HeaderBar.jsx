@@ -16,6 +16,7 @@ import GetComments from '../components/GetComments'
 
 export default function HeaderBar() {
   let { orders } = useSelector((store) => store.saleOrder)
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -99,6 +100,7 @@ export default function HeaderBar() {
         >
           {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
           <MenuItem onClick={() => navigate('/info')}>วิธีการใช้งาน</MenuItem>
+          <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
           <MenuItem onClick={onClickLogout}>Logout</MenuItem>
         </Menu>
       </Box>

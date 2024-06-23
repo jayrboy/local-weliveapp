@@ -54,6 +54,8 @@ import { Helmet } from 'react-helmet'
 import FacebookLoginReact from './test/FacebookLoginReact'
 import FacebookLoginSDK from './test/FacebookLoginSDK'
 
+import Settings from './views/Settings'
+
 // export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 export const baseURL = 'http://localhost:8000'
 
@@ -141,6 +143,14 @@ function App() {
         <Route path="/order/:id" element={<CustomerByOrder />} />
 
         {/* Admin */}
+        <Route
+          path="/settings"
+          element={
+            <AdminRoute>
+              <Settings />
+            </AdminRoute>
+          }
+        />
         <Route
           path="/admin/home"
           element={
