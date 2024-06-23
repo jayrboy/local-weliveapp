@@ -124,3 +124,14 @@ function login() {
   )
 }
 ```
+
+# Get Pages Access Token
+
+- ตรวจสอบว่าสร้างแอป Meta แบบ Business
+- เพิ่มสิทธิ์ `pages_read_engagement` ใน scope ตอน login()
+
+```js
+{
+  scope: 'public_profile,pages_read_engagement'
+}
+```

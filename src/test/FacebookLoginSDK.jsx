@@ -1,12 +1,14 @@
 import React from 'react'
 import { baseURL } from '../App'
 
+import { Button } from '@mui/material'
+import { FaFacebook } from 'react-icons/fa'
+
 const FacebookLoginSDK = () => {
   function login() {
     window.FB.login(
       (response) => {
         if (response.status === 'connected') {
-          // console.log(response)
           console.log(response.authResponse.accessToken)
 
           fetch(
@@ -18,16 +20,25 @@ const FacebookLoginSDK = () => {
           console.log('User not authenticated')
         }
       },
-      { scope: 'public_profile' }
+      { scope: 'public_profile,pages_read_engagement' }
     )
   }
 
   return (
-    <>
+    <div className="container">
       <h1>Facebook SDK for JavaScript</h1>
       <br />
-      <button onClick={login}>Login</button>
-    </>
+      <div className="text-center">
+        <Button
+          type="button"
+          onClick={login}
+          startIcon={<FaFacebook size={35} />}
+          style={{ backgroundColor: '#1877f2', color: 'white' }}
+        >
+          Login With Facebook
+        </Button>
+      </div>
+    </div>
   )
 }
 
