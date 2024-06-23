@@ -12,7 +12,7 @@ const FacebookLoginSDK = () => {
           console.log(response.authResponse.accessToken)
 
           fetch(
-            `${baseURL}/graph-api?token=${response.authResponse.accessToken}`
+            `${baseURL}/api/fb-sdk?token=${response.authResponse.accessToken}`
           )
             .then((response) => response.json())
             .then((data) => console.log('Data :', data))

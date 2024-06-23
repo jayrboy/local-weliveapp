@@ -113,7 +113,7 @@ function login() {
   window.FB.login(
     (response) => {
       if (response.status === 'connected') {
-        fetch(`${baseURL}/graph-api?token=${response.authResponse.accessToken}`)
+        fetch(`${baseURL}/api/fb-sdk?token=${response.authResponse.accessToken}`)
           .then((response) => response.json())
           .then((data) => console.log('Data :', data))
       } else {
@@ -133,5 +133,16 @@ function login() {
 ```js
 {
   scope: 'public_profile,pages_read_engagement'
+}
+```
+
+# Create Page Content
+
+- ตรวจสอบว่าสร้างแอป Meta แบบ Business
+- เพิ่มสิทธิ์ `pages_read_engagement` ใน scope ตอน login()
+
+```js
+{
+  scope: 'public_profile,pages_read_engagement,pages_manage_posts'
 }
 ```

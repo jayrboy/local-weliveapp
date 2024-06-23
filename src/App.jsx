@@ -54,8 +54,8 @@ import { Helmet } from 'react-helmet'
 import FacebookLoginReact from './test/FacebookLoginReact'
 import FacebookLoginSDK from './test/FacebookLoginSDK'
 
-export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
-// export const baseURL = 'http://localhost:8000'
+// export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
+export const baseURL = 'http://localhost:8000'
 
 function App() {
   const dispatch = useDispatch()
