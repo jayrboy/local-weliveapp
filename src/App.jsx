@@ -9,7 +9,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import ResponsiveAppBar from './layout/ResponsiveAppBar'
 
 import Register from './views/Register'
-import Login from './views/Login'
+import LoginV1 from './views/Login'
+import LoginFB from './views/LoginFB'
 
 import AdminRoute from './routes/AdminRoute'
 import UserRoute from './routes/UserRoute'
@@ -133,7 +134,8 @@ function App() {
           }
         />
         <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginFB />} />
+        <Route path="/loginV1" element={<LoginV1 />} />
         <Route path="/order/:id" element={<CustomerByOrder />} />
 
         {/* Admin */}

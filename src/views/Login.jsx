@@ -59,9 +59,6 @@ const Login = () => {
   }, [])
 
   function roleRedirect(role) {
-    // console.log(role)
-    // navigate('/admin/home')
-
     if (role === 'admin') {
       navigate('/admin/home')
     } else {

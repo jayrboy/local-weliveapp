@@ -49,6 +49,7 @@ const FacebookLoginSDK = () => {
 
                 toast.success(data.payload.user.name + ': login successfully')
                 localStorage.setItem('token', data.token)
+                localStorage.setItem('accessToken', data.accessToken)
                 navigate('/admin/home')
               })
           })
@@ -66,11 +67,19 @@ const FacebookLoginSDK = () => {
     <Button
       type="button"
       fullWidth={true}
-      startIcon={<FaFacebook />}
-      style={{ backgroundColor: '#1877f2', color: 'white' }}
+      startIcon={<FaFacebook size={30} />}
+      style={{
+        backgroundColor: '#1877f2',
+        color: 'white',
+        textTransform: 'capitalize',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        height: '40px',
+        width: '300px',
+      }}
       onClick={loginFB}
     >
-      Login With Facebook
+      Continue with Facebook
     </Button>
   )
 }
