@@ -53,8 +53,8 @@ import { login } from './redux/userSlice'
 import { Helmet } from 'react-helmet'
 import Settings from './views/Settings'
 
-// export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
-export const baseURL = 'http://localhost:8000'
+export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
+// export const baseURL = 'http://localhost:8000'
 
 function App() {
   const dispatch = useDispatch()
