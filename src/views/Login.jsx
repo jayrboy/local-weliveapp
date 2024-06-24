@@ -15,9 +15,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { login } from '../redux/userSlice'
 
-import { FacebookLogin } from 'facebook-login-react'
-import { FaFacebook } from 'react-icons/fa'
-
+import  FacebookLoginSDK  from '../components/FacebookLoginSDK'
 import { toast } from 'react-toastify'
 
 function Copyright(props) {
@@ -105,32 +103,32 @@ const Login = () => {
   }
 
   //TODO: Login Facebook
-  async function responseFacebook(response) {
-    console.log(response)
-    console.log('Access Token :', response.accessToken)
+  // async function responseFacebook(response) {
+  //   console.log(response)
+  //   console.log('Access Token :', response.accessToken)
 
-    localStorage.setItem('accessToken', response.accessToken)
+  //   localStorage.setItem('accessToken', response.accessToken)
 
-    return await axios
-      .post(`${baseURL}/api/login-facebook`, response)
-      .then((result) => {
-        // console.log(result.data)
-        toast.success(result.data.payload.user.name + ' login successfully')
-        dispatch(
-          login({
-            username: result.data.payload.user.username,
-            role: result.data.payload.user.role,
-            name: result.data.payload.user.name,
-            email: result.data.payload.user.email,
-            picture: result.data.payload.user.picture,
-            token: result.data.token,
-          })
-        )
-        localStorage.setItem('token', result.data.token)
-        roleRedirect(result.data.payload.user.role)
-      })
-      .catch((err) => alert(err))
-  }
+  //   return await axios
+  //     .post(`${baseURL}/api/login-facebook`, response)
+  //     .then((result) => {
+  //       // console.log(result.data)
+  //       toast.success(result.data.payload.user.name + ' login successfully')
+  //       dispatch(
+  //         login({
+  //           username: result.data.payload.user.username,
+  //           role: result.data.payload.user.role,
+  //           name: result.data.payload.user.name,
+  //           email: result.data.payload.user.email,
+  //           picture: result.data.payload.user.picture,
+  //           token: result.data.token,
+  //         })
+  //       )
+  //       localStorage.setItem('token', result.data.token)
+  //       roleRedirect(result.data.payload.user.role)
+  //     })
+  //     .catch((err) => alert(err))
+  // }
 
   return (
     <Grid container component="main" item sx={{ justifyContent: 'center' }}>
@@ -212,27 +210,7 @@ const Login = () => {
             >
               Login
             </Button>
-            {/* Facebook Login : autoLoad={true} login auto)*/}
-
-            <FacebookLogin
-              appId="1164205974620414"
-              autoLoad={false}
-              fields="name,email,picture"
-              scope="public_profile"
-              callback={responseFacebook}
-              render={(renderProps) => (
-                <Button
-                  type="button"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mb: 2 }}
-                  onClick={renderProps.onClick}
-                  startIcon={<FaFacebook />}
-                >
-                  Login With Facebook
-                </Button>
-              )}
-            />
+            <FacebookLoginSDK />
           </Box>
           <Grid container>
             <Grid item xs>

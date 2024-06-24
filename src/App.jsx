@@ -1,7 +1,6 @@
 /* eslint-disable */
-import React, { createContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import axios from 'axios'
 
 import { CssBaseline } from '@mui/material'
 import { toast, ToastContainer } from 'react-toastify'
@@ -47,13 +46,10 @@ import LoadingFn from './components/LoadingFn'
 
 import Info from './views/Info'
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { login } from './redux/userSlice'
 
 import { Helmet } from 'react-helmet'
-import FacebookLoginReact from './test/FacebookLoginReact'
-import FacebookLoginSDK from './test/FacebookLoginSDK'
-
 import Settings from './views/Settings'
 
 // export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
@@ -121,8 +117,6 @@ function App() {
       <ToastContainer position="top-center" autoClose={3000} />
       {/* Public */}
       <Routes>
-        <Route path="/test/fb-login" element={<FacebookLoginReact />} />
-        <Route path="/test/fb-sdk" element={<FacebookLoginSDK />} />
         <Route
           path="*"
           element={

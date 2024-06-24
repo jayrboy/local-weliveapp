@@ -15,15 +15,15 @@ export const userSlice = createSlice({
     },
     loginFB: (state, action) => {
       state.userFB = {
-        accessToken: action.payload.accessToken,
-        id: action.payload.id,
+        _id: action.payload._id,
         name: action.payload.name,
-        picture: action.payload.picture.data.url,
+        picture: action.payload.picture[0].data.url,
         email: action.payload.email,
       }
     },
     logout: (state) => {
       state.user = []
+      state.userFB = {}
       localStorage.clear()
     },
   },
