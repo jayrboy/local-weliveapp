@@ -41,7 +41,7 @@ const LoginFB = () => {
         minHeight: '100vh',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f0f2f5', // Light grey background for business look
+        backgroundColor: '#EDE7F6', // Light background for business look
         padding: '2rem',
       }}
     >
@@ -55,7 +55,6 @@ const LoginFB = () => {
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
           padding: '3rem', // More padding for a spacious look
           backgroundColor: '#fff',
           borderRadius: '8px', // Rounded corners for a modern look
@@ -79,18 +78,11 @@ const LoginFB = () => {
           </Box>
 
           {/* Heading */}
-          <Typography
-            variant="h5"
-            component="h1"
-            sx={{ mb: 2, fontWeight: 'bold', color: '#333' }}
-          >
-            Web Application for Store Online
+          <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
+            Web Application
           </Typography>
-          <Typography
-            variant="body1"
-            sx={{ mb: 4, color: '#666', textAlign: 'center' }}
-          >
-            เข้าสู่ระบบ
+          <Typography variant="body1" sx={{ mb: 4, color: '#666' }}>
+            for Store Online
           </Typography>
 
           {/* Facebook Login */}

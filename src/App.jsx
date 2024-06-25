@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 
 import { CssBaseline } from '@mui/material'
 import { toast, ToastContainer } from 'react-toastify'
@@ -57,24 +57,10 @@ export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 // export const baseURL = 'http://localhost:8000'
 
 function App() {
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(true)
   const token = localStorage.getItem('token')
-
-  useEffect(() => {
-    window.fbAsyncInit = function () {
-      if (window.FB) {
-        window.FB.init({
-          appId: import.meta.env.VITE_APP_ID,
-          xfbml: true,
-          version: 'v20.0',
-        })
-        console.log({ message: 'FB SDK Initialized' })
-      } else {
-        console.log({ error: 'FB SDK not initialized' })
-      }
-    }
-  }, [])
 
   useEffect(() => {
     if (token) {
@@ -86,14 +72,14 @@ function App() {
         },
       })
         .then((response) => response.json())
-        .then((result) => {
+        .then((data) => {
           dispatch(
             login({
-              username: result.username,
-              role: result.role,
-              name: result.name,
-              email: result.email,
-              picture: result.picture,
+              username: data.username,
+              role: data.role,
+              name: data.name,
+              email: data.email,
+              picture: data.picture,
               token: token,
             })
           )
@@ -102,11 +88,12 @@ function App() {
         .catch((err) => {
           toast.error('token หมดอายุ :', err)
           setLoading(false)
+          navigate('/login')
         })
     } else {
       setLoading(false)
     }
-  }, [dispatch])
+  }, [token])
 
   if (loading) {
     return <LoadingFn />

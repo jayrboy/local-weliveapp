@@ -1,5 +1,5 @@
 import { baseURL } from '../App'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,6 +15,19 @@ const FacebookLoginSDK = () => {
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.user)
   console.log(user)
+
+  useEffect(() => {
+    window.fbAsyncInit = function () {
+      if (window.FB) {
+        window.FB.init({
+          appId: import.meta.env.VITE_APP_ID,
+          xfbml: true,
+          version: 'v20.0',
+        })
+        console.log({ message: 'Facebook SDK Initialized' })
+      }
+    }
+  }, [])
 
   function loginFB() {
     window.FB.login(
@@ -54,7 +67,7 @@ const FacebookLoginSDK = () => {
               })
           })
         } else {
-          console.log('User cancelled login or did not fully authorize.')
+          toast.warning('ผู้ใช้ยกเลิกการเข้าสู่ระบบ หรือไม่ได้อนุญาตโดยสมบูรณ์')
         }
       },
       {
@@ -69,7 +82,7 @@ const FacebookLoginSDK = () => {
       fullWidth={true}
       startIcon={<FaFacebook size={30} />}
       style={{
-        backgroundColor: '#4267b2',
+        backgroundColor: '#1877f2',
         color: 'white',
         textTransform: 'capitalize',
         fontSize: '16px',
