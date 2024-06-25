@@ -130,13 +130,31 @@ function App() {
         <Route
           path="/policy"
           element={
+            <>
+              <ResponsiveAppBar />
+              <Policy />
+            </>
+          }
+        />
+        <Route
+          path="/term"
+          element={
+            <>
+              <ResponsiveAppBar />
+              <TermOfServices />
+            </>
+          }
+        />
+        <Route
+          path="/app/policy"
+          element={
             <AuthRoute>
               <Policy />
             </AuthRoute>
           }
         />
         <Route
-          path="/term"
+          path="/app/term"
           element={
             <AuthRoute>
               <TermOfServices />

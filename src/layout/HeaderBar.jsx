@@ -100,8 +100,8 @@ export default function HeaderBar() {
         >
           {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
           <MenuItem onClick={() => navigate('/info')}>วิธีการใช้งาน</MenuItem>
-          <MenuItem onClick={() => navigate('/policy')}>นโยบาย</MenuItem>
-          <MenuItem onClick={() => navigate('/term')}>
+          <MenuItem onClick={() => navigate('/app/policy')}>นโยบาย</MenuItem>
+          <MenuItem onClick={() => navigate('/app/term')}>
             ข้อกำหนดของบริการ
           </MenuItem>
           <MenuItem onClick={() => navigate('/settings')}>ตั้งค่า</MenuItem>

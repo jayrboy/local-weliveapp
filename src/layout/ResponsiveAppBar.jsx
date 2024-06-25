@@ -25,7 +25,17 @@ const pages = [
   {
     title: 'หน้าหลัก',
     icon: '',
-    to: '/',
+    href: '/',
+  },
+  {
+    title: 'นโยบาย',
+    icon: '',
+    href: '/policy',
+  },
+  {
+    title: 'ข้อกำหนดของบริการ',
+    icon: '',
+    href: '/term',
   },
 ]
 
@@ -33,7 +43,7 @@ const linkAuth = [
   {
     title: 'Login / Register',
     icon: <LoginIcon />,
-    to: '/auth/login',
+    href: '/auth/login',
   },
 ]
 
@@ -41,12 +51,12 @@ const settings = [
   // {
   //   title: 'Profile',
   //   icon: '',
-  //   to: '/profile',
+  //   href: '/profile',
   // },
   {
     title: 'Logout',
     icon: '',
-    to: '#',
+    href: '#',
   },
 ]
 
@@ -134,11 +144,13 @@ const ResponsiveAppBar = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              <MenuItem onClick={handleCloseNavMenu}>
-                <Link to="/" style={{ textDecoration: 'none' }}>
-                  <Typography textAlign="center">หน้าแรก</Typography>
-                </Link>
-              </MenuItem>
+              {pages.map((p, i) => (
+                <MenuItem key={i} onClick={handleCloseNavMenu}>
+                  <Link to={p.href} style={{ textDecoration: 'none' }}>
+                    <Typography textAlign="center">{p.title}</Typography>
+                  </Link>
+                </MenuItem>
+              ))}
               {user.length === 0 &&
                 linkAuth.map((page, index) => (
                   <MenuItem key={index} onClick={handleCloseNavMenu}>
@@ -154,14 +166,18 @@ const ResponsiveAppBar = () => {
 
           {/* Menu Left Full */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <Link to="/">
-              <Button
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'black', mr: 5 }}
-              >
-                หน้าแรก
-              </Button>
-            </Link>
+            {pages.map((p, i) => (
+              <React.Fragment key={i + 1}>
+                <Link to={p.href}>
+                  <Button
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'black', mr: 5 }}
+                  >
+                    {p.title}
+                  </Button>
+                </Link>
+              </React.Fragment>
+            ))}
           </Box>
 
           {/* Menu Right Full */}
