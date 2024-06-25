@@ -90,7 +90,7 @@ const LoginFB = () => {
             variant="body1"
             sx={{ mb: 4, color: '#666', textAlign: 'center' }}
           >
-            Please login to continue to your account
+            เข้าสู่ระบบ
           </Typography>
 
           {/* Facebook Login */}
@@ -107,7 +107,7 @@ const LoginFB = () => {
                 to="https://www.facebook.com/login/identify/?ctx=recover&ars=facebook_login&from_login_screen=0"
                 style={{ color: '#1976d2', textDecoration: 'none' }}
               >
-                Forgot password?
+                ลืมรหัสผ่าน?
               </Link>
             </Grid>
             <Grid item>
@@ -115,7 +115,7 @@ const LoginFB = () => {
                 to="https://www.facebook.com/reg/?next=%2Finfestsea%3Flocale%3Dth_TH"
                 style={{ color: '#1976d2', textDecoration: 'none' }}
               >
-                Register
+                สร้างบัญชี
               </Link>
             </Grid>
           </Grid>

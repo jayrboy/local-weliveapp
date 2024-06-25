@@ -69,17 +69,16 @@ const FacebookLoginSDK = () => {
       fullWidth={true}
       startIcon={<FaFacebook size={30} />}
       style={{
-        backgroundColor: '#1877f2',
+        backgroundColor: '#4267b2',
         color: 'white',
         textTransform: 'capitalize',
         fontSize: '16px',
-        fontWeight: 'bold',
         height: '40px',
         width: '300px',
       }}
       onClick={loginFB}
     >
-      Continue with Facebook
+      เข้าสู่ระบบด้วยบัญชี Facebook
     </Button>
   )
 }
