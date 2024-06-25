@@ -63,7 +63,7 @@ const FacebookLoginSDK = () => {
                 toast.success(data.payload.user.name + ': login successfully')
                 localStorage.setItem('token', data.token)
                 localStorage.setItem('accessToken', data.accessToken)
-                navigate('/admin/home')
+                navigate('/dashboard')
               })
           })
         } else {
