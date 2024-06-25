@@ -167,7 +167,7 @@ const ResponsiveAppBar = () => {
           {/* Menu Left Full */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((p, i) => (
-              <React.Fragment key={i + 1}>
+              <React.Fragment key={i}>
                 <Link to={p.href}>
                   <Button
                     onClick={handleCloseNavMenu}
