@@ -154,7 +154,7 @@ const ResponsiveAppBar = () => {
               {user.length === 0 &&
                 linkAuth.map((page, index) => (
                   <MenuItem key={index} onClick={handleCloseNavMenu}>
-                    <Link to={page.to} style={{ textDecoration: 'none' }}>
+                    <Link to={page.href} style={{ textDecoration: 'none' }}>
                       <Typography textAlign="center">{page.title}</Typography>
                     </Link>
                   </MenuItem>
@@ -185,7 +185,7 @@ const ResponsiveAppBar = () => {
             {user.length === 0 &&
               linkAuth.map((page, index) => (
                 <React.Fragment key={index}>
-                  <Link to={page.to}>
+                  <Link to={page.href}>
                     <Button
                       onClick={handleCloseNavMenu}
                       sx={{
