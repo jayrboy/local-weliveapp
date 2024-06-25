@@ -49,7 +49,7 @@ export default function DailyStock() {
       <div className="row m-3">
         <div className="col-lg-6">
           <h3 className="text-start">
-            <Link to="/admin/home" className="  text-decoration-none">
+            <Link to="/dashboard" className="  text-decoration-none">
               DAILY STOCK |
             </Link>
             <span className="text-success"> รายการขายสินค้า</span>
@@ -206,7 +206,7 @@ export default function DailyStock() {
       </>
       <br />
       <div className="d-flex justify-content-center mx-auto">
-        <Link to="/admin/home" className="btn btn-light btn-sm border">
+        <Link to="/dashboard" className="btn btn-light btn-sm border">
           หน้าหลัก
         </Link>
       </div>

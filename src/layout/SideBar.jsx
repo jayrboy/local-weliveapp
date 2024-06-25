@@ -77,7 +77,7 @@ const SideBar = () => {
 
               <MenuItem
                 icon={<DashboardIcon />}
-                onClick={() => navigate('/admin/home')}
+                onClick={() => navigate('/dashboard')}
               >
                 Dashboard
               </MenuItem>

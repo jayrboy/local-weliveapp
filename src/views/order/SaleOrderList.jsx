@@ -39,7 +39,7 @@ export default function SaleOrderList() {
       <div className="row m-3">
         <div className="col-lg-6">
           <h3 className="text-start">
-            <Link to="/admin/home" className="  text-decoration-none">
+            <Link to="/dashboard" className="  text-decoration-none">
               SALE ORDER |
             </Link>
             <span className="text-success"> รายการคำสั่งซื้อ</span>

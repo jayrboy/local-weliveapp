@@ -78,7 +78,7 @@ const UserManage = () => {
   }
 
   return (
-    <div>
+    <div className='m-3'>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>

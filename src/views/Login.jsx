@@ -1,5 +1,6 @@
 import { baseURL } from '../App'
 import { useState, useRef, useEffect } from 'react'
+import Logo from '../assets/logo-192-1.png'
 
 import {
   Button,
@@ -15,7 +16,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { login } from '../redux/userSlice'
 
-import  FacebookLoginSDK  from '../components/FacebookLoginSDK'
+import FacebookLoginSDK from '../components/FacebookLoginSDK'
 import { toast } from 'react-toastify'
 
 function Copyright(props) {
@@ -60,9 +61,9 @@ const Login = () => {
 
   function roleRedirect(role) {
     if (role === 'admin') {
-      navigate('/admin/home')
+      navigate('/dashboard')
     } else {
-      navigate('/admin/home')
+      navigate('/dashboard')
     }
   }
 
@@ -155,7 +156,7 @@ const Login = () => {
         >
           {/* Logo */}
           <Box display="flex" alignItems="center">
-            <img src="./logo-192-1.png" alt="Logo" />
+            <img src={Logo} alt="Logo" style={{ width: '100px' }} />
             <Typography
               component="h1"
               variant="h6"

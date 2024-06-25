@@ -33,7 +33,7 @@ const linkAuth = [
   {
     title: 'Login / Register',
     icon: <LoginIcon />,
-    to: '/login',
+    to: '/auth/login',
   },
 ]
 

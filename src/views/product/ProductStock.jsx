@@ -2,6 +2,7 @@ import { baseURL } from '../../App'
 import React, { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -9,6 +10,8 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import { styled } from '@mui/material/styles'
+
 import {
   MdEdit,
   MdDeleteForever,
@@ -19,6 +22,16 @@ import { FaPlus } from 'react-icons/fa'
 
 import ProductCreate from './ProductCreate'
 import ProductEdit from './ProductEdit'
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))
 
 const Stock = () => {
   let [data, setData] = useState('')
@@ -59,59 +72,68 @@ const Stock = () => {
 
     let r = (
       <form onSubmit={onSubmitForm} ref={form}>
-        <div className="col-12 col-sm-12 col-lg-12">
-          <div className="table-responsive px-2">
-            <TableContainer component={Paper}>
-              <Table className="table table-sm table-striped text-center table-bordered border-light table-hover">
-                <TableHead>
-                  <TableRow>
-                    <TableCell className="text-center">รายการที่</TableCell>
-                    <TableCell className="text-center">รหัสสินค้า</TableCell>
-                    <TableCell className="text-center">จำนวนสินค้า</TableCell>
-                    <TableCell className="text-center">ต้นทุน</TableCell>
-                    <TableCell className="text-center">ราคา</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {result.docs.map((product, index) => {
-                    console.log(index)
-                    console.log(product)
-                    return (
-                      <TableRow key={product._id}>
-                        <TableCell className="text-center">
-                          {index + 1} |
-                          <input
-                            type="radio"
-                            name="_id"
-                            value={product._id}
-                            className="ms-2 form-check-input"
-                          />
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Link
-                            to={`/admin/product-graph/${product._id}`}
-                            state={{ _id: product._id }}
-                          >
-                            {product.name}
-                          </Link>
-                        </TableCell>
+        <div className="m-3">
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ width: '100px' }}>
+                    <strong>รายการที่</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>รหัสสินค้า</strong>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <strong>จำนวนสินค้า</strong>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <strong>ต้นทุน</strong>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <strong>ราคา</strong>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {result.docs.map((product, index) => {
+                  console.log(index)
+                  console.log(product)
+                  return (
+                    <StyledTableRow key={product._id}>
+                      <TableCell>
+                        <input
+                          type="radio"
+                          name="_id"
+                          value={product._id}
+                          className="ms-2 form-check-input"
+                        />
+                        &nbsp;&nbsp;{index + 1}
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          to={`/admin/product-graph/${product._id}`}
+                          state={{ _id: product._id }}
+                        >
+                          {product.name}
+                        </Link>
+                      </TableCell>
 
-                        <TableCell className="text-center">
-                          {product.stock_quantity}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {product.cost}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {product.price}
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            {/* <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
+                      <TableCell className="text-center">
+                        {product.stock_quantity}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {product.cost}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {product.price}
+                      </TableCell>
+                    </StyledTableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {/* <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
                 <caption className="ms-3">
                   {numDocs === 0 ? (
                     <>ไม่พบข้อมูล</>
@@ -177,7 +199,6 @@ const Stock = () => {
                   })}
                 </tbody>
               </table> */}
-          </div>
         </div>
       </form>
     )
@@ -289,7 +310,7 @@ const Stock = () => {
       <div className="row m-3">
         <div className="col-lg-4">
           <h3 className="text-start">
-            <Link to="/admin/home" className="text-decoration-none">
+            <Link to="/dashboard" className="text-decoration-none">
               WE LIVE |
             </Link>
             <span className="text-success">&nbsp; สินค้าทั้งหมด</span>
@@ -347,7 +368,7 @@ const Stock = () => {
       </div>
       <br />
       <div className="d-flex justify-content-center mx-auto">
-        <Link to="/admin/home" className="btn btn-light btn-sm">
+        <Link to="/dashboard" className="btn btn-light btn-sm">
           หน้าหลัก
         </Link>
       </div>

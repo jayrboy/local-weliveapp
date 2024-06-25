@@ -1,4 +1,5 @@
 import React from 'react'
+import Logo from '../assets/logo-192-1.png'
 import { useNavigate, Link } from 'react-router-dom'
 import { Paper, Box, Grid, Typography } from '@mui/material'
 import FacebookLoginSDK from '../components/FacebookLoginSDK'
@@ -70,11 +71,7 @@ const LoginFB = () => {
         >
           {/* Logo */}
           <Box display="flex" alignItems="center" sx={{ mb: 3 }}>
-            <img
-              src="./logo-192-1.png"
-              alt="Logo"
-              style={{ height: '100px' }}
-            />
+            <img src={Logo} alt="Logo" style={{ height: '100px' }} />
           </Box>
 
           {/* Heading */}

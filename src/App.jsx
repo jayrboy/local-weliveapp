@@ -121,8 +121,8 @@ function App() {
           }
         />
         <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<LoginFB />} />
-        <Route path="/loginV1" element={<LoginV1 />} />
+        <Route path="/auth/login" element={<LoginFB />} />
+        <Route path="/login" element={<LoginV1 />} />
         <Route path="/order/:id" element={<CustomerByOrder />} />
 
         {/* Admin */}
@@ -135,7 +135,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/home"
+          path="/dashboard"
           element={
             <AdminRoute>
               <UserHome />
