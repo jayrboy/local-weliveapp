@@ -11,7 +11,7 @@ import LiveVideoModal from '../components/LiveVideoModal'
 export const firstLoadContext = createContext()
 export const commentContext = createContext()
 
-const AdminRoute = ({ children }) => {
+const AuthRoute = ({ children }) => {
   const { user } = useSelector((state) => state.user)
   const { isOpen } = useSelector((state) => state.modal)
 
@@ -70,4 +70,4 @@ const AdminRoute = ({ children }) => {
   }
 }
 
-export default AdminRoute
+export default AuthRoute

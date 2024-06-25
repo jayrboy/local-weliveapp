@@ -7,20 +7,19 @@ import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import ResponsiveAppBar from './layout/ResponsiveAppBar'
+import HomePage from './views/HomePage'
 
 import Register from './views/Register'
 import LoginV1 from './views/Login'
-import LoginFB from './views/LoginFB'
 
-import AdminRoute from './routes/AdminRoute'
+import AuthRoute from './routes/AuthRoute'
 import UserRoute from './routes/UserRoute'
 
-import HomePage from './views/HomePage'
+import LoadingFn from './components/LoadingFn'
 import NotFound from './views/NotFound'
 
-import UserHome from './views/user/UserHome'
-import UserManage from './views/user/UserManage'
-
+import Dashboard from './views/Dashboard'
+import Info from './views/Info'
 import ProductStock from './views/product/ProductStock'
 import ProductGraph from './views/product/ProductGraph'
 
@@ -43,14 +42,16 @@ import ExpressList from './views/express/ExpressList'
 import ExpressCreate from './views/express/ExpressCreate'
 import ExpressDelete from './views/express/ExpressDelete'
 
-import LoadingFn from './components/LoadingFn'
-
-import Info from './views/Info'
+import UserManage from './views/admin/UserManage'
 
 import { useDispatch } from 'react-redux'
 import { login } from './redux/userSlice'
 
 import { Helmet } from 'react-helmet'
+import LoginFB from './views/LoginFB'
+import Policy from './views/Policy'
+import TermOfServices from './views/TermOfServices'
+
 import Settings from './views/Settings'
 
 export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
@@ -73,34 +74,36 @@ function App() {
       })
         .then((response) => response.json())
         .then((data) => {
-          dispatch(
-            login({
-              username: data.username,
-              role: data.role,
-              name: data.name,
-              email: data.email,
-              picture: data.picture,
-              token: token,
-            })
-          )
-          setLoading(false)
+          if (data.username) {
+            dispatch(
+              login({
+                username: data.username,
+                role: data.role,
+                name: data.name,
+                email: data.email,
+                picture: data.picture,
+                token: token,
+              })
+            )
+            setLoading(false)
+          } else {
+            throw new Error('Invalid token')
+          }
         })
         .catch((err) => {
-          toast.error('token หมดอายุ :', err)
+          toast.error('Token หมดอายุหรือไม่ถูกต้อง: ' + err.message)
           setLoading(false)
-          navigate('/login')
+          navigate('/auth/login')
+          localStorage.clear()
         })
     } else {
       setLoading(false)
     }
-  }, [token])
-
-  if (loading) {
-    return <LoadingFn />
-  }
+  }, [token, dispatch, navigate])
 
   return (
     <React.Fragment>
+      {loading && <LoadingFn />}
       <CssBaseline />
       <ToastContainer position="top-center" autoClose={3000} />
       {/* Public */}
@@ -121,172 +124,190 @@ function App() {
           }
         />
         <Route path="/register" element={<Register />} />
-        <Route path="/auth/login" element={<LoginFB />} />
         <Route path="/login" element={<LoginV1 />} />
+
+        <Route path="/auth/login" element={<LoginFB />} />
+        <Route
+          path="/policy"
+          element={
+            <AuthRoute>
+              <Policy />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/term"
+          element={
+            <AuthRoute>
+              <TermOfServices />
+            </AuthRoute>
+          }
+        />
+
         <Route path="/order/:id" element={<CustomerByOrder />} />
 
         {/* Admin */}
         <Route
           path="/settings"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <Settings />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
           path="/dashboard"
           element={
-            <AdminRoute>
-              <UserHome />
-            </AdminRoute>
+            <AuthRoute>
+              <Dashboard />
+            </AuthRoute>
           }
         />
         <Route
-          path="/admin/stock"
+          path="/stock"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <ProductStock />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
           path="/admin/product-graph/:id"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <ProductGraph />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
 
         <Route
-          path="/admin/daily-stock"
+          path="/sale-daily"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <DailyStock />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
-          path="/admin/daily-stock/create"
+          path="/sale-daily/create"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <DailyCreate />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
-          path="/admin/daily-stock/edit/:id"
+          path="/sale-daily/edit/:id"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <DailyEdit />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
-          path="/admin/daily-stock/history"
+          path="/sale-daily/history"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <DailyStockHistory />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
-          path="/search/customer"
+          path="/customer/search"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <CustomerSearch />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
           path="/customer/edit/:id"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <CustomerEdit />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
-          path="/search/order"
+          path="/order/search"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <SaleOrderSearch />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
           path="/express"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <ExpressList />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
           path="/express/create"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <ExpressCreate />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
           path="/express/delete"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <ExpressDelete />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
-          path="/admin/checkout"
+          path="/checkout"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <SaleOrderCheckout />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
-          path="/admin/sales"
+          path="/sales"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <SaleOrder />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         {/* Manage User */}
         <Route
           path="/admin/manage"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <UserManage />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         {/* --------------- */}
         <Route
           path="/order"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <SaleOrderList />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
           path="/analysis"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <SaleOrderReport />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
         <Route
           path="/info"
           element={
-            <AdminRoute>
+            <AuthRoute>
               <Info />
-            </AdminRoute>
+            </AuthRoute>
           }
         />
       </Routes>

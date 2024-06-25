@@ -3,7 +3,7 @@ import { RiLiveFill } from 'react-icons/ri'
 import { toast } from 'react-toastify'
 import { useDispatch } from 'react-redux'
 import { closeModal } from '../redux/modalSlice'
-import { firstLoadContext } from '../routes/AdminRoute'
+import { firstLoadContext } from '../routes/AuthRoute'
 
 const LiveVideoModal = () => {
   const dispatch = useDispatch()

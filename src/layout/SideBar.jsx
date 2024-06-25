@@ -85,14 +85,14 @@ const SideBar = () => {
               <SubMenu icon={<MapOutlinedIcon />} label="ทรัพย์สิน">
                 <MenuItem
                   icon={<TableViewIcon />}
-                  onClick={() => navigate('/admin/stock')}
+                  onClick={() => navigate('/stock')}
                 >
                   สินค้า
                 </MenuItem>
 
                 <MenuItem
                   icon={<ShoppingCartIcon />}
-                  onClick={() => navigate('/admin/daily-stock')}
+                  onClick={() => navigate('/sale-daily')}
                 >
                   ขาย
                 </MenuItem>
@@ -101,13 +101,13 @@ const SideBar = () => {
               <SubMenu label="ร้านค้า" icon={<StorefrontIcon />}>
                 <MenuItem
                   icon={<PersonSearchOutlinedIcon />}
-                  onClick={() => navigate('/search/customer')}
+                  onClick={() => navigate('/customer/search')}
                 >
                   ค้นหาลูกค้า
                 </MenuItem>
                 <MenuItem
                   icon={<ContentPasteSearchIcon />}
-                  onClick={() => navigate('/search/order')}
+                  onClick={() => navigate('/order/search')}
                 >
                   ค้นหาคำสั่งซื้อ
                 </MenuItem>
@@ -125,14 +125,14 @@ const SideBar = () => {
                 </MenuItem>
                 <MenuItem
                   icon={<CallMissedOutgoingIcon />}
-                  onClick={() => navigate('/admin/checkout')}
+                  onClick={() => navigate('/checkout')}
                 >
                   <span className=" ">เช็คเอาท์</span>
                 </MenuItem>
 
                 <MenuItem
                   icon={<PaidOutlinedIcon />}
-                  onClick={() => navigate('/admin/sales')}
+                  onClick={() => navigate('/sales')}
                 >
                   <span className=" text-success">ยอดขาย</span>
                 </MenuItem>

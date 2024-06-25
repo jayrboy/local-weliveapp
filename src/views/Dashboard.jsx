@@ -9,19 +9,19 @@ import { BiSolidBarChartAlt2 } from 'react-icons/bi'
 import { IoMdCart } from 'react-icons/io'
 import { IoSearchSharp } from 'react-icons/io5'
 
-function HomeUser() {
+function Dashboard() {
   const features = [
     {
       id: nanoid(),
-      title: 'ขาย',
-      link: '/admin/daily-stock',
-      icon: <IoMdCart size={75} color="#555555 " />,
+      title: 'สินค้า',
+      link: '/stock',
+      icon: <MdOutlineTableView size={75} color="#555555" />,
     },
     {
       id: nanoid(),
-      title: 'ค้นหารายการสั่งซื้อ',
-      link: '/search/order',
-      icon: <MdManageSearch size={75} color="#555555 " />,
+      title: 'ขาย',
+      link: '/sale-daily',
+      icon: <IoMdCart size={75} color="#555555 " />,
     },
     {
       id: nanoid(),
@@ -31,22 +31,22 @@ function HomeUser() {
     },
     {
       id: nanoid(),
-      title: 'สินค้า',
-      link: '/admin/stock',
-      icon: <MdOutlineTableView size={75} color="#555555" />,
+      title: 'ค้นหารายการสั่งซื้อ',
+      link: '/order/search',
+      icon: <MdManageSearch size={75} color="#555555 " />,
     },
-    {
-      id: nanoid(),
-      title: 'เช็คยอด',
-      link: '/admin/sales',
-      icon: <TbArrowElbowRight size={75} color="#555555" />,
-    },
-    {
-      id: nanoid(),
-      title: 'รายงานสรุปยอด',
-      link: '/analysis',
-      icon: <BiSolidBarChartAlt2 size={75} color="#555555" />,
-    },
+    // {
+    //   id: nanoid(),
+    //   title: 'เช็คยอด',
+    //   link: '/sales',
+    //   icon: <TbArrowElbowRight size={75} color="#555555" />,
+    // },
+    // {
+    //   id: nanoid(),
+    //   title: 'รายงานสรุปยอด',
+    //   link: '/analysis',
+    //   icon: <BiSolidBarChartAlt2 size={75} color="#555555" />,
+    // },
   ]
 
   return (
@@ -73,4 +73,4 @@ function HomeUser() {
     </>
   )
 }
-export default HomeUser
+export default Dashboard

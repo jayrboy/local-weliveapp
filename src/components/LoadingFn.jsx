@@ -1,10 +1,25 @@
+import CircularProgress from '@mui/material/CircularProgress'
+import { styled } from '@mui/material/styles'
+
+const CenteredContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100vh',
+  padding: theme.spacing(5),
+  background: 'transparent',
+}))
+
+const LargeCircularProgress = styled(CircularProgress)(({ theme }) => ({
+  width: '100px !important',
+  height: '100px !important',
+}))
+
 const LoadingFn = () => {
   return (
-    <div className="d-flex justify-content-center p-5">
-      <div className="spinner-border text-secondary" role="status">
-        <span className="visually-hidden">Loading..</span>
-      </div>
-    </div>
+    <CenteredContainer>
+      <LargeCircularProgress color="secondary" />
+    </CenteredContainer>
   )
 }
 export default LoadingFn

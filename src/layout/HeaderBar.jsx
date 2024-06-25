@@ -11,7 +11,7 @@ import { getOrders } from '../redux/saleOrderSlice'
 import { logout } from '../redux/userSlice'
 import { openModal } from '../redux/modalSlice'
 
-import { firstLoadContext } from '../routes/AdminRoute'
+import { firstLoadContext } from '../routes/AuthRoute'
 import GetComments from '../components/GetComments'
 
 export default function HeaderBar() {
@@ -100,7 +100,11 @@ export default function HeaderBar() {
         >
           {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
           <MenuItem onClick={() => navigate('/info')}>วิธีการใช้งาน</MenuItem>
-          <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
+          <MenuItem onClick={() => navigate('/policy')}>นโยบาย</MenuItem>
+          <MenuItem onClick={() => navigate('/term')}>
+            ข้อกำหนดของบริการ
+          </MenuItem>
+          <MenuItem onClick={() => navigate('/settings')}>ตั้งค่า</MenuItem>
           <MenuItem onClick={onClickLogout}>Logout</MenuItem>
         </Menu>
       </Box>
