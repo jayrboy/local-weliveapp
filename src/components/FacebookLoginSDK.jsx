@@ -58,7 +58,8 @@ const FacebookLoginSDK = () => {
         }
       },
       {
-        scope: 'public_profile,email,pages_read_engagement,pages_manage_posts',
+        scope:
+          'public_profile,email,pages_show_list,pages_read_engagement,pages_read_user_engagement,pages_manage_posts,publish_video,pages_manage_ads,pages_manage_cta,pages_manage_metadata',
       }
     )
   }
