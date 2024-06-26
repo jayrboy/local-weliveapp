@@ -1,5 +1,5 @@
-import logo from '../assets/logo.png'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import Logo from '../assets/logo.png'
 
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -20,19 +20,23 @@ import LoginIcon from '@mui/icons-material/Login'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../redux/userSlice'
+import { nanoid } from 'nanoid'
 
 const pages = [
   {
+    id: nanoid(),
     title: 'หน้าหลัก',
     icon: '',
     href: '/',
   },
   {
+    id: nanoid(),
     title: 'นโยบาย',
     icon: '',
     href: '/policy',
   },
   {
+    id: nanoid(),
     title: 'ข้อกำหนดของบริการ',
     icon: '',
     href: '/term',
@@ -41,6 +45,7 @@ const pages = [
 
 const linkAuth = [
   {
+    id: nanoid(),
     title: 'Login / Register',
     icon: <LoginIcon />,
     href: '/auth/login',
@@ -49,11 +54,13 @@ const linkAuth = [
 
 const settings = [
   // {
+  //   id: nanoid(),
   //   title: 'Profile',
   //   icon: '',
   //   href: '/profile',
   // },
   {
+    id: nanoid(),
     title: 'Logout',
     icon: '',
     href: '#',
@@ -67,6 +74,8 @@ const ResponsiveAppBar = () => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  useEffect(() => {}, [navigate])
 
   const onClickLogout = () => {
     dispatch(logout())
@@ -96,26 +105,36 @@ const ResponsiveAppBar = () => {
     <AppBar position="static" style={{ backgroundColor: '#EDE7F6' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          {/* Logo and Business Name */}
           <Typography
             variant="h6"
-            noWrap
-            component="a"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
+              color: 'white', // สีตัวอักษรเป็นสีขาว
               textDecoration: 'none',
+              alignItems: 'center',
             }}
           >
-            <Avatar alt="logo" src={logo} />
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                '&:hover': {
+                  transform: 'scale(0.9)', // ขยายโลโก้เมื่อวางเมาส์เหนือ
+                  transition: 'transform 0.3s', // เพิ่มการเปลี่ยนแปลงที่นุ่มนวล
+                },
+              }}
+            >
+              <Avatar alt="logo" src={Logo} sx={{ mr: 1 }} />
+              WE Live
+            </Box>
           </Typography>
 
           {/* Mobile Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            {/* Hamburger */}
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -125,6 +144,7 @@ const ResponsiveAppBar = () => {
               color="default"
             >
               <MenuIcon />
+              {/* Hamburger Button */}
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -144,119 +164,116 @@ const ResponsiveAppBar = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((p, i) => (
-                <MenuItem key={i} onClick={handleCloseNavMenu}>
-                  <Link to={p.href} style={{ textDecoration: 'none' }}>
+              {pages.map((p) => (
+                <MenuItem key={p.id} onClick={handleCloseNavMenu}>
+                  <Link
+                    to={p.href}
+                    style={{ textDecoration: 'none', width: '100%' }}
+                  >
                     <Typography textAlign="center">{p.title}</Typography>
                   </Link>
                 </MenuItem>
               ))}
-              {user.length === 0 &&
-                linkAuth.map((page, index) => (
-                  <MenuItem key={index} onClick={handleCloseNavMenu}>
-                    <Link to={page.href} style={{ textDecoration: 'none' }}>
-                      <Typography textAlign="center">{page.title}</Typography>
-                    </Link>
-                  </MenuItem>
-                ))}
+              {!user && (
+                <MenuItem onClick={handleCloseNavMenu}>
+                  <Link
+                    to="/auth/login"
+                    style={{ textDecoration: 'none', width: '100%' }}
+                  >
+                    <Typography textAlign="center">Login / Register</Typography>
+                  </Link>
+                </MenuItem>
+              )}
             </Menu>
-            {/* LOGO Mobile */}
-            <Avatar alt="logo" src={logo} sx={{ my: 'auto' }} />
+            <Avatar alt="logo" src={Logo} sx={{ my: 'auto' }} />
           </Box>
 
-          {/* Menu Left Full */}
+          {/* Desktop Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((p, i) => (
-              <React.Fragment key={i}>
-                <Link to={p.href}>
-                  <Button
-                    onClick={handleCloseNavMenu}
-                    sx={{ my: 2, color: 'black', mr: 5 }}
-                  >
-                    {p.title}
-                  </Button>
-                </Link>
-              </React.Fragment>
+              <Link key={i} to={p.href} style={{ textDecoration: 'none' }}>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'black', mr: 5 }}
+                >
+                  {p.title}
+                </Button>
+              </Link>
             ))}
           </Box>
 
-          {/* Menu Right Full */}
-          <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
-            {user.length === 0 &&
+          {/* Authenticated User Menu */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            {user.length == 0 &&
               linkAuth.map((page, index) => (
-                <React.Fragment key={index}>
-                  <Link to={page.href}>
-                    <Button
-                      onClick={handleCloseNavMenu}
-                      sx={{
-                        my: 2,
-                        color: 'black',
-                        mr: 2,
-                      }}
-                      startIcon={page.icon}
-                    >
-                      {page.title}
-                    </Button>
-                  </Link>
-                </React.Fragment>
+                <Link
+                  key={index}
+                  to={page.href}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <Button
+                    onClick={handleCloseNavMenu}
+                    sx={{
+                      my: 2,
+                      color: 'black',
+                      mr: 2,
+                    }}
+                    startIcon={page.icon}
+                  >
+                    {page.title}
+                  </Button>
+                </Link>
               ))}
           </Box>
 
           {/* User Menu */}
-          {user.length != 0 && (
-            <>
-              <Typography
-                sx={{
-                  color: 'gray',
-                }}
-              >
+          {user.role && (
+            <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ color: 'gray', mr: 2 }}>
                 Welcome, {user.username}
               </Typography>
-              &nbsp;&nbsp;
-              <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar
-                      alt="profile_picture"
-                      src={user.picture[0].data.url}
-                    />
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: '45px' }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                >
-                  {settings.map((setting, index) => (
-                    <MenuItem
-                      key={index}
-                      onClick={
-                        setting.title == 'Logout'
-                          ? onClickLogout
-                          : handleCloseUserMenu
-                      }
-                    >
-                      <Link to={setting.to} style={{ textDecoration: 'none' }}>
-                        <Typography textAlign="center">
-                          {setting.title}
-                        </Typography>
-                      </Link>
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Box>
-            </>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar
+                    alt="profile_picture"
+                    src={user.picture[0].data.url}
+                  />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting, index) => (
+                  <MenuItem
+                    key={index}
+                    onClick={
+                      setting.title === 'Logout'
+                        ? onClickLogout
+                        : handleCloseUserMenu
+                    }
+                  >
+                    <Link to={setting.to} style={{ textDecoration: 'none' }}>
+                      <Typography textAlign="center">
+                        {setting.title}
+                      </Typography>
+                    </Link>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
           )}
         </Toolbar>
       </Container>
