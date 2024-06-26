@@ -1,13 +1,12 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RiLiveFill } from 'react-icons/ri'
 import { toast } from 'react-toastify'
-import { useDispatch } from 'react-redux'
-import { closeModal } from '../redux/modalSlice'
-import { firstLoadContext } from '../routes/AuthRoute'
+import { useDispatch, useSelector } from 'react-redux'
+import { closeModal, onLoading, onLoaded } from '../redux/liveSlice'
 
 const LiveVideoModal = () => {
   const dispatch = useDispatch()
-  let [firstLoad, setFirstLoad] = useContext(firstLoadContext)
+  const { isLoading } = useSelector((state) => state.live)
   let [liveId, setLiveId] = useState(localStorage.getItem('liveVideoId') || '')
 
   useEffect(() => {
@@ -23,7 +22,7 @@ const LiveVideoModal = () => {
       console.log('เปิด : ระบบดูด comments')
       localStorage.setItem('liveVideoId', liveId)
       toast.success('เปิด : ระบบดูด comments')
-      setFirstLoad(true) // icon RiLiveFill color="red" and GetComments() to HeaderBar.jsx Component
+      dispatch(onLoading()) // icon RiLiveFill color="red" and GetComments() to HeaderBar.jsx Component
       dispatch(closeModal())
     }
   }
@@ -31,9 +30,9 @@ const LiveVideoModal = () => {
   const closeLiveVideo = () => {
     console.log('ปิด : ระบบดูด comments')
     toast('ปิด : ระบบดูด comments')
-    setFirstLoad(false) // icon RiLiveFill color="grey"
+    dispatch(onLoaded()) // icon RiLiveFill color="grey"
     dispatch(closeModal())
-    localStorage.removeItem('liveVideoId')
+    // localStorage.removeItem('liveVideoId')
     setLiveId('') // Clear the state
   }
 
@@ -45,7 +44,7 @@ const LiveVideoModal = () => {
             สร้างออเดอร์อัตโนมัติจาก Comments - <strong>Live Facebook</strong>
           </h4>
 
-          {firstLoad ? (
+          {isLoading ? (
             <div className="text-center bouncing-text-y p-3">
               <RiLiveFill color="red" size={80} />
             </div>
@@ -65,7 +64,7 @@ const LiveVideoModal = () => {
                 onChange={(e) => setLiveId(e.target.value)}
                 className="form-control shadow-sm"
                 placeholder="ป้อน ID ไลฟ์สด"
-                disabled={firstLoad}
+                disabled={isLoading}
               />
             </div>
 
@@ -84,7 +83,7 @@ const LiveVideoModal = () => {
               >
                 ปิด
               </button>
-              {firstLoad ? (
+              {isLoading ? (
                 <button
                   type="button"
                   className="btn btn-danger"
@@ -99,7 +98,7 @@ const LiveVideoModal = () => {
           </form>
         </div>
       </aside>
-      {/* {firstLoad && <GetComments />} */}
+      {/* {isLoading && <GetComments />} */}
     </>
   )
 }

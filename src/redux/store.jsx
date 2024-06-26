@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './userSlice'
-import modalReducer from './modalSlice'
+import liveReducer from './liveSlice'
 import productReducer from './productSlice'
 import dailyStockReducer from './dailyStockSlice'
 import saleOrderReducer from './saleOrderSlice'
@@ -8,7 +8,7 @@ import saleOrderReducer from './saleOrderSlice'
 const store = configureStore({
   reducer: {
     user: userReducer,
-    modal: modalReducer,
+    live: liveReducer,
     product: productReducer,
     dailyStock: dailyStockReducer,
     saleOrder: saleOrderReducer,

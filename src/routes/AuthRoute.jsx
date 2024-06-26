@@ -1,22 +1,21 @@
 import { baseURL } from '../App'
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { onLoaded } from '../redux/liveSlice'
+
 import { Box } from '@mui/material'
 import SideBar from '../layout/SideBar'
 import HeaderBar from '../layout/HeaderBar'
-import { useEffect, useState, createContext, useCallback } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect, useCallback } from 'react'
 import axios from 'axios'
+
 import NotFound from '../views/NotFound'
 import LiveVideoModal from '../components/LiveVideoModal'
 
-export const firstLoadContext = createContext()
-export const commentContext = createContext()
-
 const AuthRoute = ({ children }) => {
+  const dispatch = useDispatch()
   const { user } = useSelector((state) => state.user)
-  const { isOpen } = useSelector((state) => state.modal)
-
-  let [firstLoad, setFirstLoad] = useState(false)
-  let [comment, setComment] = useState([])
+  const { isOpen } = useSelector((state) => state.live)
 
   const axiosFetch = useCallback(
     (authToken) => {
@@ -36,7 +35,7 @@ const AuthRoute = ({ children }) => {
         })
         .catch((error) => {
           console.log(error)
-          setFirstLoad(false)
+          dispatch(onLoaded())
         })
     },
     [user]
@@ -48,26 +47,24 @@ const AuthRoute = ({ children }) => {
     }
   }, [user, axiosFetch])
 
-  if (user.token) {
-    return (
-      <firstLoadContext.Provider value={[firstLoad, setFirstLoad]}>
-        <commentContext.Provider value={[comment, setComment]}>
-          <div className="app">
-            <SideBar />
-            <main className="content">
-              {isOpen && <LiveVideoModal />}
-              <HeaderBar />
-              <div className="content_body">
-                <Box>{children}</Box>
-              </div>
-            </main>
-          </div>
-        </commentContext.Provider>
-      </firstLoadContext.Provider>
-    )
-  } else {
-    return <NotFound text="Admin Not Permission" />
-  }
+  return (
+    <React.Fragment>
+      {user.token ? (
+        <div className="app">
+          <SideBar />
+          <main className="content">
+            {isOpen && <LiveVideoModal />}
+            <HeaderBar />
+            <div className="content_body">
+              <Box>{children}</Box>
+            </div>
+          </main>
+        </div>
+      ) : (
+        <NotFound text="Admin Not Permission" />
+      )}
+    </React.Fragment>
+  )
 }
 
 export default AuthRoute

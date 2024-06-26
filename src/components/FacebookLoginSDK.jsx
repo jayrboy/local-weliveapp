@@ -1,5 +1,5 @@
 import { baseURL } from '../App'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,19 +15,6 @@ const FacebookLoginSDK = () => {
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.user)
   console.log(user)
-
-  useEffect(() => {
-    window.fbAsyncInit = function () {
-      if (window.FB) {
-        window.FB.init({
-          appId: import.meta.env.VITE_APP_ID,
-          xfbml: true,
-          version: 'v20.0',
-        })
-        console.log({ message: 'Facebook SDK Initialized' })
-      }
-    }
-  }, [])
 
   function loginFB() {
     window.FB.login(

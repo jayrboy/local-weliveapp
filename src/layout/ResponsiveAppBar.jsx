@@ -174,7 +174,7 @@ const ResponsiveAppBar = () => {
                   </Link>
                 </MenuItem>
               ))}
-              {!user && (
+              {user.length == 0 && (
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Link
                     to="/auth/login"
@@ -204,26 +204,25 @@ const ResponsiveAppBar = () => {
 
           {/* Authenticated User Menu */}
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            {user.length == 0 &&
-              linkAuth.map((page, index) => (
-                <Link
-                  key={index}
-                  to={page.href}
-                  style={{ textDecoration: 'none' }}
+            {linkAuth.map((page, index) => (
+              <Link
+                key={index}
+                to={page.href}
+                style={{ textDecoration: 'none' }}
+              >
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{
+                    my: 2,
+                    color: 'black',
+                    mr: 2,
+                  }}
+                  startIcon={page.icon}
                 >
-                  <Button
-                    onClick={handleCloseNavMenu}
-                    sx={{
-                      my: 2,
-                      color: 'black',
-                      mr: 2,
-                    }}
-                    startIcon={page.icon}
-                  >
-                    {page.title}
-                  </Button>
-                </Link>
-              ))}
+                  {page.title}
+                </Button>
+              </Link>
+            ))}
           </Box>
 
           {/* User Menu */}
@@ -265,7 +264,7 @@ const ResponsiveAppBar = () => {
                         : handleCloseUserMenu
                     }
                   >
-                    <Link to={setting.to} style={{ textDecoration: 'none' }}>
+                    <Link to={setting.href} style={{ textDecoration: 'none' }}>
                       <Typography textAlign="center">
                         {setting.title}
                       </Typography>

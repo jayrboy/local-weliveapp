@@ -9,18 +9,16 @@ import { RiLiveFill } from 'react-icons/ri'
 import { useSelector, useDispatch } from 'react-redux'
 import { getOrders } from '../redux/saleOrderSlice'
 import { logout } from '../redux/userSlice'
-import { openModal } from '../redux/modalSlice'
+import { openModal } from '../redux/liveSlice'
 
-import { firstLoadContext } from '../routes/AuthRoute'
 import GetComments from '../components/GetComments'
 
 export default function HeaderBar() {
   let { orders } = useSelector((store) => store.saleOrder)
+  let { isLoading } = useSelector((store) => store.live)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
-
-  let [firstLoad, setFirstLoad] = useContext(firstLoadContext)
 
   useEffect(() => {
     dispatch(getOrders())
@@ -63,7 +61,7 @@ export default function HeaderBar() {
       {/* icons */}
       <Box display="flex">
         <IconButton onClick={() => dispatch(openModal())}>
-          {firstLoad ? (
+          {isLoading ? (
             <>
               <RiLiveFill color="red" />
               {/* Set Interval for Real-time  */}

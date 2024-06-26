@@ -1,12 +1,11 @@
 import { useEffect } from 'react'
 import axios from 'axios'
 import { baseURL } from '../App'
-import { useContext } from 'react'
-import { firstLoadContext } from '../routes/AuthRoute'
 import { toast } from 'react-toastify'
 import { useDispatch } from 'react-redux'
 import { getAllDaily } from '../redux/dailyStockSlice'
 import { getOrders } from '../redux/saleOrderSlice'
+import { onLoading, onLoaded } from '../redux/liveSlice'
 
 //! ต้องมีสิทธ์การอนุญาต publish_video (บัญชีธุรกิจ)
 // ฟังก์ชัน เปิด Live Video บน User
@@ -26,10 +25,10 @@ function openLiveVideo() {
 
 //! ต้องมีสิทธ์การอนุญาต public_profile, user_videos (บัญชีผู้บริโภค)
 // (1) Comments from Graph API
-async function getCommentsGraphAPI(liveVideoId) {
+async function getCommentsGraphAPI(liveVideoId, accessToken) {
   const url = `https://graph.facebook.com/v19.0/${liveVideoId}/comments`
   const params = {
-    access_token: import.meta.env.VITE_ACCESS_TOKEN,
+    access_token: accessToken,
   }
   try {
     const response = await axios(url, { params })
@@ -42,17 +41,18 @@ async function getCommentsGraphAPI(liveVideoId) {
 
 //TODO: Main Component
 const GetComments = () => {
-  let [firstLoad, setFirstLoad] = useContext(firstLoadContext)
   const dispatch = useDispatch()
 
   useEffect(() => {
     let firstRound = true
     let tempComment = []
-    let liveVideoId = localStorage.getItem('liveVideoId')
+    const liveVideoId = localStorage.getItem('liveVideoId')
+    const accessToken = localStorage.getItem('accessToken')
+    console.log(accessToken)
 
     const realTime = setInterval(async () => {
       try {
-        const newComment = await getCommentsGraphAPI(liveVideoId)
+        const newComment = await getCommentsGraphAPI(liveVideoId, accessToken)
         if (firstRound) {
           console.log('Initial comments', newComment)
           tempComment = newComment
@@ -68,7 +68,7 @@ const GetComments = () => {
 
         console.log('ปิด : ระบบดูด comments')
         toast('ปิด : ระบบดูด comments')
-        setFirstLoad(false)
+        dispatch(onLoaded())
         localStorage.removeItem('liveVideoId')
         clearInterval(realTime) // Stop the interval on error
       }
