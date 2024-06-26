@@ -96,13 +96,38 @@ export default function HeaderBar() {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
-          <MenuItem onClick={() => navigate('/info')}>วิธีการใช้งาน</MenuItem>
-          <MenuItem onClick={() => navigate('/app/policy')}>นโยบาย</MenuItem>
-          <MenuItem onClick={() => navigate('/app/term')}>
+          <MenuItem
+            onClick={() => {
+              handleClose()
+              navigate('/profile')
+            }}
+          >
+            Profile
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleClose()
+              navigate('/info')
+            }}
+          >
+            วิธีการใช้งาน
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleClose()
+              navigate('/app/policy')
+            }}
+          >
+            นโยบาย
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleClose()
+              navigate('/app/term')
+            }}
+          >
             ข้อกำหนดของบริการ
           </MenuItem>
-          <MenuItem onClick={() => navigate('/settings')}>ตั้งค่า</MenuItem>
           <MenuItem onClick={onClickLogout}>Logout</MenuItem>
         </Menu>
       </Box>

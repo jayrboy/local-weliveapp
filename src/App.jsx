@@ -52,7 +52,7 @@ import LoginFB from './views/LoginFB'
 import Policy from './views/Policy'
 import TermOfServices from './views/TermOfServices'
 
-import Settings from './views/Settings'
+import Profile from './views/Profile'
 
 export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 // export const baseURL = 'http://localhost:8000'
@@ -179,10 +179,10 @@ function App() {
 
         {/* Admin */}
         <Route
-          path="/settings"
+          path="/profile"
           element={
             <AuthRoute>
-              <Settings />
+              <Profile />
             </AuthRoute>
           }
         />

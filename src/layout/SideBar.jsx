@@ -24,6 +24,10 @@ import EqualizerIcon from '@mui/icons-material/Equalizer'
 import InfoIcon from '@mui/icons-material/Info'
 import CommentIcon from '@mui/icons-material/Comment'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
+import { login } from '../redux/userSlice'
+
+import { Button } from '@mui/material'
+import { FaFacebook } from 'react-icons/fa'
 
 const SideBar = () => {
   const { user } = useSelector((state) => state.user)

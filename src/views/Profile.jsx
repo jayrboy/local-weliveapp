@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { baseURL } from '../App'
 import { useSelector } from 'react-redux'
 
-const Settings = () => {
+const Profile = () => {
   const tokenRef = useRef()
   const [userToken, setUserToken] = useState('')
   const { user } = useSelector((state) => state.user)
@@ -36,8 +36,8 @@ const Settings = () => {
   }
 
   return (
-    <div className="container">
-      <h4>Settings</h4>
+    <div className="container mt-3">
+      <h4>Profile</h4>
       {user.role === 'admin' && (
         <>
           {userToken ? (
@@ -91,4 +91,4 @@ const Settings = () => {
     </div>
   )
 }
-export default Settings
+export default Profile
