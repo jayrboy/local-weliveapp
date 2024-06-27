@@ -3,7 +3,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { login } from '../redux/userSlice'
+import { login, onLoading, onLoaded } from '../redux/userSlice'
 
 import { Button } from '@mui/material'
 import { FaFacebook } from 'react-icons/fa'
@@ -13,7 +13,7 @@ import { toast } from 'react-toastify'
 const FacebookLoginSDK = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { user } = useSelector((state) => state.user)
+  const { user, isLoading } = useSelector((state) => state.user)
   console.log(user)
 
   function loginFB() {
@@ -21,6 +21,7 @@ const FacebookLoginSDK = () => {
       (response) => {
         // handle the response
         if (response.status === 'connected') {
+          dispatch(onLoading())
           const accessToken = response.authResponse.accessToken //short-lived access token
 
           window.FB.api('/me?fields=id,name,email,picture', (userData) => {
@@ -36,6 +37,7 @@ const FacebookLoginSDK = () => {
               .then((resp) => resp.json())
               .then((data) => {
                 console.log(data)
+                dispatch(onLoaded())
                 dispatch(
                   login({
                     username: data.payload.user.username,
@@ -54,33 +56,36 @@ const FacebookLoginSDK = () => {
               })
           })
         } else {
-          toast.warning('ผู้ใช้ยกเลิกการเข้าสู่ระบบ หรือไม่ได้อนุญาตโดยสมบูรณ์')
+          toast.warning('ยกเลิกการเข้าสู่ระบบ')
+          console.log('ผู้ใช้ยกเลิกการเข้าสู่ระบบ หรือไม่ได้อนุญาตโดยสมบูรณ์')
         }
       },
       {
         scope:
-          'public_profile,email,pages_show_list,pages_read_engagement,pages_read_user_engagement,pages_manage_posts,publish_video,pages_manage_ads,pages_manage_cta,pages_manage_metadata',
+          'public_profile,email,pages_show_list,pages_read_engagement,pages_manage_posts',
       }
     )
   }
 
   return (
-    <Button
-      type="button"
-      fullWidth={true}
-      startIcon={<FaFacebook size={30} />}
-      style={{
-        backgroundColor: '#1877f2',
-        color: 'white',
-        textTransform: 'capitalize',
-        fontSize: '16px',
-        height: '40px',
-        width: '300px',
-      }}
-      onClick={loginFB}
-    >
-      เข้าสู่ระบบด้วยบัญชี Facebook
-    </Button>
+    <>
+      <Button
+        type="button"
+        fullWidth={true}
+        startIcon={<FaFacebook size={30} />}
+        style={{
+          backgroundColor: '#1877f2',
+          color: 'white',
+          textTransform: 'capitalize',
+          fontSize: '16px',
+          height: '40px',
+          width: '300px',
+        }}
+        onClick={loginFB}
+      >
+        เข้าสู่ระบบด้วยบัญชี Facebook
+      </Button>
+    </>
   )
 }
 

@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   user: [],
   userFB: {},
+  isLoading: false,
 }
 
 export const userSlice = createSlice({
@@ -26,8 +27,14 @@ export const userSlice = createSlice({
       state.userFB = {}
       localStorage.clear()
     },
+    onLoading: (state) => {
+      state.isLoading = true
+    },
+    onLoaded: (state) => {
+      state.isLoading = false
+    },
   },
 })
 // Action creators are generated for each case reducer function
-export const { login, logout, loginFB } = userSlice.actions
+export const { login, logout, loginFB, onLoading, onLoaded } = userSlice.actions
 export default userSlice.reducer

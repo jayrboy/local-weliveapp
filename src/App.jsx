@@ -47,7 +47,6 @@ import UserManage from './views/admin/UserManage'
 import { useDispatch } from 'react-redux'
 import { login } from './redux/userSlice'
 
-import { Helmet } from 'react-helmet'
 import LoginFB from './views/LoginFB'
 import Policy from './views/Policy'
 import TermOfServices from './views/TermOfServices'
@@ -107,6 +106,7 @@ function App() {
           toast.error('Token หมดอายุหรือไม่ถูกต้อง: ' + err.message)
           setLoading(false)
           navigate('/auth/login')
+          window.location.reload()
           localStorage.clear()
         })
     } else {
@@ -342,15 +342,6 @@ function App() {
           }
         />
       </Routes>
-      {/* Add Facebook SDK for JavaScript */}
-      <Helmet>
-        <script
-          async
-          defer
-          crossorigin="anonymous"
-          src="https://connect.facebook.net/en_US/sdk.js"
-        />
-      </Helmet>
     </React.Fragment>
   )
 }
