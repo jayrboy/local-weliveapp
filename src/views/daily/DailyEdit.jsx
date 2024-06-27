@@ -67,7 +67,7 @@ const DailyEdit = () => {
       .then((res) => res.json())
       .then((result) => {
         toast.success('แก้ไขข้อมูลสำเร็จ')
-        navigate('/admin/daily-stock')
+        navigate('/sale-daily')
       })
       .catch((err) => toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก'))
   }
@@ -131,7 +131,7 @@ const DailyEdit = () => {
       <div className="row m-3">
         <div className="col-lg-6">
           <h3 className="text-start">
-            <Link to="/admin/home" className="  text-decoration-none">
+            <Link to="/home" className="  text-decoration-none">
               DAILY STOCK |
             </Link>
             <span className="text-success"> รายการขายสินค้า / แก้ไข</span>
@@ -151,7 +151,7 @@ const DailyEdit = () => {
               </div>
               <button
                 className="btn btn-light btn-sm float-end border"
-                onClick={() => navigate('/admin/daily-stock')}
+                onClick={() => navigate('/sale-daily')}
               >
                 <CloseIcon sx={{ color: 'red' }} />
               </button>
@@ -292,7 +292,7 @@ const DailyEdit = () => {
             <footer className="d-flex justify-content-center p-4">
               <button
                 className="btn btn-sm"
-                onClick={() => navigate('/admin/daily-stock')}
+                onClick={() => navigate('/sale-daily')}
               >
                 ยกเลิก
               </button>

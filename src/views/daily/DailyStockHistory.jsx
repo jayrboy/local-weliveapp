@@ -213,7 +213,7 @@ export default function DailyStockHistory() {
       <div className="row m-3">
         <div className="col-lg-6">
           <h3 className="text-start">
-            <Link to="/admin/home" className="  text-decoration-none">
+            <Link to="/dashboard" className="  text-decoration-none">
               DAILY STOCK |
             </Link>
             <span className="text-success"> ประวัติรายการขายสินค้า</span>
@@ -222,7 +222,7 @@ export default function DailyStockHistory() {
         <div className="col-lg-6 mt-1">
           <button
             className="btn btn-light btn-sm border"
-            onClick={() => navigate('/admin/daily-stock/create')}
+            onClick={() => navigate('/sale-daily/create')}
           >
             <FaPlus color="blue" />
             &nbsp;เพิ่มสินค้าขายรายวัน
@@ -230,7 +230,7 @@ export default function DailyStockHistory() {
           &nbsp;
           <button
             className="btn btn-light btn-sm border"
-            onClick={() => navigate('/admin/daily-stock/history')}
+            onClick={() => navigate('/sale-daily/history')}
           >
             <FaHistory color="red" />
             &nbsp;ประวัติย้อนหลัง
@@ -240,7 +240,7 @@ export default function DailyStockHistory() {
       <>{data}</>
       <br />
       <div className="d-flex justify-content-center mx-auto">
-        <Link to="/admin/daily-stock" className="btn btn-light btn-sm border">
+        <Link to="/sale-daily" className="btn btn-light btn-sm border">
           ย้อนกลับ
         </Link>
       </div>

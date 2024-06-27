@@ -75,6 +75,7 @@ const Stock = () => {
         <div className="m-3">
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <caption>พบข้อมูลทั้งหมด {result.docs.length} รายการ</caption>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ width: '100px' }}>
@@ -288,7 +289,7 @@ const Stock = () => {
           setData('ไม่มีรายการข้อมูล')
         }
         toast.success('ข้อมูลถูกลบแล้ว')
-        navigate('/admin/stock')
+        navigate('/stock')
       })
       .catch((err) => toast.error(err))
   }
@@ -318,7 +319,7 @@ const Stock = () => {
         </div>
 
         <div className="col-lg-4 p-1">
-          <form action="/admin/stock" method="get">
+          <form action="/stock" method="get">
             <div className="d-inline-block">
               <input
                 type="text"

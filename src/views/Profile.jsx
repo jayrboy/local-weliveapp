@@ -4,12 +4,12 @@ import { useSelector } from 'react-redux'
 
 const Profile = () => {
   const tokenRef = useRef()
-  const [userToken, setUserToken] = useState('')
+  const accessToken = localStorage.getItem('accessToken')
   const { user } = useSelector((state) => state.user)
 
   useEffect(() => {
-    if (userToken) {
-      tokenRef.current.value = userToken
+    if (accessToken) {
+      tokenRef.current.value = accessToken
     }
   }, [])
 
@@ -20,9 +20,8 @@ const Profile = () => {
       return alert('ต้องเป็น 0-9 หรือ a-z หรือ A-Z เท่านั้น')
     }
 
-    setUserToken(token)
 
-    // fetch(`${baseURL}/api/fb-sdk?token=${userToken}`)
+    // fetch(`${baseURL}/api/fb-sdk?token=${accessToken}`)
     //   .then((response) => response.json())
     //   .then((data) => {
     //     console.log('Saved Token :', token)
@@ -31,7 +30,6 @@ const Profile = () => {
   }
 
   const disconnectToken = () => {
-    setUserToken('')
     console.log('Disconnected Token')
   }
 
@@ -40,7 +38,7 @@ const Profile = () => {
       <h4>Profile</h4>
       {user.role === 'admin' && (
         <>
-          {userToken ? (
+          {accessToken ? (
             <form>
               <div>
                 <label>Facebook Account</label>

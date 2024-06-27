@@ -78,17 +78,17 @@ const UserManage = () => {
   }
 
   return (
-    <div className='m-3'>
+    <div className="m-3">
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <caption>พบข้อมูลทั้งหมด {data.length} รายการ</caption>
           <TableHead>
             <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>username</TableCell>
-              <TableCell>role</TableCell>
-              <TableCell>create</TableCell>
-              <TableCell>last update</TableCell>
-              {/* <TableCell>action</TableCell> */}
+              <TableCell>บัญชีผู้ใช้</TableCell>
+              <TableCell>ชื่อ</TableCell>
+              <TableCell>บทบาท</TableCell>
+              <TableCell>วันที่สร้าง</TableCell>
+              <TableCell>เข้าใช้งานล่าสุด</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -100,7 +100,7 @@ const UserManage = () => {
                       {cdt.getDate()}-{cdt.getMonth() + 1}-{cdt.getFullYear()}
                     </>
                   )
-                  let udt = new Date(Date.parse(item.createdAt))
+                  let udt = new Date(Date.parse(item.updatedAt))
                   let udf = (
                     <>
                       {udt.getDate()}-{udt.getMonth() + 1}-{udt.getFullYear()}
@@ -111,8 +111,8 @@ const UserManage = () => {
                       key={index}
                       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     >
-                      <TableCell>{index + 1}</TableCell>
                       <TableCell>{item.username}</TableCell>
+                      <TableCell>{item.name}</TableCell>
                       <TableCell>
                         <Select
                           value={item.role}

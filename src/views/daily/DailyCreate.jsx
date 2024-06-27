@@ -60,7 +60,7 @@ const DailyCreate = () => {
         if (result === 'true') {
           form.current.reset()
           toast.success('ข้อมูลถูกจัดเก็บแล้ว')
-          navigate('/admin/daily-stock')
+          navigate('/sale-daily')
         } else {
           toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
         }
@@ -104,7 +104,7 @@ const DailyCreate = () => {
       <div className="row m-3">
         <div className="col-lg-12">
           <h3 className="text-start">
-            <Link to="/admin/home" className="  text-decoration-none">
+            <Link to="/home" className="  text-decoration-none">
               DAILY STOCK |
             </Link>
             <span className="text-success"> รายการขายสินค้า / เพิ่ม</span>
@@ -151,7 +151,7 @@ const DailyCreate = () => {
               <div className="text-end">
                 <button
                   className="btn btn-light btn-sm border"
-                  onClick={() => navigate('/admin/daily-stock')}
+                  onClick={() => navigate('/sale-daily')}
                 >
                   <CloseIcon sx={{ color: 'red' }} />
                 </button>
@@ -162,7 +162,7 @@ const DailyCreate = () => {
               <button
                 type="button"
                 className="btn btn-sm btn-light border"
-                onClick={() => navigate('/admin/stock')}
+                onClick={() => navigate('/stock')}
               >
                 <FaPlus color="blue" /> เพิ่มสินค้า
               </button>
@@ -253,7 +253,7 @@ const DailyCreate = () => {
           <footer className="d-flex justify-content-center p-4">
             <button
               className="btn btn-sm"
-              onClick={() => navigate('/admin/daily-stock')}
+              onClick={() => navigate('/sale-daily')}
             >
               ยกเลิก
             </button>

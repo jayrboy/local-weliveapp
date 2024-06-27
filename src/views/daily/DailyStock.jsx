@@ -58,7 +58,7 @@ export default function DailyStock() {
         <div className="col-lg-6 mt-1">
           <button
             className="btn btn-light btn-sm border"
-            onClick={() => navigate('/admin/daily-stock/create')}
+            onClick={() => navigate('/sale-daily/create')}
           >
             <FaPlus color="blue" />
             &nbsp;เพิ่ม Daily Stock
@@ -66,7 +66,7 @@ export default function DailyStock() {
           &nbsp;
           <button
             className="btn btn-light btn-sm border"
-            onClick={() => navigate('/admin/daily-stock/history')}
+            onClick={() => navigate('/sale-daily/history')}
           >
             <FaHistory color="red" />
             &nbsp;ประวัติย้อนหลัง
@@ -103,7 +103,7 @@ export default function DailyStock() {
                         วันที่:&nbsp;
                         <strong className="text-primary">{df}</strong>
                       </div>
-                      <Link to={`/admin/daily-stock/edit/${doc._id}`}>
+                      <Link to={`/sale-daily/edit/${doc._id}`}>
                         <button className="btn btn-light btn-sm float-end border">
                           <MdEdit color="orange" />
                           &nbsp;แก้ไข
