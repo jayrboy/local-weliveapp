@@ -63,6 +63,35 @@ function App() {
   const token = localStorage.getItem('token')
 
   useEffect(() => {
+    window.fbAsyncInit = function () {
+      if (window.FB) {
+        window.FB.init({
+          appId: import.meta.env.VITE_APP_ID,
+          xfbml: true,
+          version: 'v20.0',
+        })
+        console.log({ message: 'Facebook SDK Initialized' })
+      }
+    }
+    // Load the Facebook SDK script
+    const loadFbSdk = () => {
+      ;(function (d, s, id) {
+        var js,
+          fjs = d.getElementsByTagName(s)[0]
+        if (d.getElementById(id)) {
+          return
+        }
+        js = d.createElement(s)
+        js.id = id
+        js.src = 'https://connect.facebook.net/en_US/sdk.js'
+        fjs.parentNode.insertBefore(js, fjs)
+      })(document, 'script', 'facebook-jssdk')
+    }
+
+    loadFbSdk()
+  }, [])
+
+  useEffect(() => {
     if (token) {
       fetch(`${baseURL}/api/current-user`, {
         method: 'POST',
@@ -92,9 +121,9 @@ function App() {
         .catch((err) => {
           toast.error('Token หมดอายุหรือไม่ถูกต้อง: ' + err.message)
           setLoading(false)
-          navigate('/auth/login')
           window.location.reload()
           localStorage.clear()
+          navigate('/auth/login')
         })
     } else {
       setLoading(false)

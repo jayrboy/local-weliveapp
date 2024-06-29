@@ -79,6 +79,31 @@ const SideBar = () => {
                 )}
               </MenuItem>
 
+              {!isCollapsed && (
+                <Box mb="25px">
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <img
+                      alt="profile-picture"
+                      width="50px"
+                      src={user.picture[0].data.url}
+                      style={{
+                        cursor: 'pointer',
+                        borderRadius: '50%',
+                      }}
+                    />
+                  </Box>
+                  <Box textAlign="center">
+                    <Typography sx={{ m: '10px 0 0 0' }}>
+                      {user.name}
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
+
               <MenuItem
                 icon={<DashboardIcon />}
                 onClick={() => navigate('/dashboard')}

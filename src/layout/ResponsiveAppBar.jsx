@@ -204,32 +204,33 @@ const ResponsiveAppBar = () => {
 
           {/* Authenticated User Menu */}
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            {linkAuth.map((page, index) => (
-              <Link
-                key={index}
-                to={page.href}
-                style={{ textDecoration: 'none' }}
-              >
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{
-                    my: 2,
-                    color: 'black',
-                    mr: 2,
-                  }}
-                  startIcon={page.icon}
+            {user.length == 0 &&
+              linkAuth.map((page, index) => (
+                <Link
+                  key={index}
+                  to={page.href}
+                  style={{ textDecoration: 'none' }}
                 >
-                  {page.title}
-                </Button>
-              </Link>
-            ))}
+                  <Button
+                    onClick={handleCloseNavMenu}
+                    sx={{
+                      my: 2,
+                      color: 'black',
+                      mr: 2,
+                    }}
+                    startIcon={page.icon}
+                  >
+                    {page.title}
+                  </Button>
+                </Link>
+              ))}
           </Box>
 
           {/* User Menu */}
           {user.role && (
             <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
               <Typography sx={{ color: 'gray', mr: 2 }}>
-                Welcome, {user.username}
+                Welcome, {user.name}
               </Typography>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

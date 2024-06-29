@@ -14,19 +14,6 @@ const FacebookLoginSDK = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    window.fbAsyncInit = function () {
-      if (window.FB) {
-        window.FB.init({
-          appId: import.meta.env.VITE_APP_ID,
-          xfbml: true,
-          version: 'v20.0',
-        })
-        console.log({ message: 'Facebook SDK Initialized' })
-      }
-    }
-  }, [])
-
   const loginFB = () => {
     window.FB.login(
       function (response) {
@@ -34,37 +21,48 @@ const FacebookLoginSDK = () => {
           dispatch(onLoading())
           const accessToken = response.authResponse.accessToken //short-lived access token
 
-          window.FB.api('/me?fields=id,name,email,picture', (userData) => {
-            // console.log(userData)
+          window.FB.api(
+            '/me',
+            { fields: 'id, name, email, picture' },
+            (userData) => {
+              // console.log(userData)
 
-            fetch(`${baseURL}/api/fb-sdk?token=${accessToken}`, {
-              method: 'POST', // เปลี่ยนจาก GET เป็น POST
-              headers: {
-                'Content-Type': 'application/json', // เพิ่ม headers เพื่อบอกว่า body เป็น JSON
-              },
-              body: JSON.stringify(userData), // แปลง userData เป็น JSON string
-            })
-              .then((resp) => resp.json())
-              .then((data) => {
-                console.log('ข้อมูลตอบกลับจาก Server :', data)
-                dispatch(onLoaded())
-                dispatch(
-                  login({
-                    username: data.payload.user.username,
-                    role: data.payload.user.role,
-                    name: data.payload.user.name,
-                    email: data.payload.user.email,
-                    picture: data.payload.user.picture,
-                    token: data.token,
-                  })
-                )
-
-                toast.success(data.payload.user.name + ': login successfully')
-                localStorage.setItem('token', data.token)
-                localStorage.setItem('accessToken', data.accessToken)
-                navigate('/dashboard')
+              fetch(`${baseURL}/api/fb-sdk?token=${accessToken}`, {
+                method: 'POST', // เปลี่ยนจาก GET เป็น POST
+                headers: {
+                  'Content-Type': 'application/json', // เพิ่ม headers เพื่อบอกว่า body เป็น JSON
+                },
+                body: JSON.stringify(userData), // แปลง userData เป็น JSON string
               })
-          })
+                .then((resp) => resp.json())
+                .then((data) => {
+                  console.log('ข้อมูลตอบกลับจาก Server :', data)
+                  dispatch(onLoaded())
+                  dispatch(
+                    login({
+                      username: data.payload.user.username,
+                      role: data.payload.user.role,
+                      name: data.payload.user.name,
+                      email: data.payload.user.email,
+                      picture: data.payload.user.picture,
+                      token: data.token,
+                    })
+                  )
+
+                  toast.success(data.payload.user.name + ': login successfully')
+                  localStorage.setItem('token', data.token)
+                  localStorage.setItem(
+                    'pages',
+                    JSON.stringify(data.payload.pages)
+                  )
+                  localStorage.setItem(
+                    'scopes',
+                    JSON.stringify(data.payload.scopes)
+                  )
+                  navigate('/dashboard')
+                })
+            }
+          )
         } else {
           toast.warning('ยกเลิกการเข้าสู่ระบบ')
           console.log('ผู้ใช้ยกเลิกการเข้าสู่ระบบ หรือไม่ได้อนุญาตโดยสมบูรณ์')
