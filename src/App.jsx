@@ -63,19 +63,6 @@ function App() {
   const token = localStorage.getItem('token')
 
   useEffect(() => {
-    window.fbAsyncInit = function () {
-      if (window.FB) {
-        window.FB.init({
-          appId: import.meta.env.VITE_APP_ID,
-          xfbml: true,
-          version: 'v20.0',
-        })
-        console.log({ message: 'Facebook SDK Initialized' })
-      }
-    }
-  }, [])
-
-  useEffect(() => {
     if (token) {
       fetch(`${baseURL}/api/current-user`, {
         method: 'POST',

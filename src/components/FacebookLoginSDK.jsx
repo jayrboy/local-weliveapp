@@ -1,8 +1,8 @@
 import { baseURL } from '../App'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { login, onLoading, onLoaded } from '../redux/userSlice'
 
 import { Button } from '@mui/material'
@@ -13,13 +13,23 @@ import { toast } from 'react-toastify'
 const FacebookLoginSDK = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { user, isLoading } = useSelector((state) => state.user)
-  console.log(user)
 
-  function loginFB() {
+  useEffect(() => {
+    window.fbAsyncInit = function () {
+      if (window.FB) {
+        window.FB.init({
+          appId: import.meta.env.VITE_APP_ID,
+          xfbml: true,
+          version: 'v20.0',
+        })
+        console.log({ message: 'Facebook SDK Initialized' })
+      }
+    }
+  }, [])
+
+  const loginFB = () => {
     window.FB.login(
-      (response) => {
-        // handle the response
+      function (response) {
         if (response.status === 'connected') {
           dispatch(onLoading())
           const accessToken = response.authResponse.accessToken //short-lived access token
@@ -36,7 +46,7 @@ const FacebookLoginSDK = () => {
             })
               .then((resp) => resp.json())
               .then((data) => {
-                console.log(data)
+                console.log('ข้อมูลตอบกลับจาก Server :', data)
                 dispatch(onLoaded())
                 dispatch(
                   login({
