@@ -102,7 +102,10 @@ const ResponsiveAppBar = () => {
   }
 
   return (
-    <AppBar position="static" style={{ backgroundColor: '#EDE7F6' }}>
+    <AppBar
+      position="static"
+      style={{ backgroundColor: '#EDE7F6', boxShadow: 'none' }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Logo and Business Name */}
@@ -134,7 +137,14 @@ const ResponsiveAppBar = () => {
           </Typography>
 
           {/* Mobile Menu */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: 'flex', md: 'none' },
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -185,7 +195,15 @@ const ResponsiveAppBar = () => {
                 </MenuItem>
               )}
             </Menu>
-            <Avatar alt="logo" src={Logo} sx={{ my: 'auto' }} />
+            {user.length == 0 ? (
+              <Avatar alt="logo" src={Logo} sx={{ my: 'auto' }} />
+            ) : (
+              <Avatar
+                alt="profile-picture"
+                src={user.picture[0].data.url}
+                sx={{ my: 'auto' }}
+              />
+            )}
           </Box>
 
           {/* Desktop Menu */}
