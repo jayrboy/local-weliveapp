@@ -2,13 +2,22 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { baseURL } from '../App'
 import { useSelector } from 'react-redux'
-
 import { Card, CardContent, Typography, Avatar } from '@mui/material'
+import PostPage from '../components/PostPage'
 
 const Profile = () => {
   const { user } = useSelector((state) => state.user)
+  const [isOpenPost, setIsOpenPost] = useState(false)
+  const [selectedPage, setSelectedPage] = useState(null) // เพิ่ม state นี้
   const pages = JSON.parse(localStorage.getItem('pages'))
   const scopes = JSON.parse(localStorage.getItem('scopes'))
+
+  console.log(isOpenPost)
+
+  const handlePostClick = (page) => {
+    setSelectedPage(page) // กำหนด page ที่เลือก
+    setIsOpenPost(true)
+  }
 
   return (
     <div className="container mt-3">
@@ -61,38 +70,61 @@ const Profile = () => {
             <Typography variant="body2" color="text.secondary">
               <strong>Pages:</strong>
             </Typography>
-            <table className="table table-striped">
-              <thead>
-                <tr>
-                  <th>Page ID</th>
-                  <th>Name</th>
-                  <th>Page Access Token</th>
-                  <th>Category</th>
-                  {/* <th>Tasks</th> */}
-                </tr>
-              </thead>
-              <tbody>
-                {pages.map((page, index) => (
-                  <tr key={index}>
-                    <td>{page.id}</td>
-                    <td>{page.name}</td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        defaultValue={page.access_token}
-                      />
-                    </td>
-                    <td>{page.category}</td>
-                    {/* <td>{page.tasks.join(', ')}</td> */}
+            <div className="table-responsive">
+              <table className="table table-striped table-sm">
+                <thead>
+                  <tr>
+                    {/* <th>ID</th> */}
+                    <th>Page Name</th>
+                    {/* <th>Access Token</th> */}
+                    <th>Category</th>
+                    {/* <th>Tasks</th> */}
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {pages.map((page, index) => (
+                    <tr key={index}>
+                      {/* <td>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm"
+                          defaultValue={page.id}
+                        />
+                      </td> */}
+                      <td>{page.name}</td>
+                      {/* <td>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm"
+                          defaultValue={page.access_token}
+                        />
+                      </td> */}
+                      <td>{page.category}</td>
+                      {/* <td>{page.tasks.join(', ')}</td> */}
+                      <td>
+                        <div>
+                          <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => handlePostClick(page)}
+                          >
+                            โพสต์
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </CardContent>
         </Card>
       </div>
+      {isOpenPost && (
+        <PostPage setIsOpenPost={setIsOpenPost} page={selectedPage} />
+      )}
     </div>
   )
 }
+
 export default Profile

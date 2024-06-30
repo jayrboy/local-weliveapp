@@ -53,8 +53,8 @@ import TermOfServices from './views/TermOfServices'
 
 import Profile from './views/Profile'
 
-export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
-// export const baseURL = 'http://localhost:8000'
+// export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
+export const baseURL = 'http://localhost:8000'
 
 function App() {
   const navigate = useNavigate()
