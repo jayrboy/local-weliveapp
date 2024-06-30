@@ -195,15 +195,6 @@ const ResponsiveAppBar = () => {
                 </MenuItem>
               )}
             </Menu>
-            {user.length == 0 ? (
-              <Avatar alt="logo" src={Logo} sx={{ my: 'auto' }} />
-            ) : (
-              <Avatar
-                alt="profile-picture"
-                src={user.picture[0].data.url}
-                sx={{ my: 'auto' }}
-              />
-            )}
           </Box>
 
           {/* Desktop Menu */}

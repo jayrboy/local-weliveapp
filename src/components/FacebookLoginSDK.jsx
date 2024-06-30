@@ -37,6 +37,7 @@ const FacebookLoginSDK = () => {
                 .then((resp) => resp.json())
                 .then((data) => {
                   console.log('ข้อมูลตอบกลับจาก Server :', data)
+
                   dispatch(onLoaded())
                   dispatch(
                     login({
@@ -51,6 +52,10 @@ const FacebookLoginSDK = () => {
 
                   toast.success(data.payload.user.name + ': login successfully')
                   localStorage.setItem('token', data.token)
+                  localStorage.setItem(
+                    'accessToken',
+                    data.payload.userAccessToken
+                  )
                   localStorage.setItem(
                     'pages',
                     JSON.stringify(data.payload.pages)

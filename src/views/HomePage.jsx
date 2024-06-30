@@ -13,8 +13,8 @@ export default function HomePage() {
         <Grid container spacing={2} justifyContent="center" alignItems="center">
           <Grid item xs={12} md={6} textAlign="center">
             <Typography variant="h4" component="div" gutterBottom>
-              <strong>Web Application</strong>
-              <Badge badgeContent="Live" color="secondary" sx={{ ml: 2 }} />
+              <strong>Web Application</strong>&nbsp;
+              <Badge badgeContent="FREE" color="secondary" sx={{ ml: 2 }} />
             </Typography>
             <Typography variant="body1" align="justify">
               เว็บแอปพลิเคชันเพื่อช่วยส่งเสริมผู้ประการทำการขายสินค้าออนไลน์
@@ -69,7 +69,7 @@ export default function HomePage() {
                   <strong>ระบบแชทบอท</strong>
                 </Typography>
                 <Typography>
-                  ตอบแชทส่งออเดอร์ผ่าน Messenger ของลูกค้าอัตโนมัติ
+                  ตอบแชทส่งออเดอร์ผ่าน Messenger ให้กับลูกค้าอัตโนมัติ
                 </Typography>
               </Card>
             </Grid>
@@ -82,7 +82,7 @@ export default function HomePage() {
         <Container maxWidth="sm">
           <Typography variant="h6">
             <strong>กำลังอยู่ในช่วงพัฒนาระบบ</strong>&nbsp;&nbsp;
-            <Badge badgeContent="FREE" color="secondary" sx={{ ml: 2 }} />
+            <Badge badgeContent="DEV" color="secondary" sx={{ ml: 2 }} />
           </Typography>
           <Typography>
             สามารถเข้าใช้งานระบบโดยเข้าสู่ระบบด้วยบัญชีเฟสบุ๊ก

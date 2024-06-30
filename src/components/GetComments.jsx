@@ -47,8 +47,9 @@ const GetComments = () => {
     let firstRound = true
     let tempComment = []
     const liveVideoId = localStorage.getItem('liveVideoId')
-    const accessToken =
-      'EAAGAtKWXZCNsBO22SueX42lgPATAysDvw6Jnlf9vVkUqGNgRGZA6kkuDgZAFgUYZA2uioZCOw9Vn2A2RgB8IYNbOJZB10uQaR6WTGuj0iZAoGFICQLdOZADzZCw1BZCbUjEZCef6oQ2vCqASrZBVF4ZANsIvSQFG2Q3FTbW9L0sXPJvbTvdUVaAzHWdKrOZAjNpcwyGfin'
+    const accessToken = localStorage.getItem('accessToken')
+    // const accessToken =
+    //   'EAAGAtKWXZCNsBO22SueX42lgPATAysDvw6Jnlf9vVkUqGNgRGZA6kkuDgZAFgUYZA2uioZCOw9Vn2A2RgB8IYNbOJZB10uQaR6WTGuj0iZAoGFICQLdOZADzZCw1BZCbUjEZCef6oQ2vCqASrZBVF4ZANsIvSQFG2Q3FTbW9L0sXPJvbTvdUVaAzHWdKrOZAjNpcwyGfin'
     console.log(accessToken)
 
     const realTime = setInterval(async () => {
