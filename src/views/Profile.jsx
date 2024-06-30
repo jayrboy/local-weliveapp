@@ -1,13 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { baseURL } from '../App'
 import { useSelector } from 'react-redux'
 import { Card, CardContent, Typography, Avatar } from '@mui/material'
 import PostPage from '../components/PostPage'
+import PostLiveVideo from '../components/PostLiveVideo'
 
 const Profile = () => {
   const { user } = useSelector((state) => state.user)
   const [isOpenPost, setIsOpenPost] = useState(false)
+  const [isOpenLiveVideo, setIsOpenLiveVideo] = useState(false)
+
   const [selectedPage, setSelectedPage] = useState(null) // เพิ่ม state นี้
   const pages = JSON.parse(localStorage.getItem('pages'))
   const scopes = JSON.parse(localStorage.getItem('scopes'))
@@ -17,6 +19,11 @@ const Profile = () => {
   const handlePostClick = (page) => {
     setSelectedPage(page) // กำหนด page ที่เลือก
     setIsOpenPost(true)
+  }
+
+  const handleLiveClick = (page) => {
+    setSelectedPage(page) // กำหนด page ที่เลือก
+    setIsOpenLiveVideo(true)
   }
 
   return (
@@ -49,19 +56,33 @@ const Profile = () => {
             <Typography variant="body2" color="text.secondary">
               <strong>Email:</strong> {user.email}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              <strong>Scopes:</strong>
-            </Typography>
-            <ul>
-              {scopes &&
-                scopes.map((scope, index) => (
-                  <li key={index}>
-                    <Typography variant="body2" color="text.secondary">
-                      {scope}
-                    </Typography>
-                  </li>
-                ))}
-            </ul>
+            {user.role === 'admin' && (
+              <>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Scopes:</strong>
+                </Typography>
+                <ul>
+                  {scopes &&
+                    scopes.map((scope, index) => (
+                      <li key={index}>
+                        <Typography variant="body2" color="text.secondary">
+                          {scope}
+                        </Typography>
+                      </li>
+                    ))}
+                </ul>
+              </>
+            )}
+
+            <div>
+              <button className="btn btn-sm btn-primary">
+                โพสต์บนเพจโปรไฟล์
+              </button>
+              &nbsp;
+              <button className="btn btn-sm btn-danger">
+                ไลฟ์สดบนเพจโปรไฟล์
+              </button>
+            </div>
           </CardContent>
         </Card>
 
@@ -110,6 +131,13 @@ const Profile = () => {
                           >
                             โพสต์
                           </button>
+                          &nbsp;
+                          <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => handleLiveClick(page)}
+                          >
+                            ไลฟ์สด
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -122,6 +150,12 @@ const Profile = () => {
       </div>
       {isOpenPost && (
         <PostPage setIsOpenPost={setIsOpenPost} page={selectedPage} />
+      )}
+      {isOpenLiveVideo && (
+        <PostLiveVideo
+          setIsOpenLiveVideo={setIsOpenLiveVideo}
+          page={selectedPage}
+        />
       )}
     </div>
   )
