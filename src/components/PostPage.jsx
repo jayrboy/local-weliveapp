@@ -1,16 +1,16 @@
 import { useRef } from 'react'
-import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import CloseIcon from '@mui/icons-material/Close'
 import { MdEdit } from 'react-icons/md'
 import { baseURL } from '../App'
 
 function PostPage({ setIsOpenPost, page }) {
-  const dispatch = useDispatch()
   const form = useRef()
+  const disabledButton = useRef()
 
   const onSubmitForm = (event) => {
     event.preventDefault()
+    disabledButton.current.disabled = true
 
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
@@ -75,7 +75,12 @@ function PostPage({ setIsOpenPost, page }) {
                 ยกเลิก
               </button>
               &nbsp;&nbsp;&nbsp;
-              <button type="submit" className="btn btn-light btn-sm border">
+              <button
+                type="submit"
+                className="btn btn-light btn-sm border"
+                ref={disabledButton}
+                disabled={false}
+              >
                 <MdEdit color="orange" /> โพสต์
               </button>
             </div>

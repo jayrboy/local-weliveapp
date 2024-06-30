@@ -5,9 +5,10 @@ import { MdEdit } from 'react-icons/md'
 import { baseURL } from '../App'
 import { Description } from '@mui/icons-material'
 
-function PostLiveVideo({ setIsOpenLiveVideo, page }) {
+function PostLiveVideoProfile({ setIsOpenLiveVideoProfile, user }) {
   const form = useRef()
   const disabledButton = useRef()
+  const accessToken = localStorage.getItem('accessToken')
 
   const onSubmitForm = (event) => {
     event.preventDefault()
@@ -16,29 +17,31 @@ function PostLiveVideo({ setIsOpenLiveVideo, page }) {
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
-    const postData = {
+    const userData = {
       ...formEnt,
-      pageId: page.id,
-      accessToken: page.access_token,
+      pageId: user.username,
+      accessToken: accessToken,
     }
 
-    // console.log(postData)
+    // console.log(userData)
 
     fetch(`${baseURL}/api/fb-live-video`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(postData),
+      body: JSON.stringify(userData),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data) {
           console.log(data)
-          setIsOpenLiveVideo(false)
-          toast('โพสต์เพจเฟสบุ๊คสำเร็จ')
+          setIsOpenLiveVideoProfile(false)
+          toast('ไลฟ์สดบนเพจโปรไฟล์สำเร็จ')
+          toast.success('Live Video ID : ' + data.id)
+          localStorage.setItem('liveVideoId', data.id)
         } else {
           console.log(data)
-          toast.warning('โปรไฟล์ของคุณต้องมีอายุอย่างน้อย 60 วัน')
-          setIsOpenLiveVideo(false)
+          toast.warning('ไลฟ์สดบนเพจโปรไม่สำเร็จ')
+          setIsOpenLiveVideoProfile(false)
         }
       })
   }
@@ -50,10 +53,10 @@ function PostLiveVideo({ setIsOpenLiveVideo, page }) {
         style={{ width: '400px', background: '#fff' }}
       >
         <span className="card-header d-flex justify-content-between align-items-center">
-          <h4>PAGE / ไลฟ์สดเพจเฟสบุ๊ค</h4>
+          <h4>PROFILE / ไลฟ์สดเพจโปรไฟล์</h4>
           <button
             className="btn btn-sm border"
-            onClick={() => setIsOpenLiveVideo(false)}
+            onClick={() => setIsOpenLiveVideoProfile(false)}
           >
             <CloseIcon sx={{ color: 'red' }} />
           </button>
@@ -84,7 +87,7 @@ function PostLiveVideo({ setIsOpenLiveVideo, page }) {
               <button
                 type="button"
                 className="btn btn-sm"
-                onClick={() => setIsOpenLiveVideo(false)}
+                onClick={() => setIsOpenLiveVideoProfile(false)}
               >
                 ยกเลิก
               </button>
@@ -105,4 +108,4 @@ function PostLiveVideo({ setIsOpenLiveVideo, page }) {
   )
 }
 
-export default PostLiveVideo
+export default PostLiveVideoProfile

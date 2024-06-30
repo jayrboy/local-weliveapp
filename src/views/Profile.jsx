@@ -5,25 +5,40 @@ import { Card, CardContent, Typography, Avatar } from '@mui/material'
 import PostPage from '../components/PostPage'
 import PostLiveVideo from '../components/PostLiveVideo'
 
+import PostLiveVideoProfile from '../components/PostLiveVideoProfile'
+
 const Profile = () => {
   const { user } = useSelector((state) => state.user)
   const [isOpenPost, setIsOpenPost] = useState(false)
   const [isOpenLiveVideo, setIsOpenLiveVideo] = useState(false)
 
+  const [isOpenLiveVideoProfile, setIsOpenLiveVideoProfile] = useState(false)
+
   const [selectedPage, setSelectedPage] = useState(null) // เพิ่ม state นี้
+  const [selectedUser, setSelectedUser] = useState(null)
+
   const pages = JSON.parse(localStorage.getItem('pages'))
   const scopes = JSON.parse(localStorage.getItem('scopes'))
-
-  console.log(isOpenPost)
 
   const handlePostClick = (page) => {
     setSelectedPage(page) // กำหนด page ที่เลือก
     setIsOpenPost(true)
+    setIsOpenLiveVideo(false)
+    setIsOpenLiveVideoProfile(false)
   }
 
   const handleLiveClick = (page) => {
     setSelectedPage(page) // กำหนด page ที่เลือก
+    setIsOpenPost(false)
     setIsOpenLiveVideo(true)
+    setIsOpenLiveVideoProfile(false)
+  }
+
+  const handleLiveProfileClick = (user) => {
+    setSelectedUser(user) // กำหนด user ที่เลือก
+    setIsOpenPost(false)
+    setIsOpenLiveVideo(false)
+    setIsOpenLiveVideoProfile(true)
   }
 
   return (
@@ -75,13 +90,13 @@ const Profile = () => {
             )}
 
             <div>
-              <button className="btn btn-sm btn-primary">
-                โพสต์บนเพจโปรไฟล์
-              </button>
-              &nbsp;
-              <button className="btn btn-sm btn-danger">
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={() => handleLiveProfileClick(user)}
+              >
                 ไลฟ์สดบนเพจโปรไฟล์
               </button>
+              &nbsp;
             </div>
           </CardContent>
         </Card>
@@ -155,6 +170,12 @@ const Profile = () => {
         <PostLiveVideo
           setIsOpenLiveVideo={setIsOpenLiveVideo}
           page={selectedPage}
+        />
+      )}
+      {isOpenLiveVideoProfile && (
+        <PostLiveVideoProfile
+          setIsOpenLiveVideoProfile={setIsOpenLiveVideoProfile}
+          user={selectedUser}
         />
       )}
     </div>
