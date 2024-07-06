@@ -53,8 +53,12 @@ const FacebookLoginSDK = () => {
                   toast.success(data.payload.user.name + ': login successfully')
                   localStorage.setItem('token', data.token)
                   localStorage.setItem(
-                    'accessToken',
+                    'userAccessToken',
                     data.payload.userAccessToken
+                  )
+                  localStorage.setItem(
+                    'pageAccessToken',
+                    data.payload.pages[1].access_token
                   )
                   localStorage.setItem(
                     'pages',

@@ -1,43 +1,12 @@
 import { useEffect } from 'react'
-import axios from 'axios'
 import { baseURL } from '../App'
 import { toast } from 'react-toastify'
 import { useDispatch } from 'react-redux'
 import { getAllDaily } from '../redux/dailyStockSlice'
 import { getOrders } from '../redux/saleOrderSlice'
-import { onLoading, onLoaded } from '../redux/liveSlice'
+import { onLoaded } from '../redux/liveSlice'
 
-//! ต้องมีสิทธ์การอนุญาต publish_video (บัญชีธุรกิจ)
-// ฟังก์ชัน เปิด Live Video บน User
-function openLiveVideo() {
-  return axios
-    .post('https://graph.facebook.com/v20.0/me/live_video', {
-      params: {
-        status: 'LIVE_NOW',
-        title: "Today's Live Video",
-        description: 'This is the live video for today',
-        access_token: import.meta.env.VITE_ACCESS_TOKEN,
-      },
-    })
-    .then((response) => console.log(response.data))
-    .catch((err) => console.log(err))
-}
-
-//! ต้องมีสิทธ์การอนุญาต public_profile, user_videos (บัญชีผู้บริโภค)
-// (1) Comments from Graph API
-async function getCommentsGraphAPI(liveVideoId, accessToken) {
-  const url = `https://graph.facebook.com/v19.0/${liveVideoId}/comments`
-  const params = {
-    access_token: accessToken,
-  }
-  try {
-    const response = await axios(url, { params })
-    // console.log(response.data.data)
-    return response.data.data
-  } catch (err) {
-    throw new Error('Error fetching comments from Graph API') // Throw the error to stop further execution
-  }
-}
+import { getCommentsGraphAPI, getPSID, sendMessageToPSID } from '../services/fb'
 
 //TODO: Main Component
 const GetComments = () => {
@@ -47,14 +16,14 @@ const GetComments = () => {
     let firstRound = true
     let tempComment = []
     const liveVideoId = localStorage.getItem('liveVideoId')
-    const accessToken = localStorage.getItem('accessToken')
-    // const accessToken =
-    //   'EAAGAtKWXZCNsBO22SueX42lgPATAysDvw6Jnlf9vVkUqGNgRGZA6kkuDgZAFgUYZA2uioZCOw9Vn2A2RgB8IYNbOJZB10uQaR6WTGuj0iZAoGFICQLdOZADzZCw1BZCbUjEZCef6oQ2vCqASrZBVF4ZANsIvSQFG2Q3FTbW9L0sXPJvbTvdUVaAzHWdKrOZAjNpcwyGfin'
-    console.log(accessToken)
+    const userAccessToken = localStorage.getItem('userAccessToken') // Long-lived user access token
+    const pageAccessToken = localStorage.getItem('pageAccessToken') // Page access token
+    console.log('User Long-Lived Access Token :', userAccessToken)
+    console.log('Page Access Token :', pageAccessToken)
 
     const realTime = setInterval(async () => {
       try {
-        const newComment = await getCommentsGraphAPI(liveVideoId, accessToken)
+        const newComment = await getCommentsGraphAPI(liveVideoId, userAccessToken)
         if (firstRound) {
           console.log('Initial comments', newComment)
           tempComment = newComment
@@ -80,7 +49,7 @@ const GetComments = () => {
   }, [])
 
   // (2) ฟังก์ชันอ่านเฉพาะ comment ใหม่
-  /*
+    /*
   วนลูป newComment แต่ละแถว แล้วตรวจสอบ oldComment มันมี
   id ตรงกับ id ของ newComment ของแถวนี้ไหม
   ถ้ามี id: '514878379814006_514885169813327' มันจะไม่ 'undefined'
@@ -114,9 +83,11 @@ const GetComments = () => {
         let code = parts[0] // รหัสสินค้า
         let quantity = parseInt(parts[1]) // จำนวนสินค้า
 
-        let dailyStock = await axios.get(`${baseURL}/api/daily/new-status`)
+        let dailyStock = await fetch(`${baseURL}/api/daily/new-status`).then(
+          (res) => res.json()
+        )
 
-        dailyStock.data.products.forEach((p) => {
+        dailyStock.products.forEach((p) => {
           if (code === p.code.toLowerCase()) {
             console.log('ชื่อสินค้า :', p.name)
             console.log('จำนวนที่สั่ง :', quantity)
@@ -162,21 +133,41 @@ const GetComments = () => {
               date_added: new Date().toISOString(),
             }
 
-            axios
-              .post(`${baseURL}/api/sale-order`, orderData)
-              .then((resp) => {
+            fetch(`${baseURL}/api/sale-order`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(orderData),
+            })
+              .then(async (resp) => {
                 console.log('Document sales order saved')
 
                 // เรียก getOrders เพื่ออัปเดต Redux state
                 dispatch(getOrders())
+
+                // const psid = await getPSID(idFb, pageAccessToken) // ใช้ userAccessToken สำหรับ getPSID
+
+                // if (psid) {
+                //   await sendMessageToPSID(
+                //     psid,
+                //     `นี่คือลิงก์ออเดอร์ของคุณ: https://weliveapp.netlify.app/order/${data._id}`,
+                //     pageAccessToken // ใช้ pageAccessToken สำหรับการส่งข้อความ
+                //   )
+                // }
               })
               .catch((err) => console.log(err))
           }
         })
 
         // อัปเดต dailyStock ในฐานข้อมูล
-        axios
-          .put(`${baseURL}/api/daily/update`, dailyStock.data)
+        fetch(`${baseURL}/api/daily/update`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dailyStock),
+        })
           .then((resp) => {
             console.log('Document daily stock updated')
 
