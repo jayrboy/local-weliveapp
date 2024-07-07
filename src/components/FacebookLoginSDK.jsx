@@ -47,23 +47,13 @@ const FacebookLoginSDK = () => {
                       email: data.payload.user.email,
                       picture: data.payload.user.picture,
                       token: data.token,
+                      userAccessToken: data.payload.user.userAccessToken,
+                      pages: data.payload.user.pages,
                     })
                   )
 
                   toast.success(data.payload.user.name + ': login successfully')
                   localStorage.setItem('token', data.token)
-                  localStorage.setItem(
-                    'userAccessToken',
-                    data.payload.userAccessToken
-                  )
-                  localStorage.setItem(
-                    'pageAccessToken',
-                    data.payload.pages[1].access_token
-                  )
-                  localStorage.setItem(
-                    'pages',
-                    JSON.stringify(data.payload.pages)
-                  )
                   localStorage.setItem(
                     'scopes',
                     JSON.stringify(data.payload.scopes)

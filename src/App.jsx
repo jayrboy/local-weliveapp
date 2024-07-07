@@ -111,6 +111,8 @@ function App() {
                 email: data.email,
                 picture: data.picture,
                 token: token,
+                userAccessToken: data.userAccessToken,
+                pages: data.pages
               })
             )
             setLoading(false)

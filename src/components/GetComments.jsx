@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { baseURL } from '../App'
 import { toast } from 'react-toastify'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { getAllDaily } from '../redux/dailyStockSlice'
 import { getOrders } from '../redux/saleOrderSlice'
 import { onLoaded } from '../redux/liveSlice'
@@ -11,19 +11,19 @@ import { getCommentsGraphAPI, getPSID, sendMessageToPSID } from '../services/fb'
 //TODO: Main Component
 const GetComments = () => {
   const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.user) // Long-lived user access token
+  const liveVideoId = localStorage.getItem('liveVideoId')
 
   useEffect(() => {
     let firstRound = true
     let tempComment = []
-    const liveVideoId = localStorage.getItem('liveVideoId')
-    const userAccessToken = localStorage.getItem('userAccessToken') // Long-lived user access token
-    const pageAccessToken = localStorage.getItem('pageAccessToken') // Page access token
-    console.log('User Long-Lived Access Token :', userAccessToken)
-    console.log('Page Access Token :', pageAccessToken)
 
     const realTime = setInterval(async () => {
       try {
-        const newComment = await getCommentsGraphAPI(liveVideoId, userAccessToken)
+        const newComment = await getCommentsGraphAPI(
+          liveVideoId,
+          user.userAccessToken
+        )
         if (firstRound) {
           console.log('Initial comments', newComment)
           tempComment = newComment
@@ -49,7 +49,7 @@ const GetComments = () => {
   }, [])
 
   // (2) ฟังก์ชันอ่านเฉพาะ comment ใหม่
-    /*
+  /*
   วนลูป newComment แต่ละแถว แล้วตรวจสอบ oldComment มันมี
   id ตรงกับ id ของ newComment ของแถวนี้ไหม
   ถ้ามี id: '514878379814006_514885169813327' มันจะไม่ 'undefined'
