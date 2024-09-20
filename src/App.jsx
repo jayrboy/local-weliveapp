@@ -53,7 +53,8 @@ import TermOfServices from './views/TermOfServices'
 
 import Profile from './views/Profile'
 
-export const baseURL = 'https://server-weliveapp.azurewebsites.net'
+export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
+// export const baseURL = 'https://server-weliveapp.azurewebsites.net'
 // export const baseURL = 'http://localhost:8000'
 
 function App() {
@@ -112,7 +113,7 @@ function App() {
                 picture: data.picture,
                 token: token,
                 userAccessToken: data.userAccessToken,
-                pages: data.pages
+                pages: data.pages,
               })
             )
             setLoading(false)
