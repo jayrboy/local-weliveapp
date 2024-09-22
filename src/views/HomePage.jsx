@@ -1,6 +1,17 @@
 import React from 'react'
 import projectImage from '../assets/dashboard-logo.png'
-import { Container, Card, Typography, Badge, Box, Grid } from '@mui/material'
+import {
+  Container,
+  Card,
+  Typography,
+  Badge,
+  Box,
+  Grid,
+  CardMedia,
+} from '@mui/material'
+import stock from '../assets/stock.png'
+import orderAuto from '../assets/orderauto.png'
+import chatbot from '../assets/chatbot.jpg'
 
 export default function HomePage() {
   return (
@@ -47,6 +58,12 @@ export default function HomePage() {
               <Card sx={{ p: 3, borderRadius: 2, boxShadow: 3 }}>
                 <Typography variant="h6" gutterBottom>
                   <strong>ระบบจัดการสต็อก</strong>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={stock}
+                    alt="Stock"
+                  />
                 </Typography>
                 <Typography>
                   จัดการสินค้า ราคา ต้นทุน สามารถกำหนดให้ขายเกินจำนวนในสต็อกได้
@@ -57,6 +74,12 @@ export default function HomePage() {
               <Card sx={{ p: 3, borderRadius: 2, boxShadow: 3 }}>
                 <Typography variant="h6" gutterBottom>
                   <strong>ระบบสร้างออเดอร์อัตโนมัติ</strong>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={orderAuto}
+                    alt="Order Auto"
+                  />
                 </Typography>
                 <Typography>
                   สร้างรายการคำสั่งซื้อที่ตรงกับโค้ดสินค้าให้อัตโนมัติ
@@ -67,6 +90,12 @@ export default function HomePage() {
               <Card sx={{ p: 3, borderRadius: 2, boxShadow: 3 }}>
                 <Typography variant="h6" gutterBottom>
                   <strong>ระบบแชทบอท</strong>
+                  <CardMedia
+                    component="img"
+                    height=""
+                    image={chatbot}
+                    alt="Paella dish"
+                  />
                 </Typography>
                 <Typography>
                   ตอบแชทส่งออเดอร์ผ่าน Messenger ให้กับลูกค้าอัตโนมัติ
