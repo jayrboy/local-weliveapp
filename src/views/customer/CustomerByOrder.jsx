@@ -19,11 +19,13 @@ import Editor from '../order/Editer'
 import Quill from 'quill'
 import CreditScoreIcon from '@mui/icons-material/CreditScore'
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
+
 export default function CustomerByOrder() {
   const Delta = Quill.import('delta')
   const [range, setRange] = useState()
   let { user } = useSelector((store) => store.user)
   console.log('USER : ', user)
+
   const dispatch = useDispatch()
   const [lastChange, setLastChange] = useState()
   const [readOnly, setReadOnly] = useState(false)
@@ -33,7 +35,6 @@ export default function CustomerByOrder() {
   const [orders, setOrders] = useState({
     data: { name: 'loading', orders: [] },
   })
-  const token = localStorage.getItem('token')
   const [formData, setFormData] = useState([])
 
   const confirmPayment = async () => {
@@ -45,11 +46,6 @@ export default function CustomerByOrder() {
             order_id: order._id,
             quantity: order.quantity,
           })),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       )
 
@@ -65,11 +61,6 @@ export default function CustomerByOrder() {
         `${baseURL}/api/sale-order/sended/${id}`,
         {
           express: formData.express, // Add this line to send the express value
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       )
       toast.success('อัพเดตสถานะแล้ว')
@@ -81,11 +72,7 @@ export default function CustomerByOrder() {
 
   const fetchSaleOrder = async () => {
     try {
-      const response = await axios.get(`${baseURL}/api/sale-order/read/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const response = await axios.get(`${baseURL}/api/sale-order/read/${id}`)
       console.log('oo', response.data)
       setOrders({ data: response.data })
       setFormData(response.data)
@@ -96,10 +83,8 @@ export default function CustomerByOrder() {
   }
 
   useEffect(() => {
-    if (token) {
-      fetchSaleOrder()
-    }
-  }, [token, id])
+    fetchSaleOrder()
+  }, [id])
 
   console.log('1.', orders, 'DATE ORDER : ', orders)
 
@@ -267,7 +252,7 @@ export default function CustomerByOrder() {
               {orders.data.orders && orders.data.orders.length > 0 ? (
                 orders.data.orders.map((order, index) => {
                   return (
-                    <TableRow key={order._id}>
+                    <TableRow key={order.id}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{order.name}</TableCell>
                       <TableCell>{order.quantity}</TableCell>
@@ -563,7 +548,7 @@ export default function CustomerByOrder() {
                     />
                   </Grid>
 
-                  {user.role == 'admin' ? (
+                  {user.role == 'admin' || 'user' ? (
                     <>
                       {orders.data.complete == false ? (
                         <>
