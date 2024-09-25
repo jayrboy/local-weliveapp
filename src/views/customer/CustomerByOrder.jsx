@@ -78,7 +78,7 @@ export default function CustomerByOrder() {
       setFormData(response.data)
       setImage(JSON.parse(response.data.picture_payment))
     } catch (error) {
-      console.error('There was an error!', error)
+      console.log('There was an error!', error)
     }
   }
 
@@ -336,7 +336,7 @@ export default function CustomerByOrder() {
                     <TextField
                       fullWidth
                       name="address"
-                      defaultValue={formData.date_added}
+                      defaultValue={formData.address}
                       onChange={handleChange}
                       required
                     />
@@ -346,7 +346,7 @@ export default function CustomerByOrder() {
                       label="ตำบล"
                       fullWidth
                       name="district"
-                      defaultValue={formData.date_added}
+                      defaultValue={formData.district}
                       onChange={handleChange}
                       required
                     />
@@ -463,6 +463,7 @@ export default function CustomerByOrder() {
                     {buffer.data.address != null ? (
                       <>
                         <TextField
+                          label="ที่อยู่"
                           fullWidth
                           name="address"
                           defaultValue={buffer.data.address}
@@ -551,28 +552,16 @@ export default function CustomerByOrder() {
                   {user.role == 'admin' || 'user' ? (
                     <>
                       {orders.data.complete == false ? (
-                        <>
-                          <Grid item xs={6}>
-                            <Button
-                              type="onSubmit"
-                              variant="contained"
-                              color="primary"
-                              onClick={confirmPayment}
-                            >
-                              ส่งแบบฟอร์มการชำระเงิน
-                            </Button>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Button
-                              type="button"
-                              variant="contained"
-                              color="warning"
-                              onClick={confirmPayment}
-                            >
-                              ยืนยันการชำระเงิน
-                            </Button>
-                          </Grid>
-                        </>
+                        <Grid item xs={6}>
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            onClick={confirmPayment}
+                          >
+                            ส่งแบบฟอร์มการชำระเงิน
+                          </Button>
+                        </Grid>
                       ) : (
                         <>
                           <Grid item xs={6}>
@@ -597,16 +586,19 @@ export default function CustomerByOrder() {
                                   required
                                 />
                               </Grid>
-                              <Grid item xs={6}>
-                                <Button
-                                  type="button"
-                                  variant="contained"
-                                  color="warning"
-                                  onClick={confirmSended}
-                                >
-                                  ยืนยันการส่งสินค้า
-                                </Button>
-                              </Grid>
+                              {(user.role == 'admin' ||
+                                user.role == 'user') && (
+                                <Grid item xs={6}>
+                                  <Button
+                                    type="button"
+                                    variant="contained"
+                                    color="warning"
+                                    onClick={confirmSended}
+                                  >
+                                    ยืนยันการส่งสินค้า
+                                  </Button>
+                                </Grid>
+                              )}
                             </>
                           ) : (
                             <>
@@ -620,16 +612,19 @@ export default function CustomerByOrder() {
                                   disabled
                                 />
                               </Grid>
-                              <Grid item xs={6}>
-                                <Button
-                                  type="button"
-                                  variant="contained"
-                                  color="error"
-                                  onClick={confirmSended}
-                                >
-                                  ยกเลิกสถานะการจัดส่ง
-                                </Button>
-                              </Grid>
+                              {(user.role == 'admin' ||
+                                user.role == 'user') && (
+                                <Grid item xs={6}>
+                                  <Button
+                                    type="button"
+                                    variant="contained"
+                                    color="error"
+                                    onClick={confirmSended}
+                                  >
+                                    ยกเลิกสถานะการจัดส่ง
+                                  </Button>
+                                </Grid>
+                              )}
                             </>
                           )}
                         </>

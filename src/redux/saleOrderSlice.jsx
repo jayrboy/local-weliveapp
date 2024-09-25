@@ -8,6 +8,9 @@ const url = 'https://api-weliveapp.azurewebsites.net/api/sale-order'
 const initialState = {
   orders: [],
   order: {},
+  totalQuantity: 0, // จำนวนสินค้ารวมที่คำนวณได้
+  totalPrice: 0, // ราคารวมที่คำนวณได้
+  totalExpressPrice: 0, // ค่าขนส่งที่คำนวณได้
   isLoading: true,
 }
 
@@ -49,9 +52,9 @@ const saleOrderSlice = createSlice({
     calculateTotalQuantity: (state) => {
       let total = 0
       state.order.orders.map((item) => {
-        total += item.stock_quantity * item.price
+        total += item.quantity
       })
-      state.total = total
+      state.totalQuantity = total
     },
     calculateTotalPrice: (state) => {
       let total = 0
@@ -93,8 +96,15 @@ const saleOrderSlice = createSlice({
         console.log(action)
         state.isLoading = false
       })
+      .addCase(getOrder.pending, (state) => {
+        state.isLoading = true
+      })
       .addCase(getOrder.fulfilled, (state, action) => {
+        state.isLoading = false
         state.order = action.payload
+      })
+      .addCase(getOrder.rejected, (state, action) => {
+        state.isLoading = false
       })
   },
 })
