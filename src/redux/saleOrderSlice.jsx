@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const url = 'https://vercel-server-weliveapp.vercel.app/api/sale-order'
+// const url = 'https://vercel-server-weliveapp.vercel.app/api/sale-order'
+const url = 'https://api-weliveapp.azurewebsites.net/api/sale-order'
 // const url = 'http://localhost:8000/api/sale-order'
 
 const initialState = {
