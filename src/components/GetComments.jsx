@@ -6,13 +6,43 @@ import { getAllDaily } from '../redux/dailyStockSlice'
 import { getOrders } from '../redux/saleOrderSlice'
 import { onLoaded } from '../redux/liveSlice'
 
-import { getCommentsGraphAPI, getPSID, sendMessageToPSID } from '../services/fb'
+import {
+  getCommentsGraphAPI,
+  getLiveVideos,
+  getPSID,
+  sendMessageToPSID,
+} from '../services/fb'
 
 //TODO: Main Component
 const GetComments = () => {
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.user) // Long-lived user access token
   const liveVideoId = localStorage.getItem('liveVideoId')
+
+  // let liveVideoId = ''
+  // useEffect(() => {
+  //   const fetchLiveVideos = async () => {
+  //     let liveVdo = await getLiveVideos(user.userAccessToken)
+  //     console.log('Live Video: ', liveVdo)
+
+  //     if (liveVdo && liveVdo.status == 'LIVE') {
+  //       let embed_html = liveVdo.embed_html
+  //       let videoIdMatch = embed_html.match(/videos%2F(\d+)/)
+
+  //       if (videoIdMatch) {
+  //         let videoId = videoIdMatch[1]
+  //         liveVideoId = videoId
+  //         toast.success(`Title: ${liveVdo.title}, Video ID: ${videoId}`)
+  //       } else {
+  //         toast.error('ไม่พบ video ID ใน embed_html')
+  //       }
+  //     } else {
+  //       toast.warning('กรุณาเปิดการถ่ายทอดสดที่ Facebook')
+  //     }
+  //   }
+
+  //   fetchLiveVideos()
+  // }, [])
 
   useEffect(() => {
     let firstRound = true
@@ -34,10 +64,8 @@ const GetComments = () => {
           tempComment = await latestComment(tempComment, newComment)
         }
       } catch (error) {
-        console.error('เกิดข้อผิดพลาดในการดึงข้อมูล comments:', error)
         toast.warning('ID ไลฟ์สด Facebook ไม่ถูกต้อง')
 
-        console.log('ปิด : ระบบดูด comments')
         toast('ปิด : ระบบดูด comments')
         dispatch(onLoaded())
         localStorage.removeItem('liveVideoId')
@@ -78,24 +106,23 @@ const GetComments = () => {
       //TODO: check Confirm (cf)
       if (commentFb && commentFb.includes('=')) {
         let parts = commentFb.split('=') // split "t2=5" into an array["t2", "5"]
-        console.log('Have message code :', parts) // ข้อความทั้งหมดที่อยู่ใน parts
-
         let code = parts[0] // รหัสสินค้า
         let quantity = parseInt(parts[1]) // จำนวนสินค้า
 
-        let dailyStock = await fetch(`${baseURL}/api/daily/new-status`).then(
-          (res) => res.json()
-        )
+        let response = await fetch(`${baseURL}/api/daily/new-status`)
+        let data = await response.json()
+        let dailyStock = data
 
         dailyStock.products.forEach((p) => {
           if (code === p.code.toLowerCase()) {
+            console.log('ชื่อลูกค้า :', nameFb)
             console.log('ชื่อสินค้า :', p.name)
             console.log('จำนวนที่สั่ง :', quantity)
 
             if (quantity <= p.remaining_cf) {
               // จำนวนสินค้าที่สั่งเข้ามา น้อยกว่า สินค้าคงเหลือ
-              p.cf += quantity
-              p.remaining_cf -= quantity
+              p.cf = p.cf + quantity
+              p.remaining_cf = p.remaining_cf - quantity
             }
             // จำนวนสินค้าที่สั่งเข้ามา มากกว่า สินค้าคงเหลือ จะสั่งได้ แต่ต้องไม่เกิน limit ที่กำหนดเอาไว้
             else if (quantity > p.remaining_cf && p.limit > 0) {
@@ -103,8 +130,8 @@ const GetComments = () => {
 
               // ถ้า (สินค้าคงเหลือ - จำนวนลูกค้าสั่งมาลบ) >= -(limit + สินค้าคงเหลือ) สมมุติ : 10 >= -(10 + 10)
               if (newRemainingCf >= -(p.limit + p.stock_quantity)) {
-                p.cf += quantity
-                p.remaining_cf -= quantity
+                p.cf = p.cf + quantity
+                p.remaining_cf = p.remaining_cf - quantity
               }
             }
 
@@ -130,6 +157,8 @@ const GetComments = () => {
               postcode: '',
               tel: '',
               complete: false,
+              sended: false,
+              express: '',
               date_added: new Date().toISOString(),
             }
 
@@ -178,10 +207,10 @@ const GetComments = () => {
       }
 
       //TODO: check Cancel (cc)
-      if (commentFb && commentFb.startsWith('CC')) {
-        let parts = commentFb.split(' ') // split "cf a2=2" into an array ["cf","a2=2"]
-        console.log('Have message "cc or CC" :', commentFb)
-      }
+      // if (commentFb && commentFb.startsWith('CC')) {
+      //   let parts = commentFb.split(' ') // split "cf a2=2" into an array ["cf","a2=2"]
+      //   console.log('Have message "cc or CC" :', commentFb)
+      // }
     } catch (e) {
       console.log('checked message code error :', e)
     }

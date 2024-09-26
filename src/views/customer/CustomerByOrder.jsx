@@ -539,6 +539,9 @@ export default function CustomerByOrder() {
                     />
                   </Grid>
                   <Grid item xs={12}>
+                    <Typography variant="h6" gutterBottom>
+                      อัปโหลดรูปภาพ
+                    </Typography>
                     <Editor
                       ref={quillRef}
                       readOnly={readOnly}

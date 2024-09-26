@@ -39,6 +39,25 @@ export async function getCommentsGraphAPI(liveVideoId, userAccessToken) {
   }
 }
 
+export const getLiveVideos = async (userAccessToken) => {
+  try {
+    const response = await fetch(
+      `${graphUrl}/me/live_videos?fields=id,title,status,embed_html&access_token=${userAccessToken}`
+    )
+
+    if (!response.ok) {
+      throw new Error('Error fetching comments from Graph API')
+    }
+
+    const data = await response.json()
+    const liveVideos = data.data[0]
+
+    return liveVideos
+  } catch (error) {
+    console.log('Error fetching live videos:', error.message)
+  }
+}
+
 // https://developers.facebook.com/docs/messenger-platform/identity/id-matching
 // ฟังก์ชันแปลง USER ID เป็น PSID
 export const getPSID = async (userId, pageAccessToken) => {
