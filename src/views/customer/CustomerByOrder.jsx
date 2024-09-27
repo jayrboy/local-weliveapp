@@ -24,7 +24,7 @@ export default function CustomerByOrder() {
   const Delta = Quill.import('delta')
   const [range, setRange] = useState()
   let { user } = useSelector((store) => store.user)
-  console.log('USER : ', user)
+  // console.log('USER : ', user)
 
   const dispatch = useDispatch()
   const [lastChange, setLastChange] = useState()
@@ -35,6 +35,7 @@ export default function CustomerByOrder() {
   const [orders, setOrders] = useState({
     data: { name: 'loading', orders: [] },
   })
+  // console.log(orders.data.picture_payment)
   const [formData, setFormData] = useState([])
 
   const confirmPayment = async () => {
@@ -66,27 +67,24 @@ export default function CustomerByOrder() {
       toast.success('อัพเดตสถานะแล้ว')
       window.location.reload()
     } catch (error) {
-      console.error('There was an error!', error)
+      toast.error('There was an error!')
     }
   }
 
   const fetchSaleOrder = async () => {
     try {
       const response = await axios.get(`${baseURL}/api/sale-order/read/${id}`)
-      console.log('oo', response.data)
       setOrders({ data: response.data })
       setFormData(response.data)
       setImage(JSON.parse(response.data.picture_payment))
     } catch (error) {
-      console.log('There was an error!', error)
+      toast.error('There was an error!')
     }
   }
 
   useEffect(() => {
     fetchSaleOrder()
   }, [id])
-
-  console.log('1.', orders, 'DATE ORDER : ', orders)
 
   const calculateTotalQuantity = () => {
     return orders.data.orders.reduce(
@@ -116,7 +114,6 @@ export default function CustomerByOrder() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    console.log(name, value)
     setFormData((prevData) => ({ ...prevData, [name]: value }))
   }
 
@@ -128,8 +125,6 @@ export default function CustomerByOrder() {
   }
 
   const handleSubmit = async (e) => {
-    console.log(orders)
-    console.log(formData)
     e.preventDefault()
     const formDataToSend = new FormData()
     formDataToSend.append(
@@ -149,20 +144,21 @@ export default function CustomerByOrder() {
 
     const formEnt = Object.fromEntries(formDataToSend.entries())
     console.log('SEND THIS : ', formEnt)
-    try {
-      const response = await axios.put(
-        `${baseURL}/api/sale-order`,
-        formDataToSend,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      )
-      return response.data
-    } catch (error) {
-      console.error('There was an error!', error)
-    }
+
+    // try {
+    //   const response = await axios.put(
+    //     `${baseURL}/api/sale-order`,
+    //     formDataToSend,
+    //     {
+    //       headers: {
+    //         'Content-Type': 'multipart/form-data',
+    //       },
+    //     }
+    //   )
+    //   return response.data
+    // } catch (error) {
+    //   console.error('There was an error!', error)
+    // }
   }
 
   const buffer = orders
@@ -174,7 +170,6 @@ export default function CustomerByOrder() {
   }
   let df =
     '' + dt.getFullYear() + '-' + a(dt.getMonth() + 1) + '-' + dt.getDate()
-  console.log(df)
 
   let sum = calculateTotalPrice() + calculateTotalExpressPrice()
 

@@ -84,6 +84,7 @@ export default function SaleOrderList() {
                         <Link
                           to={`/order/${order._id}`}
                           state={{ _id: order._id }}
+                          target="_blank"
                         >
                           {order.name}
                         </Link>

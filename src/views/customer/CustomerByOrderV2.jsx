@@ -19,6 +19,9 @@ import Editor from '../customer/Editor'
 import Quill from 'quill'
 import CreditScoreIcon from '@mui/icons-material/CreditScore'
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
+import { RiErrorWarningFill } from 'react-icons/ri'
+import { TfiReload } from 'react-icons/tfi'
+
 import {
   getOrder,
   calculateTotalQuantity,
@@ -28,28 +31,29 @@ import {
 import LoadingFn from '../../components/LoadingFn'
 
 export default function CustomerByOrderV2() {
-  const Delta = Quill.import('delta')
   const [range, setRange] = useState()
 
   const dispatch = useDispatch()
   let { user } = useSelector((store) => store.user)
   let { order, isLoading, totalQuantity, totalPrice, totalExpressPrice } =
     useSelector((store) => store.saleOrder)
-  console.log(order)
+  // console.log(order.picture_payment)
 
-  const [lastChange, setLastChange] = useState()
+  const Delta = Quill.import('delta')
+  const [image, setImage] = useState(new Delta().insert(''))
   const [readOnly, setReadOnly] = useState(false)
+  const [lastChange, setLastChange] = useState()
   const quillRef = useRef()
   const { id } = useParams()
-  const [image, setImage] = useState(new Delta().insert('')) // ค่าเริ่มต้นเป็น Delta ว่าง
-  const [formData, setFormData] = useState([])
+
+  let form = useRef()
 
   // เรียก getOrder เพื่อดึงข้อมูลคำสั่งซื้อ
   useEffect(() => {
     if (id) {
       dispatch(getOrder(id))
     }
-  }, [dispatch, id])
+  }, [])
 
   // คำนวณ totalQuantity, totalPrice, และค่าขนส่ง เมื่อข้อมูล order อัปเดต
   useEffect(() => {
@@ -59,12 +63,17 @@ export default function CustomerByOrderV2() {
       dispatch(calculateTotalExpressPrice())
       try {
         setImage(JSON.parse(order.picture_payment))
-        setFormData(order)
       } catch (error) {
-        toast.warning('ยังไม่แนปรูปภาพการชำระเงิน')
+        toast.warning('กรุณาอัปโหลดรูปภาพ')
       }
     }
-  }, [dispatch, order])
+  }, [order])
+
+  useEffect(() => {
+    if (quillRef.current) {
+      quillRef.current.setContents(image) // ตั้งค่าใหม่ให้กับ Editor
+    }
+  }, [image]) // เรียกใช้เมื่อ image เปลี่ยนแปลง
 
   if (isLoading) {
     return <LoadingFn />
@@ -82,63 +91,44 @@ export default function CustomerByOrderV2() {
       toast.success('อัพเดตสถานะแล้ว')
       window.location.reload()
     } catch (error) {
-      console.log('Payment: There was an error!', error)
+      toast.error('Payment: There was an error!')
     }
   }
 
   const confirmSended = async () => {
     try {
       await axios.put(`${baseURL}/api/sale-order/sended/${id}`, {
-        express: formData.express, // Add this line to send the express value
+        express: order.express, // Add this line to send the express value
       })
       toast.success('อัพเดตสถานะแล้ว')
       window.location.reload()
     } catch (error) {
-      console.log('Sended: There was an error!', error)
+      toast.error('Sended: There was an error!')
     }
-  }
-
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    console.log(name, value)
-    setFormData((prevData) => ({ ...prevData, [name]: value }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const formDataToSend = new FormData()
 
-    formDataToSend.append(
+    const formData = new FormData(form.current)
+    formData.append('_id', order._id)
+    formData.append(
       'picture_payment',
       JSON.stringify(quillRef.current?.getContents())
     )
-    formDataToSend.append('name', formData.name)
-    formDataToSend.append('address', formData.address)
-    formDataToSend.append('sub_district', formData.sub_district)
-    formDataToSend.append('sub_area', formData.sub_area)
-    formDataToSend.append('district', formData.district)
-    formDataToSend.append('postcode', formData.postcode)
-    formDataToSend.append('tel', formData.tel)
-    formDataToSend.append('express', formData.express)
-    formDataToSend.append('date_added', formData.date_added)
-    formDataToSend.append('_id', id)
 
-    const formEnt = Object.fromEntries(formDataToSend.entries())
-    // console.log(formEnt)
+    const formEnt = Object.fromEntries(formData.entries())
+    console.log(formEnt)
 
     try {
-      const response = await axios.put(
-        `${baseURL}/api/sale-order`,
-        formDataToSend,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      )
-      return response.data
+      await axios.put(`${baseURL}/api/sale-order2`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      toast.success('Success')
     } catch (error) {
-      console.log('Submit: There was an error!', error)
+      toast.error('Submit: There was an error!')
     }
   }
 
@@ -273,7 +263,7 @@ export default function CustomerByOrderV2() {
           แบบฟอร์มสำหรับกรอกข้อมูล
         </Typography>
 
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <form onSubmit={handleSubmit} ref={form} encType="multipart/form-data">
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <TextField
@@ -281,7 +271,6 @@ export default function CustomerByOrderV2() {
                 type="date"
                 name="date_added"
                 defaultValue={df}
-                onChange={handleChange}
                 required
               />
             </Grid>
@@ -292,7 +281,6 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="name"
                 defaultValue={order.name}
-                onChange={handleChange}
                 required
               />
             </Grid>
@@ -303,29 +291,26 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="address"
                 defaultValue={order.address}
-                onChange={handleChange}
                 required
               />
             </Grid>
 
             <Grid item xs={4}>
               <TextField
-                label="ตำบล"
+                label="ตำบล/แขวง"
                 fullWidth
                 name="district"
                 defaultValue={order.district}
-                onChange={handleChange}
                 required
               />
             </Grid>
 
             <Grid item xs={4}>
               <TextField
-                label="อำเภอ"
+                label="อำเภอ/เขต"
                 fullWidth
                 name="sub_area"
                 defaultValue={order.sub_area}
-                onChange={handleChange}
                 required
               />
             </Grid>
@@ -336,7 +321,6 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="sub_district"
                 defaultValue={order.sub_district}
-                onChange={handleChange}
                 required
               />
             </Grid>
@@ -347,7 +331,6 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="postcode"
                 defaultValue={order.postcode}
-                onChange={handleChange}
                 required
               />
             </Grid>
@@ -358,79 +341,102 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="tel"
                 defaultValue={order.tel}
-                onChange={handleChange}
                 required
               />
             </Grid>
 
             <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
-                อัปโหลดรูปภาพ
+                อัปโหลดรูปภาพการชำระเงิน
               </Typography>
               <Editor
                 ref={quillRef}
                 readOnly={readOnly}
                 onSelectionChange={setRange}
                 onTextChange={setLastChange}
-                defaultValue={image} // ใช้ defaultValue
+                defaultValue={image}
               />
             </Grid>
-
-            {/* Event Action */}
-            <Grid item xs={6}>
-              <Button
-                type="button"
-                variant="contained"
-                color="primary"
-                onClick={confirmPayment}
+            {order.picture_payment != '{"ops":[{"insert":"\\n"}]}' && (
+              <Grid
+                item
+                xs={12}
+                container
+                direction="column"
+                alignItems="center" // จัดตรงกลางในแนวนอน
+                justifyContent="center" // จัดตรงกลางในแนวตั้ง
               >
-                ส่งแบบฟอร์มการชำระเงิน
+                <Typography>
+                  รอยืนยันการชำระเงิน <RiErrorWarningFill color="orange" />
+                </Typography>
+              </Grid>
+            )}
+
+            {/* ------------------------------------ Event Action ------------------------------------ */}
+            <Grid
+              item
+              xs={12}
+              container
+              direction="column"
+              alignItems="end" // จัดตรงกลางในแนวนอน
+              justifyContent="center" // จัดตรงกลางในแนวตั้ง
+            >
+              <Button type="submit" variant="contained" color="success">
+                ยืนยันการชำระเงิน
               </Button>
             </Grid>
 
-            <Grid item xs={6}>
-              <Button
-                type="button"
-                variant="contained"
-                color="error"
-                onClick={confirmPayment}
-              >
-                ปฎิเสธการชำระเงิน
-              </Button>
-            </Grid>
+            {user.role && order.complete && (
+              <>
+                <Grid item xs={6}>
+                  <Button
+                    type="button"
+                    variant="contained"
+                    color="error"
+                    onClick={confirmPayment}
+                  >
+                    ปฎิเสธการชำระเงิน
+                  </Button>
+                </Grid>
+              </>
+            )}
 
-            <Grid item xs={12}>
-              <TextField
-                label="เลขติดตามพัสดุสินค้า"
-                fullWidth
-                name="express"
-                defaultValue={order.express}
-                onChange={handleChange}
-                required
-              />
-            </Grid>
-
-            <Grid item xs={6}>
-              <Button
-                type="button"
-                variant="contained"
-                color="warning"
-                onClick={confirmSended}
-              >
-                ยืนยันการส่งสินค้า
-              </Button>
-            </Grid>
-
-            <Grid item xs={6}>
-              <Button
-                type="button"
-                variant="contained"
-                color="error"
-                onClick={confirmSended}
-              >
-                ยกเลิกสถานะการจัดส่ง
-              </Button>
-            </Grid>
+            {order.complete && (
+              <>
+                <Grid item xs={12}>
+                  <TextField
+                    label="เลขติดตามพัสดุสินค้า"
+                    fullWidth
+                    name="express"
+                    defaultValue={order.express}
+                    required
+                  />
+                </Grid>
+                {order.sended ? (
+                  <Grid item xs={6}>
+                    <Button
+                      type="button"
+                      variant="contained"
+                      color="error"
+                      onClick={confirmSended}
+                    >
+                      ยกเลิกสถานะการจัดส่ง
+                    </Button>
+                  </Grid>
+                ) : (
+                  <Grid item xs={6}>
+                    <Button
+                      type="button"
+                      variant="contained"
+                      color="warning"
+                      onClick={confirmSended}
+                    >
+                      ยืนยันการส่งสินค้า
+                    </Button>
+                  </Grid>
+                )}
+              </>
+            )}
           </Grid>
         </form>
       </Paper>
