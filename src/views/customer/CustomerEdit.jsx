@@ -135,7 +135,7 @@ export default function CustomerEdit() {
             </small>
           </div>
           <div className="d-flex justify-content-center mt-2">
-            <Link to="/search/customer" className="btn btn-secondary btn-sm">
+            <Link to="/customer/search" className="btn btn-secondary btn-sm">
               กลับหน้าหลัก
             </Link>
             &nbsp;&nbsp;

@@ -180,7 +180,8 @@ const Login = () => {
               id="username"
               name="username"
               autoComplete="username"
-              defaultValue={username}
+              // defaultValue={username}
+              defaultValue={'admin'}
             />
             <label className="form-label">Password</label>
             <input
@@ -189,7 +190,8 @@ const Login = () => {
               type="password"
               id="password"
               autoComplete="current-password"
-              defaultValue={password}
+              // defaultValue={password}
+              defaultValue={'1234'}
             />
             <div className="mt-3 form-check">
               <input
@@ -208,7 +210,7 @@ const Login = () => {
             >
               Login
             </Button>
-            <FacebookLoginSDK />
+            {/* <FacebookLoginSDK /> */}
           </Box>
           <Grid container>
             <Grid item xs>

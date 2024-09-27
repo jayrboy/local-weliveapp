@@ -48,7 +48,8 @@ const linkAuth = [
     id: nanoid(),
     title: 'Login / Register',
     icon: <LoginIcon />,
-    href: '/auth/login',
+    href: '/login',
+    // href: '/auth/login',
   },
 ]
 

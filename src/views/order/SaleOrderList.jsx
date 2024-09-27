@@ -54,19 +54,22 @@ export default function SaleOrderList() {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <strong>รายการที่</strong>
+                    <strong>#</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>สินค้า</strong>
+                    <strong>ชื่อลูกค้า</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>จำนวนสินค้า</strong>
+                    <strong>จำนวน</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>ราคารวม</strong>
+                    <strong>ราคารวม (฿)</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>สถานะ</strong>
+                    <strong>สถานะการชำระเงิน</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>สถานะการส่งสินค้า</strong>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -104,6 +107,17 @@ export default function SaleOrderList() {
                         ) : (
                           <>
                             <p className="text-danger">ยังไม่ชำระเงิน</p>
+                          </>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {order.sended == true ? (
+                          <>
+                            <p className="text-success">ขนส่งแล้ว</p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-warning">รอดำเนินการ</p>
                           </>
                         )}
                       </TableCell>

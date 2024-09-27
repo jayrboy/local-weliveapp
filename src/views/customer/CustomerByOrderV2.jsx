@@ -15,7 +15,7 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Editor from '../order/Editer'
+import Editor from '../customer/Editor'
 import Quill from 'quill'
 import CreditScoreIcon from '@mui/icons-material/CreditScore'
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
@@ -57,20 +57,12 @@ export default function CustomerByOrderV2() {
       dispatch(calculateTotalQuantity())
       dispatch(calculateTotalPrice())
       dispatch(calculateTotalExpressPrice())
-
-      // ตรวจสอบรูปแบบ JSON ของ picture_payment
       try {
-        const parsedImage = JSON.parse(order.picture_payment)
-        if (parsedImage && parsedImage.ops) {
-          // ตรวจสอบว่า parsedImage เป็น Delta ที่ถูกต้อง
-          setImage(parsedImage)
-        } else {
-          console.error('Invalid Delta format:', parsedImage)
-        }
+        setImage(JSON.parse(order.picture_payment))
+        setFormData(order)
       } catch (error) {
-        console.error('Failed to parse picture_payment:', error)
+        toast.warning('ยังไม่แนปรูปภาพการชำระเงิน')
       }
-      setFormData(order)
     }
   }, [dispatch, order])
 
@@ -80,15 +72,12 @@ export default function CustomerByOrderV2() {
 
   const confirmPayment = async () => {
     try {
-      const response = await axios.put(
-        `${baseURL}/api/sale-order/complete/${id}`,
-        {
-          orders: order.orders.map((o) => ({
-            order_id: o._id,
-            quantity: o.quantity,
-          })),
-        }
-      )
+      await axios.put(`${baseURL}/api/sale-order/complete/${id}`, {
+        orders: order.orders.map((o) => ({
+          order_id: o._id,
+          quantity: o.quantity,
+        })),
+      })
 
       toast.success('อัพเดตสถานะแล้ว')
       window.location.reload()
@@ -99,12 +88,9 @@ export default function CustomerByOrderV2() {
 
   const confirmSended = async () => {
     try {
-      const response = await axios.put(
-        `${baseURL}/api/sale-order/sended/${id}`,
-        {
-          express: formData.express, // Add this line to send the express value
-        }
-      )
+      await axios.put(`${baseURL}/api/sale-order/sended/${id}`, {
+        express: formData.express, // Add this line to send the express value
+      })
       toast.success('อัพเดตสถานะแล้ว')
       window.location.reload()
     } catch (error) {
@@ -121,11 +107,11 @@ export default function CustomerByOrderV2() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const formDataToSend = new FormData()
+
     formDataToSend.append(
       'picture_payment',
       JSON.stringify(quillRef.current?.getContents())
     )
-
     formDataToSend.append('name', formData.name)
     formDataToSend.append('address', formData.address)
     formDataToSend.append('sub_district', formData.sub_district)
@@ -138,22 +124,22 @@ export default function CustomerByOrderV2() {
     formDataToSend.append('_id', id)
 
     const formEnt = Object.fromEntries(formDataToSend.entries())
-    console.log(formEnt)
+    // console.log(formEnt)
 
-    // try {
-    //   const response = await axios.put(
-    //     `${baseURL}/api/sale-order`,
-    //     formDataToSend,
-    //     {
-    //       headers: {
-    //         'Content-Type': 'multipart/form-data',
-    //       },
-    //     }
-    //   )
-    //   return response.data
-    // } catch (error) {
-    //   console.log('Submit: There was an error!', error)
-    // }
+    try {
+      const response = await axios.put(
+        `${baseURL}/api/sale-order`,
+        formDataToSend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      )
+      return response.data
+    } catch (error) {
+      console.log('Submit: There was an error!', error)
+    }
   }
 
   let dt = new Date(Date.parse(order.date_added))
@@ -450,34 +436,4 @@ export default function CustomerByOrderV2() {
       </Paper>
     </div>
   )
-}
-
-const data = {
-  _id: '66f429a254976ec551c8a242',
-  idFb: '25712273311753617',
-  name: '๋Jay Jakkrit',
-  email: '',
-  picture_profile: [],
-  orders: [
-    {
-      id: '6664b926c528598d50aa87ec',
-      name: 'เสื้อ',
-      quantity: 5,
-      price: 100,
-    },
-  ],
-  picture_payment: '',
-  address: 'ต.บางคูวัด อ.เมือง จ.ปทุมธานี',
-  sub_district: 'ปทุมธานี',
-  sub_area: 'เมือง',
-  district: 'บางคูวัด',
-  postcode: '12000',
-  tel: '0676555555',
-  date_added: '2024-09-25T15:17:54.417Z',
-  complete: true,
-  sended: true,
-  express: '123',
-  createdAt: '2024-09-25T15:17:54.221Z',
-  updatedAt: '2024-09-25T17:06:07.946Z',
-  __v: 0,
 }

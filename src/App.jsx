@@ -35,6 +35,8 @@ import SaleOrderCheckout from './views/order/SaleOrderCheckout'
 import SaleOrderReport from './views/order/SaleOrderReport'
 
 import CustomerByOrder from './views/customer/CustomerByOrder'
+import CustomerByOrderV2 from './views/customer/CustomerByOrderV2'
+
 import CustomerEdit from './views/customer/CustomerEdit'
 import CustomerSearch from './views/customer/CustomerSearch'
 
@@ -52,7 +54,6 @@ import Policy from './views/Policy'
 import TermOfServices from './views/TermOfServices'
 
 import Profile from './views/Profile'
-import CustomerByOrderV2 from './views/customer/CustomerByOrderV2'
 
 // export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 export const baseURL = 'https://api-weliveapp.azurewebsites.net'
