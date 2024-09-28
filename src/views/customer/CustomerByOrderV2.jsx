@@ -20,7 +20,10 @@ import Quill from 'quill'
 import CreditScoreIcon from '@mui/icons-material/CreditScore'
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 import { RiErrorWarningFill } from 'react-icons/ri'
+import ErrorIcon from '@mui/icons-material/Error'
 import { TfiReload } from 'react-icons/tfi'
+import { FaRegArrowAltCircleDown } from 'react-icons/fa'
+import { TbTruckDelivery } from 'react-icons/tb'
 
 import {
   getOrder,
@@ -32,7 +35,6 @@ import LoadingFn from '../../components/LoadingFn'
 
 export default function CustomerByOrderV2() {
   const [range, setRange] = useState()
-
   const dispatch = useDispatch()
   let { user } = useSelector((store) => store.user)
   let { order, isLoading, totalQuantity, totalPrice, totalExpressPrice } =
@@ -65,7 +67,7 @@ export default function CustomerByOrderV2() {
       try {
         setImage(JSON.parse(order.picture_payment))
       } catch (error) {
-        toast.warning('กรุณาอัปโหลดรูปภาพ')
+        toast.warning('กรุณาแจ้งที่อยู่ / การชำระเงิน')
       }
     }
   }, [order])
@@ -78,6 +80,27 @@ export default function CustomerByOrderV2() {
 
   if (isLoading) {
     return <LoadingFn />
+  }
+
+  const cancelPayment = async () => {
+    const formData = new FormData()
+    formData.append('_id', order._id)
+    formData.append('isPayment', false)
+    formData.append('picture_payment', '')
+    setImage('')
+
+    try {
+      await axios.put(`${baseURL}/api/sale-order/j`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      toast.success('ปฎิเสธการชำระข้อมูลสำเร็จ')
+      dispatch(getOrder(id))
+    } catch (error) {
+      console.error(error)
+      toast.error('Payment: There was an error!')
+    }
   }
 
   const confirmPayment = async () => {
@@ -122,7 +145,7 @@ export default function CustomerByOrderV2() {
     )
 
     // const formEnt = Object.fromEntries(formData.entries())
-    // console.log(formEnt)
+    // console.log(formEnt.picture_payment)
 
     try {
       await axios.put(`${baseURL}/api/sale-order/j`, formData, {
@@ -277,6 +300,7 @@ export default function CustomerByOrderV2() {
                 type="date"
                 name="date_added"
                 defaultValue={df}
+                disabled={order.isPayment}
                 required
               />
             </Grid>
@@ -287,6 +311,7 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="name"
                 defaultValue={order.name}
+                disabled={order.isPayment}
                 required
               />
             </Grid>
@@ -297,6 +322,7 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="address"
                 defaultValue={order.address}
+                disabled={order.isPayment}
                 required
               />
             </Grid>
@@ -307,6 +333,7 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="district"
                 defaultValue={order.district}
+                disabled={order.isPayment}
                 required
               />
             </Grid>
@@ -317,6 +344,7 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="sub_area"
                 defaultValue={order.sub_area}
+                disabled={order.isPayment}
                 required
               />
             </Grid>
@@ -327,6 +355,7 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="sub_district"
                 defaultValue={order.sub_district}
+                disabled={order.isPayment}
                 required
               />
             </Grid>
@@ -337,6 +366,7 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="postcode"
                 defaultValue={order.postcode}
+                disabled={order.isPayment}
                 required
               />
             </Grid>
@@ -347,6 +377,7 @@ export default function CustomerByOrderV2() {
                 fullWidth
                 name="tel"
                 defaultValue={order.tel}
+                disabled={order.isPayment}
                 required
               />
             </Grid>
@@ -364,18 +395,62 @@ export default function CustomerByOrderV2() {
               />
             </Grid>
 
-            {order.picture_payment != '' && (
+            {order.sended ? (
               <Grid
                 item
                 xs={12}
                 container
                 direction="column"
-                alignItems="center" // จัดตรงกลางในแนวนอน
-                justifyContent="center" // จัดตรงกลางในแนวตั้ง
+                alignItems="center"
+                justifyContent="center"
               >
-                <Typography>
-                  รอยืนยันการชำระเงิน <RiErrorWarningFill color="orange" />
+                <Typography
+                  sx={{
+                    display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
+                    alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                    textAlign: 'center',
+                  }}
+                >
+                  รอติดตามเลขพัสดุสินค้า &nbsp;
+                  <TbTruckDelivery color="green" size={25} />
                 </Typography>
+              </Grid>
+            ) : (
+              <Grid
+                item
+                xs={12}
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+              >
+                {order.complete ? (
+                  <Typography
+                    sx={{
+                      display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
+                      alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                      textAlign: 'center',
+                    }}
+                  >
+                    รอยืนยันการส่งเลขพัสดุสินค้า&nbsp;
+                    <ErrorIcon color="warning" />
+                  </Typography>
+                ) : (
+                  <>
+                    {order.isPayment != '' && (
+                      <Typography
+                        sx={{
+                          display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
+                          alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                          textAlign: 'center',
+                        }}
+                      >
+                        รอยืนยันการชำระเงิน&nbsp;
+                        <ErrorIcon color="warning" />
+                      </Typography>
+                    )}
+                  </>
+                )}
               </Grid>
             )}
 
@@ -399,39 +474,7 @@ export default function CustomerByOrderV2() {
               </Grid>
             )}
 
-            {(user.role == 'admin' || user.role == 'user') && (
-              <Grid
-                item
-                xs={12}
-                container
-                direction="column"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Button
-                  type="button"
-                  variant="contained"
-                  color="error"
-                  onClick={confirmPayment}
-                >
-                  ปฎิเสธการชำระเงิน
-                </Button>
-              </Grid>
-            )}
-
-            {order.complete && (
-              <Grid item xs={12}>
-                <TextField
-                  label="เลขติดตามพัสดุสินค้า"
-                  fullWidth
-                  name="express"
-                  defaultValue={order.express}
-                  required
-                />
-              </Grid>
-            )}
-
-            {(user.role == 'admin' || user.role == 'user') && (
+            {user.role && !order.complete && (
               <>
                 <Grid
                   item
@@ -445,9 +488,9 @@ export default function CustomerByOrderV2() {
                     type="button"
                     variant="contained"
                     color="error"
-                    onClick={confirmSended}
+                    onClick={cancelPayment}
                   >
-                    ยกเลิกการจัดส่ง
+                    ปฎิเสธการชำระเงิน
                   </Button>
                 </Grid>
 
@@ -462,12 +505,71 @@ export default function CustomerByOrderV2() {
                   <Button
                     type="button"
                     variant="contained"
-                    color="warning"
-                    onClick={confirmSended}
+                    color="success"
+                    onClick={confirmPayment}
                   >
-                    ยืนยันการส่งสินค้า
+                    ยืนยันการชำระเงิน
                   </Button>
                 </Grid>
+              </>
+            )}
+
+            {order.complete && (
+              <Grid item xs={12}>
+                <TextField
+                  label="เลขติดตามพัสดุสินค้า"
+                  fullWidth
+                  name="express"
+                  defaultValue={order.express}
+                  disabled={order.sended}
+                  required
+                />
+              </Grid>
+            )}
+
+            {(user.role == 'admin' || user.role == 'user') && (
+              <>
+                {order.complete && (
+                  <>
+                    {order.sended ? (
+                      <Grid
+                        item
+                        xs={12}
+                        container
+                        direction="column"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Button
+                          type="button"
+                          variant="contained"
+                          color="error"
+                          onClick={confirmSended}
+                        >
+                          ยกเลิกการจัดส่ง
+                        </Button>
+                      </Grid>
+                    ) : (
+                      <Grid
+                        item
+                        xs={12}
+                        container
+                        direction="column"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Button
+                          type="button"
+                          variant="contained"
+                          color="warning"
+                          onClick={confirmSended}
+                        >
+                          ยืนยันการส่งสินค้า
+                        </Button>
+                      </Grid>
+                    )}
+                  </>
+                )}
               </>
             )}
           </Grid>

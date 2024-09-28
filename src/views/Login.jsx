@@ -44,6 +44,7 @@ const Login = () => {
 
   let [username, setUsername] = useState('')
   let [password, setPassword] = useState('')
+  let [isDisable, setIsDisable] = useState(false)
   const form = useRef()
   const checkbox = useRef()
 
@@ -70,6 +71,8 @@ const Login = () => {
   //TODO: Login Main App
   async function handleSubmit(event) {
     event.preventDefault()
+    setIsDisable(true)
+
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
@@ -203,6 +206,7 @@ const Login = () => {
               <label className="form-check-label">&nbsp;Remember me</label>
             </div>
             <Button
+              disabled={isDisable}
               type="submit"
               fullWidth
               variant="contained"
