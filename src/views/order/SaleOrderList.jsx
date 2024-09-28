@@ -54,7 +54,7 @@ export default function SaleOrderList() {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <strong>#</strong>
+                    <strong>รายการที่</strong>
                   </TableCell>
                   <TableCell>
                     <strong>ชื่อลูกค้า</strong>
@@ -66,10 +66,7 @@ export default function SaleOrderList() {
                     <strong>ราคารวม (฿)</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>สถานะการชำระเงิน</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>สถานะการส่งสินค้า</strong>
+                    <strong>สถานะ</strong>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -101,24 +98,13 @@ export default function SaleOrderList() {
                           .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
                       </TableCell>
                       <TableCell>
-                        {order.complete == true ? (
+                        {order.isPayment == true ? (
                           <>
                             <p className="text-success">ชำระเงินแล้ว</p>
                           </>
                         ) : (
                           <>
                             <p className="text-danger">ยังไม่ชำระเงิน</p>
-                          </>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {order.sended == true ? (
-                          <>
-                            <p className="text-success">ขนส่งแล้ว</p>
-                          </>
-                        ) : (
-                          <>
-                            <p className="text-warning">รอดำเนินการ</p>
                           </>
                         )}
                       </TableCell>
