@@ -15,7 +15,7 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Editor from '../customer/Editor'
+import EditorV2 from '../../components/EditorV2'
 import Quill from 'quill'
 import CreditScoreIcon from '@mui/icons-material/CreditScore'
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
@@ -47,6 +47,7 @@ export default function CustomerByOrderV2() {
   const { id } = useParams()
 
   let form = useRef()
+  const [isDisabled, setIsDisabled] = useState(false) // สร้าง state สำหรับเก็บสถานะของปุ่ม
 
   // เรียก getOrder เพื่อดึงข้อมูลคำสั่งซื้อ
   useEffect(() => {
@@ -110,24 +111,29 @@ export default function CustomerByOrderV2() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    setIsDisabled(true)
+
     const formData = new FormData(form.current)
     formData.append('_id', order._id)
+    formData.append('isPayment', true)
     formData.append(
       'picture_payment',
       JSON.stringify(quillRef.current?.getContents())
     )
 
-    const formEnt = Object.fromEntries(formData.entries())
-    console.log(formEnt)
+    // const formEnt = Object.fromEntries(formData.entries())
+    // console.log(formEnt)
 
     try {
-      await axios.put(`${baseURL}/api/sale-order2`, formData, {
+      await axios.put(`${baseURL}/api/sale-order/j`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
       toast.success('Success')
+      dispatch(getOrder(id))
     } catch (error) {
+      console.error(error)
       toast.error('Submit: There was an error!')
     }
   }
@@ -141,12 +147,12 @@ export default function CustomerByOrderV2() {
       <h3 className="text-start mb-3">
         <span className="text-success ms-2 text-center">
           รายการสั่งซื้อของคุณ {order.name}
-          {order.complete == true && (
+          {order.complete && (
             <>
               <p className="mt-3 text-success">
                 <CreditScoreIcon /> ชำระเงินแล้ว
               </p>
-              {order.sended == true && (
+              {order.sended && (
                 <>
                   <p className="mt-3 text-warning">
                     <LocalShippingIcon /> จัดส่งแล้ว
@@ -349,7 +355,7 @@ export default function CustomerByOrderV2() {
               <Typography variant="h6" gutterBottom>
                 อัปโหลดรูปภาพการชำระเงิน
               </Typography>
-              <Editor
+              <EditorV2
                 ref={quillRef}
                 readOnly={readOnly}
                 onSelectionChange={setRange}
@@ -357,7 +363,8 @@ export default function CustomerByOrderV2() {
                 defaultValue={image}
               />
             </Grid>
-            {order.picture_payment != '{"ops":[{"insert":"\\n"}]}' && (
+
+            {order.picture_payment != '' && (
               <Grid
                 item
                 xs={12}
@@ -372,69 +379,95 @@ export default function CustomerByOrderV2() {
               </Grid>
             )}
 
-            {/* ------------------------------------ Event Action ------------------------------------ */}
-            <Grid
-              item
-              xs={12}
-              container
-              direction="column"
-              alignItems="end" // จัดตรงกลางในแนวนอน
-              justifyContent="center" // จัดตรงกลางในแนวตั้ง
-            >
-              <Button type="submit" variant="contained" color="success">
-                ยืนยันการชำระเงิน
-              </Button>
-            </Grid>
+            {!order.picture_payment && (
+              <Grid
+                item
+                xs={12}
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={isDisabled}
+                >
+                  บันทึก
+                </Button>
+              </Grid>
+            )}
 
-            {user.role && order.complete && (
+            {(user.role == 'admin' || user.role == 'user') && (
+              <Grid
+                item
+                xs={12}
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Button
+                  type="button"
+                  variant="contained"
+                  color="error"
+                  onClick={confirmPayment}
+                >
+                  ปฎิเสธการชำระเงิน
+                </Button>
+              </Grid>
+            )}
+
+            {order.complete && (
+              <Grid item xs={12}>
+                <TextField
+                  label="เลขติดตามพัสดุสินค้า"
+                  fullWidth
+                  name="express"
+                  defaultValue={order.express}
+                  required
+                />
+              </Grid>
+            )}
+
+            {(user.role == 'admin' || user.role == 'user') && (
               <>
-                <Grid item xs={6}>
+                <Grid
+                  item
+                  xs={6}
+                  container
+                  direction="column"
+                  alignItems="center"
+                  justifyContent="center"
+                >
                   <Button
                     type="button"
                     variant="contained"
                     color="error"
-                    onClick={confirmPayment}
+                    onClick={confirmSended}
                   >
-                    ปฎิเสธการชำระเงิน
+                    ยกเลิกการจัดส่ง
                   </Button>
                 </Grid>
-              </>
-            )}
 
-            {order.complete && (
-              <>
-                <Grid item xs={12}>
-                  <TextField
-                    label="เลขติดตามพัสดุสินค้า"
-                    fullWidth
-                    name="express"
-                    defaultValue={order.express}
-                    required
-                  />
+                <Grid
+                  item
+                  xs={6}
+                  container
+                  direction="column"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Button
+                    type="button"
+                    variant="contained"
+                    color="warning"
+                    onClick={confirmSended}
+                  >
+                    ยืนยันการส่งสินค้า
+                  </Button>
                 </Grid>
-                {order.sended ? (
-                  <Grid item xs={6}>
-                    <Button
-                      type="button"
-                      variant="contained"
-                      color="error"
-                      onClick={confirmSended}
-                    >
-                      ยกเลิกสถานะการจัดส่ง
-                    </Button>
-                  </Grid>
-                ) : (
-                  <Grid item xs={6}>
-                    <Button
-                      type="button"
-                      variant="contained"
-                      color="warning"
-                      onClick={confirmSended}
-                    >
-                      ยืนยันการส่งสินค้า
-                    </Button>
-                  </Grid>
-                )}
               </>
             )}
           </Grid>
