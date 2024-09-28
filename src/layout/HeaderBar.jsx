@@ -75,7 +75,9 @@ export default function HeaderBar() {
         <IconButton onClick={() => navigate('/order')}>
           <CartIcon />
           <div className="amount-container">
-            <p className="total-amount">{orders.length}</p>
+            <p className="total-amount">
+              {orders.filter((order) => order.complete === false).length}
+            </p>
           </div>
         </IconButton>
         <IconButton onClick={handleMenu}>

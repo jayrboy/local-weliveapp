@@ -3,12 +3,23 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import Paper from '@mui/material/Paper'
+import TableContainer from '@mui/material/TableContainer'
 import Table from '@mui/material/Table'
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
+import { styled } from '@mui/material/styles'
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))
 
 export default function SaleOrderList() {
   let { orders } = useSelector((store) => store.saleOrder)
@@ -33,13 +44,14 @@ export default function SaleOrderList() {
   }
 
   const ordersWithTotals = calculateTotals(orders)
+  const filteredOrders = ordersWithTotals.filter((order) => !order.complete)
 
   return (
     <>
       <div className="row m-3">
         <div className="col-lg-6">
           <h3 className="text-start">
-            <Link to="/dashboard" className="  text-decoration-none">
+            <Link to="/dashboard" className="text-decoration-none">
               SALE ORDER |
             </Link>
             <span className="text-success"> รายการคำสั่งซื้อ</span>
@@ -71,46 +83,37 @@ export default function SaleOrderList() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {ordersWithTotals.map((order, index) => {
-                  // console.log(index)
-                  console.log(order)
-                  return (
-                    <TableRow key={order._id}>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>
-                        <Link
-                          to={`/order/${order._id}`}
-                          state={{ _id: order._id }}
-                          target="_blank"
-                        >
-                          {order.name}
-                        </Link>
-                      </TableCell>
-
-                      <TableCell>
-                        {order.totalQuantity
-                          .toFixed(0)
-                          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                      </TableCell>
-                      <TableCell>
-                        {order.totalPrice
-                          .toFixed(0)
-                          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                      </TableCell>
-                      <TableCell>
-                        {order.isPayment == true ? (
-                          <>
-                            <p className="text-success">ชำระเงินแล้ว</p>
-                          </>
-                        ) : (
-                          <>
-                            <p className="text-danger">ยังไม่ชำระเงิน</p>
-                          </>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
+                {filteredOrders.map((order, index) => (
+                  <StyledTableRow key={order._id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>
+                      <Link
+                        to={`/order/${order._id}`}
+                        state={{ _id: order._id }}
+                        target="_blank"
+                      >
+                        {order.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      {order.totalQuantity
+                        .toFixed(0)
+                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                    </TableCell>
+                    <TableCell>
+                      {order.totalPrice
+                        .toFixed(0)
+                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                    </TableCell>
+                    <TableCell>
+                      {order.isPayment ? (
+                        <p className="text-success">ชำระเงินแล้ว</p>
+                      ) : (
+                        <p className="text-danger">ยังไม่ชำระเงิน</p>
+                      )}
+                    </TableCell>
+                  </StyledTableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>

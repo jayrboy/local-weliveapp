@@ -97,8 +97,6 @@ const Stock = () => {
               </TableHead>
               <TableBody>
                 {result.docs.map((product, index) => {
-                  console.log(index)
-                  console.log(product)
                   return (
                     <StyledTableRow key={product._id}>
                       <TableCell>
