@@ -1,10 +1,32 @@
-import { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
-import { historySale } from '../../data'
+import Paper from '@mui/material/Paper'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import { styled } from '@mui/material/styles'
+
+import { MdOutlineSearch } from 'react-icons/md'
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))
 
 export default function SaleOrder() {
-  let [data, setData] = useState(historySale)
+  let { orders, totalQuantity, totalPrice } = useSelector(
+    (store) => store.saleOrder
+  )
 
   return (
     <>
@@ -19,59 +41,94 @@ export default function SaleOrder() {
         </div>
       </div>
 
-      <table className="table table-sm table-striped text-center table-bordered border-light caption-top">
-        <caption className="ms-3">
-          <div className="d-flex">
-            <input
-              type="date"
-              className="form-control form-control-sm"
-              style={{ width: '150px' }}
-            />
-            <button className="btn btn-sm btn-outline-primary ms-3">
-              ค้นหา
-            </button>
-          </div>
-        </caption>
-        <thead className="table-light">
-          <tr>
-            <th>#</th>
-            <th>วันที่</th>
-            <th>ออเดอร์</th>
-            <th>จำนวนขาย</th>
-            <th>ยอดขาย</th>
-            <th>ค่าส่ง</th>
-            <th>ส่งแล้ว/ยังไม่ส่ง</th>
-            <th>ยอดเงินโอนแล้ว/ยังไม่โอน</th>
-            <th className=" text-center">ยอดขาย</th>
-            <th>ต้นทุน</th>
-            <th>ค่าส่ง</th>
-            <th>กำไร</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((h, i) => {
-            // คำนวณค่า itempr * among - discount
-            return (
-              <tr key={h.id}>
-                <td className=" text-center">{i + 1}</td>
-                <td className=" text-center">{h.from.HSdate}</td>
-                <td className=" text-center">{h.from.HSorder} ออเดอร์</td>
-                <td className=" text-center">{h.from.HSamount} ชื้น</td>
-                <td className=" text-center">{h.from.HSsum}</td>
-                <td className=" text-center">{h.from.HSexcost}</td>
-                <td className=" text-center">
-                  {h.from.expresed / h.from.Nexpresed}
-                </td>
-                <td className=" text-center">{h.from.payed / h.from.Npayed}</td>
-                <td className=" text-center">{h.from.HSprice} ฿</td>
-                <td className=" text-center">{h.from.cost} ฿</td>
-                <td className=" text-center">{h.from.HSexcost} ฿</td>
-                <td className=" text-center">{h.from.profit} ฿</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+      <div className="position-relative m-3">
+        <div className="d-flex mb-1 justify-content-end">
+          <input
+            type="date"
+            className="form-control form-control-sm"
+            style={{ width: '150px' }}
+          />
+          <button className="btn btn-sm btn-primary ms-3">
+            <MdOutlineSearch />
+            &nbsp;ค้นหา
+          </button>
+        </div>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <strong>#</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>วันที่</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ออเดอร์</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>จำนวนขาย</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ค่าส่ง</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ส่งแล้ว/ยังไม่ส่ง</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ยอดเงินโอนแล้ว/ยังไม่โอน</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ยอดขาย</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ต้นทุน</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ค่าส่ง</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>กำไร</strong>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orders.map((order, i) => {
+                // คำนวณค่า itempr * among - discount
+                let udt = new Date(Date.parse(order.updatedAt))
+                let udf = (
+                  <>
+                    {udt.getDate()}-{udt.getMonth() + 1}-{udt.getFullYear()}
+                  </>
+                )
+
+                return (
+                  <React.Fragment key={order._id}>
+                    <StyledTableRow>
+                      <TableCell>{i + 1}</TableCell>
+                      <TableCell>{udf}</TableCell>
+                      <TableCell>{order.nameFb}</TableCell>
+                      <TableCell>{3} ชื้น</TableCell>
+                      <TableCell>{3}</TableCell>
+                      <TableCell>{50}</TableCell>
+                      <TableCell>
+                        {1} / {2}
+                      </TableCell>
+                      <TableCell>
+                        {3} / {4}
+                      </TableCell>
+                      <TableCell>{1}</TableCell>
+                      <TableCell>{2}</TableCell>
+                      <TableCell>{3}</TableCell>
+                      <TableCell>{4}</TableCell>
+                    </StyledTableRow>
+                  </React.Fragment>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
       <br />
       <div className="d-flex justify-content-center mx-auto">
         <Link to="/dashboard" className="btn btn-light btn-sm">

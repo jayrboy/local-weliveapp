@@ -1,8 +1,30 @@
 import { Link } from 'react-router-dom'
-import { checkoutDetail } from '../../data'
+import { useSelector } from 'react-redux'
 import { MdGrid3X3 } from 'react-icons/md'
+import { MdOutlineSearch } from 'react-icons/md'
+
+import Paper from '@mui/material/Paper'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import { styled } from '@mui/material/styles'
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))
 
 export default function SaleOrderCheckout() {
+  let { orders } = useSelector((store) => store.saleOrder)
+
   return (
     <>
       <div className="row m-3">
@@ -16,66 +38,92 @@ export default function SaleOrderCheckout() {
         </div>
       </div>
 
-      <form>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6 d-grid justify-content-between mb-2">
-              <label>วันที่</label>
-              <input
-                className="form-control form-control-sm"
-                name="expressDate"
-                type="date"
-                style={{ width: '150px' }}
-              />
-            </div>
-
-            <div className="col-md-6 d-grid justify-content-between mb-2">
-              <h5 className=""> เลขพัสดุ </h5>
-              <input
-                className="form-control form-control-sm"
-                type="expressID"
-                placeholder=" ' 21412312 ' "
-                style={{ width: '150px' }}
-              />
-            </div>
-            <div className="mb-3">
-              <button className="btn btn-sm btn-success">ค้นหา</button>
-            </div>
+      <div className="position-relativ m-3">
+        <form>
+          <div className="d-flex mb-1 justify-content-end">
+            <input
+              className="form-control form-control-sm ms-1"
+              name="expressDate"
+              type="date"
+              style={{ width: '150px' }}
+            />
+            <input
+              className="form-control form-control-sm ms-1"
+              type="expressID"
+              placeholder="เลขพัสดุ"
+              style={{ width: '150px' }}
+            />
+            <button className="btn btn-sm btn-primary ms-3">
+              <MdOutlineSearch />
+              &nbsp;ค้นหา
+            </button>
           </div>
-        </div>
-      </form>
-      <table className="table table-sm table-striped text-center table-bordered border-light">
-        <thead className="table-light">
-          <tr>
-            <th>
-              <MdGrid3X3 />
-            </th>
-            <th>Otherth</th>
-            <th>วันที่</th>
-            <th>ชื่อ Facebook</th>
-            <th>เลขพัสดุ</th>
-            <th>เวลาเช็คเอ้าท์</th>
-            <th>ผู้ใช้งาน</th>
-          </tr>
-        </thead>
-        <tbody>
-          {checkoutDetail.map((checkout, i) => {
-            // คำนวณค่า itempr * among - discount
+        </form>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <MdGrid3X3 />
+                </TableCell>
+                <TableCell>
+                  <strong>สั่งซื้อ</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ชื่อ Facebook</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>เลขพัสดุ</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>เวลาเช็คเอ้าท์</strong>
+                </TableCell>
+                <TableCell>
+                  <strong className="text-success">อนุมัติโดย</strong>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orders.map((order, i) => {
+                // คำนวณค่า itempr * among - discount
 
-            return (
-              <tr key={checkout.from.id}>
-                <td>{i + 1}</td>
-                <td>{checkout.from.OrderID}</td>
-                <td>{checkout.from.Date}</td>
-                <td>{checkout.from.FBName}</td>
-                <td>{checkout.from.ExpressID}</td>
-                <td>{checkout.from.CheckOutTime}</td>
-                <td>{checkout.from.WhoCheckOut}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+                let dt = new Date(Date.parse(order.createdAt))
+                let df = (
+                  <>
+                    {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                  </>
+                )
+
+                let udt = new Date(Date.parse(order.updatedAt))
+                let udf = (
+                  <>
+                    {udt.getDate()}-{udt.getMonth() + 1}-{udt.getFullYear()}
+                  </>
+                )
+
+                return (
+                  <StyledTableRow key={order._id}>
+                    <TableCell>{i + 1}</TableCell>
+                    <TableCell>{df}</TableCell>
+                    <TableCell>
+                      <Link
+                        to={`/order/${order._id}`}
+                        state={{ _id: order._id }}
+                        target="_blank"
+                      >
+                        {order.nameFb}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{order.express}</TableCell>
+                    <TableCell>{udf}</TableCell>
+                    <TableCell>{order.updateBy}</TableCell>
+                  </StyledTableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
       <br />
       <div className="d-flex justify-content-center mx-auto">
         <Link to="/dashboard" className="btn btn-light btn-sm">

@@ -1,6 +1,8 @@
-import { MdArrowDropDown } from 'react-icons/md'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { MdArrowDropDown } from 'react-icons/md'
+import { MdOutlineSearch } from 'react-icons/md'
 
 import Paper from '@mui/material/Paper'
 import TableContainer from '@mui/material/TableContainer'
@@ -66,33 +68,26 @@ export default function SaleOrderSearch() {
         </div>
       </div>
 
-      <form>
-        <div className="container m-3">
-          <div className="row">
-            <div className="col-md-6 d-grid justify-content-between">
-              <label>วันที่</label>
-              <input type="date" className="form-control form-control-sm" />
-              <div className="mt-2">
-                <button className="btn btn-sm btn-success me-2">
-                  เพิ่มรายการ
-                </button>
-                <button className="btn btn-sm btn-success ms-2">ค้นหา</button>
-              </div>
-            </div>
-            <div className="col-md-6 d-grid justify-content-between">
-              <label>ชื่อลูกค้า / Order ID / เลขพัสดุ</label>
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                style={{ width: '150px' }}
-                placeholder="เจษฎากร คุ้มเดช"
-              />
-            </div>
-          </div>
-        </div>
-      </form>
-
       <div className="position-relativ m-3">
+        <form>
+          <div className="d-flex mb-1 justify-content-end">
+            <input
+              type="date"
+              className="form-control form-control-sm ms-1"
+              style={{ width: '150px' }}
+            />
+            <input
+              type="text"
+              className="form-control form-control-sm ms-1"
+              style={{ width: '150px' }}
+              placeholder="ชื่อลูกค้า"
+            />
+            <button className="btn btn-sm btn-primary ms-3">
+              <MdOutlineSearch />
+              &nbsp;ค้นหา
+            </button>
+          </div>
+        </form>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -102,6 +97,9 @@ export default function SaleOrderSearch() {
                 </TableCell>
                 <TableCell>
                   <strong>วันที่</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ชื่อ Facebook</strong>
                 </TableCell>
                 <TableCell>
                   <strong>ชื่อลูกค้า</strong>
@@ -141,10 +139,10 @@ export default function SaleOrderSearch() {
                         state={{ _id: order._id }}
                         target="_blank"
                       >
-                        {order.name}
+                        {order.nameFb}
                       </Link>
                     </TableCell>
-
+                    <TableCell>{order.name}</TableCell>
                     <TableCell>
                       {order.totalQuantity
                         .toFixed(0)
@@ -160,7 +158,7 @@ export default function SaleOrderSearch() {
                     </TableCell>
                     <TableCell>{order.express}</TableCell>
                     <TableCell>
-                      <select className="btn btn-sm btn-outline-primary">
+                      <select className="btn btn-sm btn-outline-secondary">
                         <option>เลือกขนส่ง</option>
                         <option>J&T</option>
                         <option>Shoppee</option>

@@ -1,3 +1,4 @@
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { MdOutlineSearch } from 'react-icons/md'
@@ -10,7 +11,6 @@ import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
-import React from 'react'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -40,52 +40,33 @@ export default function CustomerSearch() {
         </div>
       </div>
 
-      <form>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-3 mb-2 d-grid justify-content-between">
-              <label>ชื่อ</label>
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                placeholder="JASDAKORN AKE"
-              />
-            </div>
-            <div className="col-md-3 mb-2 d-grid justify-content-between">
-              <label>ชื่อลูกค้า</label>
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                placeholder="เจษฎากร คุ้มเดช"
-              />
-            </div>
-            <div className="col-md-3 mb-2 d-grid justify-content-between">
-              <label>ที่อยู่</label>
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                placeholder="12/345"
-              />
-            </div>
-            <div className="col-md-3 mb-2 d-grid justify-content-between">
-              <label>เบอร์โทรศัพท์</label>
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                placeholder=" 061-xxxx-xxx "
-              />
-            </div>
-            <div className="mt-1 text-center">
-              <button className="btn btn-sm btn-primary">
-                <MdOutlineSearch />
-                &nbsp;ค้นหา
-              </button>
-            </div>
-          </div>
-        </div>
-      </form>
-
       <div className="position-relativ m-3">
+        <form>
+          <div className="d-flex mb-1 justify-content-end">
+            <input
+              type="text"
+              className="form-control form-control-sm ms-1"
+              placeholder="ชื่อลูกค้า"
+              style={{ width: '150px' }}
+            />
+            <input
+              type="text"
+              className="form-control form-control-sm ms-1"
+              placeholder="ที่อยู่"
+              style={{ width: '150px' }}
+            />
+            <input
+              type="text"
+              className="form-control form-control-sm ms-1"
+              placeholder=" เบอร์โทรศัพท์"
+              style={{ width: '150px' }}
+            />
+            <button className="btn btn-sm btn-primary ms-3">
+              <MdOutlineSearch />
+              &nbsp;ค้นหา
+            </button>
+          </div>
+        </form>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -145,7 +126,11 @@ export default function CustomerSearch() {
                         <TableCell>{order.postcode}</TableCell>
                         <TableCell>{order.tel}</TableCell>
                         <TableCell>
-                          {order.sended ? 'ส่งแล้ว' : 'ยังไม่ได้ส่ง'}
+                          {order.sended ? (
+                            <p className="text-success">ส่งแล้ว</p>
+                          ) : (
+                            <p className="text-danger">ยังไม่ได้ส่ง</p>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Link
