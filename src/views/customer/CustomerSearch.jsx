@@ -10,6 +10,7 @@ import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
+import React from 'react'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -124,35 +125,39 @@ export default function CustomerSearch() {
             <TableBody>
               {orders.map((order, index) => {
                 return (
-                  <StyledTableRow key={order._id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>
-                      <Link
-                        to={`/order/${order._id}`}
-                        state={{ _id: order._id }}
-                        target="_blank"
-                      >
-                        {order.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{order.address}</TableCell>
-                    <TableCell>{order.district}</TableCell>
-                    <TableCell>{order.sub_area}</TableCell>
-                    <TableCell>{order.sub_district}</TableCell>
-                    <TableCell>{order.postcode}</TableCell>
-                    <TableCell>{order.tel}</TableCell>
-                    <TableCell>
-                      {order.sended ? 'ส่งแล้ว' : 'ยังไม่ได้ส่ง'}
-                    </TableCell>
-                    <TableCell>
-                      <Link
-                        className="btn btn-sm btn-warning"
-                        to={'/customer/edit/' + 1}
-                      >
-                        แก้ไข
-                      </Link>
-                    </TableCell>
-                  </StyledTableRow>
+                  <React.Fragment key={index}>
+                    {!order.isDelete && (
+                      <StyledTableRow>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>
+                          <Link
+                            to={`/order/${order._id}`}
+                            state={{ _id: order._id }}
+                            target="_blank"
+                          >
+                            {order.name}
+                          </Link>
+                        </TableCell>
+                        <TableCell>{order.address}</TableCell>
+                        <TableCell>{order.district}</TableCell>
+                        <TableCell>{order.sub_area}</TableCell>
+                        <TableCell>{order.sub_district}</TableCell>
+                        <TableCell>{order.postcode}</TableCell>
+                        <TableCell>{order.tel}</TableCell>
+                        <TableCell>
+                          {order.sended ? 'ส่งแล้ว' : 'ยังไม่ได้ส่ง'}
+                        </TableCell>
+                        <TableCell>
+                          <Link
+                            className="btn btn-sm btn-warning"
+                            to={'/customer/edit/' + 1}
+                          >
+                            แก้ไข
+                          </Link>
+                        </TableCell>
+                      </StyledTableRow>
+                    )}
+                  </React.Fragment>
                 )
               })}
             </TableBody>

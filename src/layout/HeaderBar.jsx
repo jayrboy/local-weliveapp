@@ -76,7 +76,10 @@ export default function HeaderBar() {
           <CartIcon />
           <div className="amount-container">
             <p className="total-amount">
-              {orders.filter((order) => order.complete === false).length}
+              {
+                orders.filter((order) => !order.complete && !order.isDelete)
+                  .length
+              }
             </p>
           </div>
         </IconButton>

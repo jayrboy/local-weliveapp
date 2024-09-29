@@ -44,7 +44,9 @@ export default function SaleOrderList() {
   }
 
   const ordersWithTotals = calculateTotals(orders)
-  const filteredOrders = ordersWithTotals.filter((order) => !order.complete)
+  const filteredOrders = ordersWithTotals.filter(
+    (order) => !order.complete && !order.isDelete
+  )
 
   return (
     <>

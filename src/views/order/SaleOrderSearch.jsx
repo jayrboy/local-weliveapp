@@ -159,21 +159,15 @@ export default function SaleOrderSearch() {
                       <p className="text-warning">รอแพ็คสินค้าและจัดส่ง</p>
                     </TableCell>
                     <TableCell>{order.express}</TableCell>
-                    <div>
-                      <select
-                        id="myEx"
-                        onChange={() => {
-                          // SelectExpress
-                        }}
-                        className="btn btn-sm btn-outline-primary"
-                      >
+                    <TableCell>
+                      <select className="btn btn-sm btn-outline-primary">
                         <option>เลือกขนส่ง</option>
                         <option>J&T</option>
                         <option>Shoppee</option>
                         <option>Flash</option>
                         <option>EMS</option>
                       </select>
-                    </div>
+                    </TableCell>
                   </StyledTableRow>
                 )
               })}

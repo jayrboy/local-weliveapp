@@ -1,14 +1,14 @@
 [
   {
-    "label": "Ads",
+    "label": "สำเร็จ",
     "value": 32
   },
   {
-    "label": "Subscriptions",
+    "label": "รอดำเนินการ",
     "value": 45
   },
   {
-    "label": "Sponsornships",
+    "label": "ไม่สำเร็จ",
     "value": 23
   }
 ]
