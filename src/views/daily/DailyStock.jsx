@@ -80,7 +80,7 @@ export default function DailyStock() {
             onClick={() => navigate('/sale-daily/create')}
           >
             <FaPlus color="blue" />
-            &nbsp;เพิ่ม Daily Stock
+            &nbsp;เพิ่มสินค้าขายรายวัน
           </button>
           &nbsp;
           <button

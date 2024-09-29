@@ -8,6 +8,11 @@ import { SiFacebooklive } from 'react-icons/si'
 
 import { toast } from 'react-toastify'
 
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+
 export default function DailyStockHistory() {
   let [data, setData] = useState('')
   const [status, setStatus] = useState(['new', 'clear'])
@@ -74,7 +79,7 @@ export default function DailyStockHistory() {
               return (
                 <div
                   key={doc._id}
-                  className="col-12 col-sm-12 col-md-6 col-lg-6 mt-3"
+                  className="col-12 col-sm-12 col-md-6 col-lg-4 mt-3"
                 >
                   <div className="card shadow">
                     <div className="card-header">
@@ -87,7 +92,7 @@ export default function DailyStockHistory() {
                     {/* Content */}
                     <div className="card-body">
                       <div className="row">
-                        <div className="col-6 d-flex align-items-center">
+                        <div className="col-md-6 d-flex align-items-center">
                           Status:&nbsp;
                           <select
                             className="btn btn-sm btn-light border text-capitalize text-danger"
@@ -95,6 +100,7 @@ export default function DailyStockHistory() {
                             defaultValue={doc.status}
                             style={{ height: '30px' }}
                             onChange={(event) => onChangeRole(doc._id, event)}
+                            disabled
                           >
                             {status.map((item, i) => (
                               <option key={i + 1} value={item}>
@@ -103,7 +109,7 @@ export default function DailyStockHistory() {
                             ))}
                           </select>
                         </div>
-                        <div className="col-6 d-flex justify-content-end align-items-center">
+                        <div className="col-md-6 d-flex justify-content-end align-items-center">
                           Chanel:&nbsp;
                           {doc.chanel && <SiFacebooklive size={45} />}
                         </div>
@@ -126,22 +132,40 @@ export default function DailyStockHistory() {
                               </>
                             )}
                           </caption>
-                          <thead className="table-light">
-                            <tr>
-                              <th>รหัส</th>
-                              <th>สินค้า</th>
-                              <th>ราคา</th>
-                              <th>จำนวน</th>
-                              <th>limit</th>
-                              <th>CF</th>
-                              <th>จ่ายแล้ว/เหลือ</th>
-                            </tr>
-                          </thead>
-                          <tbody>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>
+                                <strong>สินค้า</strong>
+                              </TableCell>
+                              <TableCell>
+                                <strong>ราคา</strong>
+                              </TableCell>
+                              <TableCell>
+                                <strong>จำนวน</strong>
+                              </TableCell>
+                              <TableCell>
+                                <strong>limit</strong>
+                              </TableCell>
+                              <TableCell>
+                                <strong>CF</strong>
+                              </TableCell>
+                              <TableCell>
+                                <strong>จ่ายแล้ว/เหลือ</strong>
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
                             {doc.products.map((p, index) => (
-                              <tr key={index + 1}>
-                                <td>{p.code}</td>
-                                <td>{p.name}</td>
+                              <TableRow key={index + 1}>
+                                <td>
+                                  <div
+                                    className="btn btn-danger"
+                                    style={{ fontSize: '20px' }}
+                                  >
+                                    {p.code}
+                                  </div>
+                                  &nbsp;&nbsp;&nbsp;{p.name}
+                                </td>
                                 <td>{p.price}</td>
                                 <td>{p.stock_quantity}</td>
                                 <td>{p.limit}</td>
@@ -149,9 +173,9 @@ export default function DailyStockHistory() {
                                 <td>
                                   {p.paid}/{p.remaining_cf}
                                 </td>
-                              </tr>
+                              </TableRow>
                             ))}
-                          </tbody>
+                          </TableBody>
                         </table>
                       </div>
                       <div className="text-end">

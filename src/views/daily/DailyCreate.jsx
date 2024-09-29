@@ -17,6 +17,11 @@ import {
 import DailyProductCreate from '../daily/DailyProductCreate'
 import DailyProductAdd from './DailyProductAdd'
 
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+
 const DailyCreate = () => {
   let { products, total } = useSelector((store) => store.product)
   const dispatch = useDispatch()
@@ -187,9 +192,9 @@ const DailyCreate = () => {
           {/* Table */}
           <div className="table-responsive px-2">
             <table className="table table-sm table-striped text-start table-bordered border-light table-hover">
-              <thead className="table-light">
-                <tr>
-                  <th style={{ width: '80px' }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell style={{ width: '80px' }}>
                     <button
                       type="button"
                       className="btn btn-sm btn-light border"
@@ -197,19 +202,29 @@ const DailyCreate = () => {
                     >
                       <MdEdit color="orange" /> แก้ไข
                     </button>
-                  </th>
-                  <th>สินค้า</th>
-                  <th>ราคา</th>
-                  <th className="text-success">จำนวน</th>
-                  <th>limit</th>
-                  <th className="text-danger">*เหลือ</th>
-                </tr>
-              </thead>
-              <tbody>
+                  </TableCell>
+                  <TableCell>
+                    <strong>สินค้า</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>ราคา</strong>
+                  </TableCell>
+                  <TableCell className="text-success">
+                    <strong>จำนวน</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>limit</strong>
+                  </TableCell>
+                  <TableCell className="text-danger">
+                    <strong>*เหลือ</strong>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 {products &&
                   products.map((p, index) => {
                     return (
-                      <tr key={index}>
+                      <TableRow key={index}>
                         <td className="text-center">
                           <input
                             type="radio"
@@ -219,8 +234,13 @@ const DailyCreate = () => {
                           />
                         </td>
                         <td>
-                          <code style={{ fontSize: '20px' }}>{p.code}</code>
-                          &nbsp;&nbsp;{p.name}
+                          <div
+                            className="btn btn-danger"
+                            style={{ fontSize: '20px' }}
+                          >
+                            {p.code}
+                          </div>
+                          &nbsp;&nbsp;&nbsp;{p.name}
                         </td>
                         <td>
                           {p.price
@@ -231,10 +251,10 @@ const DailyCreate = () => {
                         <td>{p.limit}</td>
                         {/* สินค้าคงเหลือของ Product Master */}
                         <td>{p.remaining}</td>
-                      </tr>
+                      </TableRow>
                     )
                   })}
-              </tbody>
+              </TableBody>
             </table>
           </div>
           {/* Total */}

@@ -22,6 +22,11 @@ import DailyProductAdd from './DailyProductAdd'
 import DailyProductEdit from './DailyProductEdit'
 import DailyProductAddQuantity from './DailyProductAddQuantity'
 
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+
 const DailyEdit = () => {
   const { id } = useParams()
 
@@ -222,9 +227,9 @@ const DailyEdit = () => {
                     </>
                   )}
                 </caption>
-                <thead className="table-light">
-                  <tr>
-                    <th style={{ width: '80px' }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell style={{ width: '80px' }}>
                       <button
                         type="button"
                         className="btn btn-sm btn-light border"
@@ -233,21 +238,33 @@ const DailyEdit = () => {
                         <MdEdit color="orange" />
                         แก้ไข
                       </button>
-                    </th>
-                    <th>สินค้า</th>
-                    <th>ราคา</th>
-                    <th className="text-success">จำนวน</th>
-                    <th>limit</th>
-                    <th>CF</th>
-                    <th className="text-danger">จ่ายแล้ว/เหลือ</th>
-                  </tr>
-                </thead>
-                <tbody>
+                    </TableCell>
+                    <TableCell>
+                      <strong>สินค้า</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>ราคา</strong>
+                    </TableCell>
+                    <TableCell className="text-success">
+                      <strong>จำนวน</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>limit</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>CF</strong>
+                    </TableCell>
+                    <TableCell className="text-danger">
+                      <strong>จ่ายแล้ว/เหลือ</strong>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
                   {daily.products &&
                     daily.products.map((p, index) => {
                       // console.log(p)
                       return (
-                        <tr key={index}>
+                        <TableRow key={index}>
                           <td className="text-center">
                             <input
                               type="radio"
@@ -257,8 +274,13 @@ const DailyEdit = () => {
                             />
                           </td>
                           <td>
-                            <code style={{ fontSize: '20px' }}>{p.code}</code>
-                            &nbsp;&nbsp;{p.name}
+                            <div
+                              className="btn btn-danger"
+                              style={{ fontSize: '20px' }}
+                            >
+                              {p.code}
+                            </div>
+                            &nbsp;&nbsp;&nbsp;{p.name}
                           </td>
                           <td>{p.price}</td>
                           <td>{p.stock_quantity}</td>
@@ -273,10 +295,10 @@ const DailyEdit = () => {
                               {p.paid} / {p.remaining_cf}
                             </td>
                           )}
-                        </tr>
+                        </TableRow>
                       )
                     })}
-                </tbody>
+                </TableBody>
               </table>
             </div>
 
