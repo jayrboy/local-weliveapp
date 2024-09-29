@@ -119,6 +119,12 @@ export default function SaleOrderList() {
           </TableContainer>
         </div>
       </div>
+      <br />
+      <div className="d-flex justify-content-center mx-auto">
+        <Link to="/dashboard" className="btn btn-light btn-sm">
+          หน้าหลัก
+        </Link>
+      </div>
     </>
   )
 }

@@ -159,7 +159,7 @@ export default function SaleOrderSearch() {
                       <p className="text-warning">รอแพ็คสินค้าและจัดส่ง</p>
                     </TableCell>
                     <TableCell>{order.express}</TableCell>
-                    <TableCell>
+                    <div>
                       <select
                         id="myEx"
                         onChange={() => {
@@ -173,13 +173,19 @@ export default function SaleOrderSearch() {
                         <option>Flash</option>
                         <option>EMS</option>
                       </select>
-                    </TableCell>
+                    </div>
                   </StyledTableRow>
                 )
               })}
             </TableBody>
           </Table>
         </TableContainer>
+      </div>
+      <br />
+      <div className="d-flex justify-content-center mx-auto">
+        <Link to="/dashboard" className="btn btn-light btn-sm">
+          หน้าหลัก
+        </Link>
       </div>
     </>
   )

@@ -11,6 +11,25 @@ import { toast } from 'react-toastify'
 
 import { getAllDaily } from '../../redux/dailyStockSlice'
 
+import Paper from '@mui/material/Paper'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import { styled } from '@mui/material/styles'
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))
+
 export default function DailyStock() {
   const navigate = useNavigate()
   const form = useRef()
@@ -151,24 +170,41 @@ export default function DailyStock() {
                             </>
                           )}
                         </caption>
-                        <thead className="table-light">
-                          <tr>
-                            <th>สินค้า</th>
-                            <th>ราคา</th>
-                            <th className="text-success">จำนวน</th>
-                            <th>limit</th>
-                            <th>CF</th>
-                            <th className="text-danger">จ่ายแล้ว/เหลือ</th>
-                          </tr>
-                        </thead>
-                        <tbody>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>
+                              <strong>สินค้า</strong>
+                            </TableCell>
+                            <TableCell>
+                              <strong>ราคา</strong>
+                            </TableCell>
+                            <TableCell>
+                              <strong className="text-success">จำนวน</strong>
+                            </TableCell>
+                            <TableCell>
+                              <strong>limit</strong>
+                            </TableCell>
+                            <TableCell>
+                              <strong>CF</strong>
+                            </TableCell>
+                            <TableCell>
+                              <strong className="text-danger">
+                                จ่ายแล้ว/เหลือ
+                              </strong>
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
                           {doc.products.map((p, index) => (
-                            <tr key={index + 1}>
+                            <TableRow key={index + 1}>
                               <td>
-                                <code style={{ fontSize: '20px' }}>
-                                  รหัส {p.code} |
-                                </code>
-                                &nbsp;&nbsp;{p.name}
+                                <div
+                                  className="btn btn-danger"
+                                  style={{ fontSize: '20px' }}
+                                >
+                                  {p.code}
+                                </div>
+                                &nbsp;&nbsp;&nbsp;{p.name}
                               </td>
                               <td>
                                 {p.price
@@ -187,9 +223,9 @@ export default function DailyStock() {
                                   {p.paid} / {p.remaining_cf}
                                 </td>
                               )}
-                            </tr>
+                            </TableRow>
                           ))}
-                        </tbody>
+                        </TableBody>
                       </table>
                     </div>
                     <div className="text-end container">

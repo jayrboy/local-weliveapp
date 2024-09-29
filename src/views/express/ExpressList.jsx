@@ -228,7 +228,7 @@ export default function ExpressList() {
       </div>
       <br />
       <div className="d-flex justify-content-center mx-auto">
-        <Link to="/admin/home" className="btn btn-light btn-sm">
+        <Link to="/dashboard" className="btn btn-light btn-sm">
           หน้าหลัก
         </Link>
       </div>

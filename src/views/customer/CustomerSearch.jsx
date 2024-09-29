@@ -1,7 +1,31 @@
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { MdOutlineSearch } from 'react-icons/md'
 
+import Paper from '@mui/material/Paper'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import { styled } from '@mui/material/styles'
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))
+
 export default function CustomerSearch() {
+  let { orders, totalQuantity, totalPrice } = useSelector(
+    (store) => store.saleOrder
+  )
+
   return (
     <>
       <div className="row m-3">
@@ -50,7 +74,7 @@ export default function CustomerSearch() {
                 placeholder=" 061-xxxx-xxx "
               />
             </div>
-            <div className="mt-3">
+            <div className="mt-1 text-center">
               <button className="btn btn-sm btn-primary">
                 <MdOutlineSearch />
                 &nbsp;ค้นหา
@@ -59,46 +83,85 @@ export default function CustomerSearch() {
           </div>
         </div>
       </form>
-      <table className="table table-sm table-striped text-center table-bordered border-light mt-3">
-        <thead className="table-light">
-          <tr>
-            <th>#</th>
-            <th>ชื่อ</th>
-            <th>ชื่อลูกค้า</th>
-            <th>ที่อยู่</th>
-            <th>ตำบล/แขวง</th>
-            <th>จังหวัด</th>
-            <th>รหัสไปรษณีย์</th>
-            <th>โทรศัพท์</th>
-            <th>สถานะ</th>
-            <th>action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{1}</td>
-            <td>Jasdakorn Ake</td>
-            <td>เจษฎากร คุ้มเดช</td>
-            <td>12/345 ม.1</td>
-            <td>จอมพล,จตุจักร</td>
-            <td>กรุงเทพ</td>
-            <td>10900</td>
-            <td>061-xxxx-xxx</td>
-            <td>ส่งแล้ว</td>
-            <td>
-              <Link
-                className="btn btn-sm btn-warning"
-                to={'/customer/edit/' + 1}
-              >
-                edit
-              </Link>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+
+      <div className="position-relativ m-3">
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <strong>#</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ชื่อลูกค้า</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ที่อยู่</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ตำบล/แขวง</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>อำเภอ/เขต</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>จังหวัด</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>รหัสไปรษณีย์</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>โทรศัพท์</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>สถานะ</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>จัดการ</strong>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orders.map((order, index) => {
+                return (
+                  <StyledTableRow key={order._id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>
+                      <Link
+                        to={`/order/${order._id}`}
+                        state={{ _id: order._id }}
+                        target="_blank"
+                      >
+                        {order.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{order.address}</TableCell>
+                    <TableCell>{order.district}</TableCell>
+                    <TableCell>{order.sub_area}</TableCell>
+                    <TableCell>{order.sub_district}</TableCell>
+                    <TableCell>{order.postcode}</TableCell>
+                    <TableCell>{order.tel}</TableCell>
+                    <TableCell>
+                      {order.sended ? 'ส่งแล้ว' : 'ยังไม่ได้ส่ง'}
+                    </TableCell>
+                    <TableCell>
+                      <Link
+                        className="btn btn-sm btn-warning"
+                        to={'/customer/edit/' + 1}
+                      >
+                        แก้ไข
+                      </Link>
+                    </TableCell>
+                  </StyledTableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
       <br />
       <div className="d-flex justify-content-center mx-auto">
-        <Link to="/admin/home" className="btn btn-light btn-sm">
+        <Link to="/dashboard" className="btn btn-light btn-sm">
           หน้าหลัก
         </Link>
       </div>
