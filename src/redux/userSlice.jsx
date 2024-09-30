@@ -33,8 +33,22 @@ export const userSlice = createSlice({
     onLoaded: (state) => {
       state.isLoading = false
     },
+    updateBankAccount: (state, action) => {
+      // อัปเดตข้อมูลบัญชีธนาคารใน user.bank_account
+      const updatedAccount = action.payload
+      state.user.bank_account = state.user.bank_account.map((account) =>
+        account.id === updatedAccount.id ? updatedAccount : account
+      )
+    },
   },
 })
 // Action creators are generated for each case reducer function
-export const { login, logout, loginFB, onLoading, onLoaded } = userSlice.actions
+export const {
+  login,
+  logout,
+  loginFB,
+  onLoading,
+  onLoaded,
+  updateBankAccount,
+} = userSlice.actions
 export default userSlice.reducer

@@ -109,9 +109,11 @@ function App() {
           if (data.username) {
             dispatch(
               login({
+                _id: data._id,
                 username: data.username,
                 role: data.role,
                 name: data.name,
+                bank_account: data.bank_account,
                 email: data.email,
                 picture: data.picture,
                 token: token,
