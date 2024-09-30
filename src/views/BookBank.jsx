@@ -2,7 +2,15 @@ import { baseURL } from '../App'
 import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateBankAccount, onLoading, onLoaded } from '../redux/userSlice'
+import {
+  createBankAccount,
+  updateBankAccount,
+  onCreateAccount,
+  onCreatedAccount,
+  onEditAccount,
+  onEditedAccount,
+  removeBankAccount,
+} from '../redux/userSlice'
 
 import Paper from '@mui/material/Paper'
 import TableContainer from '@mui/material/TableContainer'
@@ -20,6 +28,7 @@ import ListAltIcon from '@mui/icons-material/ListAlt'
 import { Button, Radio, TextField } from '@mui/material'
 import { ConstructionOutlined } from '@mui/icons-material'
 import { toast } from 'react-toastify'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -33,8 +42,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const BookBank = () => {
   const dispatch = useDispatch()
-  let user = useSelector((state) => state.user.user)
-  const isLoading = useSelector((state) => state.user.isLoading)
+  let { user, isCreateAccount, isEditAccount } = useSelector(
+    (state) => state.user
+  )
 
   let [selectedId, setSelectedId] = useState('')
   let [bankData, setBankData] = useState({
@@ -44,12 +54,40 @@ const BookBank = () => {
     bankName: '',
     promptPay: '',
   })
+  let [errors, setErrors] = useState({})
 
   const token = localStorage.getItem('token')
+  let [isCreateBank, setIsCreateBank] = useState(false)
 
   useEffect(() => {
-    if (isLoading) {
-      console.log('Updated user :', user)
+    if (isCreateAccount) {
+      // console.log('Updated user :', user)
+
+      fetch(`${baseURL}/api/user`, {
+        method: 'PUT',
+        body: JSON.stringify(user),
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Network response was not ok')
+          }
+          return res.json()
+        })
+        .then((data) => {
+          toast.success('บันทึกข้อมูลสำเร็จ')
+          dispatch(onCreatedAccount())
+        })
+        .catch((error) => toast.error('เกิดข้อผิดพลาดในการส่งข้อมูล'))
+    }
+  }, [user])
+
+  useEffect(() => {
+    if (isEditAccount) {
+      // console.log('Updated user :', user)
 
       fetch(`${baseURL}/api/user`, {
         method: 'PUT',
@@ -67,13 +105,14 @@ const BookBank = () => {
         })
         .then((data) => {
           toast.success('แก้ไขข้อมูลสำเร็จ')
-          dispatch(onLoaded())
+          dispatch(onEditedAccount())
         })
         .catch((error) => toast.error('เกิดข้อผิดพลาดในการส่งข้อมูล'))
     }
-  }, [user, isLoading])
+  }, [user])
 
   const onClickRadio = (doc) => {
+    setIsCreateBank(false) // ปิดฟอร์มหลังจากสร้างบัญชี
     setBankData({
       id: doc.id,
       bankID: doc.bankID,
@@ -86,16 +125,40 @@ const BookBank = () => {
 
   const onEditBank = () => {
     dispatch(updateBankAccount(bankData))
+    setSelectedId('')
+    dispatch(onEditAccount())
+  }
+
+  const onCreateBank = () => {
+    const newErrors = {}
+    if (!bankData.bank) newErrors.bank = 'กรุณากรอกชื่อธนาคาร'
+    if (!bankData.bankName) newErrors.bankName = 'กรุณากรอกชื่อบัญชี'
+    if (!bankData.bankID) newErrors.bankID = 'กรุณากรอกเลขบัญชี'
+    if (!bankData.promptPay) newErrors.promptPay = 'กรุณากรอกพร้อมเพย์'
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return // หยุดการทำงานหากมีข้อผิดพลาด
+    }
 
     setSelectedId('')
-
-    dispatch(onLoading())
+    dispatch(createBankAccount(bankData)) // ส่งข้อมูลไปยัง Redux
+    setIsCreateBank(false) // ปิดฟอร์มหลังจากสร้างบัญชี
+    dispatch(onCreateAccount())
   }
 
   let showData = (
     <div className="position-relative m-3">
       <div className="d-flex mb-1 justify-content-end mb-2">
-        <Button variant="contained">เพิ่มบัญชีใหม่</Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setIsCreateBank(!isCreateBank)
+            setSelectedId('')
+          }}
+        >
+          {isCreateBank ? 'ปิดฟอร์ม' : 'เพิ่มบัญชีใหม่'}
+        </Button>
       </div>
       <form>
         <TableContainer component={Paper}>
@@ -117,6 +180,11 @@ const BookBank = () => {
                 <TableCell>
                   <strong>พร้อมเพย์</strong>
                 </TableCell>
+                {selectedId && (
+                  <TableCell>
+                    <strong>จัดการ</strong>
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -135,6 +203,21 @@ const BookBank = () => {
                     <TableCell>{doc.bankName}</TableCell>
                     <TableCell>{doc.bankID}</TableCell>
                     <TableCell>{doc.promptPay}</TableCell>
+                    <TableCell>
+                      {selectedId && (
+                        <IconButton
+                          variant="contained"
+                          color="error"
+                          onClick={() => {
+                            dispatch(removeBankAccount({ id: doc.id }))
+                            setSelectedId('')
+                            dispatch(onCreateAccount())
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
+                    </TableCell>
                   </StyledTableRow>
                 )
               })}
@@ -146,7 +229,7 @@ const BookBank = () => {
                       color="warning"
                       onClick={onEditBank}
                     >
-                      {isLoading ? 'กำลังบันทึก...' : 'แก้ไข'}
+                      {isEditAccount ? 'กำลังบันทึก...' : 'แก้ไข'}
                     </Button>
                   </TableCell>
                   <TableCell>
@@ -187,6 +270,65 @@ const BookBank = () => {
                       type="text"
                       name="promptPay"
                       value={bankData.promptPay}
+                      onChange={(e) =>
+                        setBankData({ ...bankData, promptPay: e.target.value })
+                      }
+                      placeholder="พร้อมเพย์"
+                    />
+                  </TableCell>
+                </TableRow>
+              )}
+              {isCreateBank && (
+                <TableRow>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={onCreateBank}
+                    >
+                      {isCreateBank ? 'บันทึก' : 'กำลังบันทึก...'}
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      type="text"
+                      name="bank"
+                      onChange={(e) =>
+                        setBankData({ ...bankData, bank: e.target.value })
+                      }
+                      placeholder="ธนาคาร"
+                      error={Boolean(errors.bank)}
+                      helperText={errors.bank}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      type="text"
+                      name="bankName"
+                      onChange={(e) =>
+                        setBankData({ ...bankData, bankName: e.target.value })
+                      }
+                      placeholder="ชื่อบัญชี"
+                      error={Boolean(errors.bankName)}
+                      helperText={errors.bankName}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      type="text"
+                      name="bankID"
+                      onChange={(e) =>
+                        setBankData({ ...bankData, bankID: e.target.value })
+                      }
+                      placeholder="เลขบัญชี"
+                      error={Boolean(errors.bankID)}
+                      helperText={errors.bankID}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      type="text"
+                      name="promptPay"
                       onChange={(e) =>
                         setBankData({ ...bankData, promptPay: e.target.value })
                       }
