@@ -4,6 +4,27 @@ import { useState, useRef, useEffect } from 'react'
 
 import { MdGrid3X3 } from 'react-icons/md'
 
+import Paper from '@mui/material/Paper'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import { styled } from '@mui/material/styles'
+
+import { Button, Checkbox, TextField } from '@mui/material'
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))
+
 export default function ExpressList() {
   let [data, setData] = useState('')
   const form = useRef()
@@ -35,122 +56,141 @@ export default function ExpressList() {
 
   const showData = (data) => {
     let updateForm = (
-      <form onSubmit={onSubmitForm} ref={form}>
-        <table className="table table-sm table-striped text-center table-bordered border-light">
-          <caption className="ms-3">
-            <small>
-              เลือกรายการที่จะแก้ไข แล้วใส่ข้อมูลใหม่ลงไป จากนั้นคลิกปุ่ม แก้ไข
-            </small>
-          </caption>
-          <thead className="table-light">
-            <tr>
-              <th>
-                <MdGrid3X3 />
-              </th>
-              <th>ชื่อขนส่ง</th>
-              <th>ค่าส่งเริ่มต้น</th>
-              <th>ค่าส่งชิ้นต่อไป</th>
-              <th>ค่าส่งสูงสุด</th>
-              <th>ส่งฟรีต่อเมื่อยอดถึง</th>
-              <th>วันที่เริ่มใช้</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((doc) => {
-              let dt = new Date(Date.parse(doc.date_start))
-              let df = (
-                <>
-                  {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                </>
-              )
+      <div className="position-relative m-3">
+        <div className="d-flex justify-content-end mb-2">
+          <Link to="/express/delete">
+            <Button variant="contained" color="error">
+              ลบขนส่งออก
+            </Button>
+          </Link>
 
-              return (
-                <tr key={doc._id}>
-                  {/* เมื่อคลิก radio บนรายการใด เราก็แนบ document ของรายการนั้น
-                      ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
-                  */}
-                  <td>
+          <Link to="/express/create" className="ms-3">
+            <Button variant="contained" color="primary">
+              เพิ่มขนส่งใหม่
+            </Button>
+          </Link>
+        </div>
+        <form onSubmit={onSubmitForm} ref={form}>
+          <TableContainer component={Paper}>
+            <Table>
+              <caption className="ms-3">
+                <small>
+                  เลือกรายการที่จะแก้ไข แล้วใส่ข้อมูลใหม่ลงไป จากนั้นคลิกปุ่ม
+                  แก้ไข
+                </small>
+              </caption>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <MdGrid3X3 />
+                  </TableCell>
+                  <TableCell>ชื่อขนส่ง</TableCell>
+                  <TableCell>ค่าส่งเริ่มต้น</TableCell>
+                  <TableCell>ค่าส่งชิ้นต่อไป</TableCell>
+                  <TableCell>ค่าส่งสูงสุด</TableCell>
+                  <TableCell>ส่งฟรีต่อเมื่อยอดถึง</TableCell>
+                  <TableCell>วันที่เริ่มใช้</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.map((doc) => {
+                  let dt = new Date(Date.parse(doc.date_start))
+                  let df = (
+                    <>
+                      {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                    </>
+                  )
+
+                  return (
+                    <StyledTableRow key={doc._id}>
+                      {/* เมื่อคลิก radio บนรายการใด เราก็แนบ document ของรายการนั้น
+                          ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
+                      */}
+                      <TableCell
+                        name="_id"
+                        padding="radio"
+                        defaultValue={doc._id}
+                        onClick={() => onClickRadio(doc)}
+                      >
+                        <Checkbox color="primary" />
+                      </TableCell>
+
+                      <TableCell>{doc.exname}</TableCell>
+                      <TableCell>{doc.fprice}</TableCell>
+                      <TableCell>{doc.sprice}</TableCell>
+                      <TableCell>{doc.maxprice}</TableCell>
+                      <TableCell>{doc.whenfprice}</TableCell>
+                      <TableCell>{df}</TableCell>
+                    </StyledTableRow>
+                  )
+                })}
+
+                {/* สร้างฟอร์มไว้ที่แถวสุดท้าย */}
+                <TableRow>
+                  <TableCell>
+                    <Button variant="contained" color="warning">
+                      แก้ไข
+                    </Button>
+                  </TableCell>
+                  <TableCell>
                     <input
-                      type="radio"
-                      name="_id"
-                      value={doc._id}
-                      onClick={() => onClickRadio(doc)}
-                      className="form-check-input"
+                      type="text"
+                      name="exname"
+                      placeholder="ชื่อขนส่ง "
+                      ref={exname}
+                      className="form-control form-control-sm"
                     />
-                  </td>
-
-                  <td>{doc.exname}</td>
-                  <td>{doc.fprice}</td>
-                  <td>{doc.sprice}</td>
-                  <td>{doc.maxprice}</td>
-                  <td>{doc.whenfprice}</td>
-                  <td>{df}</td>
-                </tr>
-              )
-            })}
-
-            {/* สร้างฟอร์มไว้ที่แถวสุดท้าย */}
-            <tr>
-              <td>
-                <button className="btn btn-warning btn-sm">แก้ไข</button>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  name="exname"
-                  placeholder="ชื่อขนส่ง "
-                  ref={exname}
-                  className="form-control form-control-sm"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  name="fprice"
-                  placeholder="ค่าส่งเริ่มต้น"
-                  ref={fprice}
-                  className="form-control form-control-sm"
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  name="sprice"
-                  placeholder="ค่าส่งชิ้นต่อไป"
-                  ref={sprice}
-                  className="form-control form-control-sm"
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  name="maxprice"
-                  placeholder="ค่าส่งสูงสุด"
-                  ref={maxprice}
-                  className="form-control form-control-sm"
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  name="whenfprice"
-                  placeholder="ส่งฟรีเมื่อยอดถึง"
-                  ref={whenfprice}
-                  className="form-control form-control-sm"
-                />
-              </td>
-              <td>
-                <input
-                  type="date"
-                  name="date_start"
-                  ref={date_start}
-                  className="form-control form-control-sm"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </form>
+                  </TableCell>
+                  <TableCell>
+                    <input
+                      type="text"
+                      name="fprice"
+                      placeholder="ค่าส่งเริ่มต้น"
+                      ref={fprice}
+                      className="form-control form-control-sm"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <input
+                      type="number"
+                      name="sprice"
+                      placeholder="ค่าส่งชิ้นต่อไป"
+                      ref={sprice}
+                      className="form-control form-control-sm"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <input
+                      type="number"
+                      name="maxprice"
+                      placeholder="ค่าส่งสูงสุด"
+                      ref={maxprice}
+                      className="form-control form-control-sm"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <input
+                      type="number"
+                      name="whenfprice"
+                      placeholder="ส่งฟรีเมื่อยอดถึง"
+                      ref={whenfprice}
+                      className="form-control form-control-sm"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <input
+                      type="date"
+                      name="date_start"
+                      ref={date_start}
+                      className="form-control form-control-sm"
+                    />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </form>
+      </div>
     )
 
     setData(updateForm)
@@ -218,14 +258,6 @@ export default function ExpressList() {
         </div>
       </div>
       <>{data}</>
-      <div className="d-flex justify-content-center mx-auto mb-3">
-        <Link to="/express/create" className="btn btn-primary btn-sm">
-          เพิ่มขนส่งใหม่
-        </Link>
-        <Link to="/express/delete" className="btn btn-danger btn-sm ms-3">
-          ลบขนส่งออก
-        </Link>
-      </div>
       <br />
       <div className="d-flex justify-content-center mx-auto">
         <Link to="/dashboard" className="btn btn-light btn-sm">

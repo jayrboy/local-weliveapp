@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
@@ -10,6 +10,9 @@ import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
+import ErrorIcon from '@mui/icons-material/Error'
+import { Tooltip, Typography } from '@mui/material'
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -61,65 +64,79 @@ export default function SaleOrderList() {
         </div>
       </div>
 
-      <div className="position-relative">
-        <div className="m-3">
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
+      <div className="position-relative m-3">
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <strong>รายการที่</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ชื่อลูกค้า</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>จำนวน</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ราคารวม (฿)</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>สถานะ</strong>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredOrders.map((order, index) => (
+                <StyledTableRow key={order._id}>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell>
-                    <strong>รายการที่</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>ชื่อลูกค้า</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>จำนวน</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>ราคารวม (฿)</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>สถานะ</strong>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredOrders.map((order, index) => (
-                  <StyledTableRow key={order._id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>
+                    <Tooltip title="คลิกเพื่อดูรายละเอียดออเดอร์">
                       <Link
                         to={`/order/${order._id}`}
                         state={{ _id: order._id }}
                         target="_blank"
                       >
-                        {order.name}
+                        <Typography>{order.name}</Typography>
                       </Link>
-                    </TableCell>
-                    <TableCell>
-                      {order.totalQuantity
-                        .toFixed(0)
-                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                    </TableCell>
-                    <TableCell>
-                      {order.totalPrice
-                        .toFixed(0)
-                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                    </TableCell>
-                    <TableCell>
-                      {order.isPayment ? (
-                        <p className="text-success">ชำระเงินแล้ว</p>
-                      ) : (
-                        <p className="text-danger">ยังไม่ชำระเงิน</p>
-                      )}
-                    </TableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell>
+                    {order.totalQuantity
+                      .toFixed(0)
+                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                  </TableCell>
+                  <TableCell>
+                    {order.totalPrice
+                      .toFixed(0)
+                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                  </TableCell>
+                  <TableCell>
+                    {order.isPayment ? (
+                      <Typography
+                        sx={{
+                          display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
+                          alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                          textAlign: 'center',
+                        }}
+                      >
+                        <span className="text-secondary">ชำระเงินแล้ว</span>
+                        &nbsp;
+                        <Tooltip title="กรุณายืนยันการชำระเงิน">
+                          <ErrorIcon color="warning" />
+                        </Tooltip>
+                      </Typography>
+                    ) : (
+                      <Typography className="text-danger">
+                        ยังไม่ชำระเงิน
+                      </Typography>
+                    )}
+                  </TableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
       <br />
       <div className="d-flex justify-content-center mx-auto">

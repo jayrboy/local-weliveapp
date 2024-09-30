@@ -54,6 +54,7 @@ import Policy from './views/Policy'
 import TermOfServices from './views/TermOfServices'
 
 import Profile from './views/Profile'
+import BookBank from './views/BookBank'
 
 // export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 export const baseURL = 'https://api-weliveapp.azurewebsites.net'
@@ -326,6 +327,14 @@ function App() {
           element={
             <AuthRoute>
               <SaleOrder />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/bookbank"
+          element={
+            <AuthRoute>
+              <BookBank />
             </AuthRoute>
           }
         />

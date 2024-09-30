@@ -2,6 +2,27 @@ import { baseURL } from '../../App'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
+import Paper from '@mui/material/Paper'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import { styled } from '@mui/material/styles'
+
+import { Button, Checkbox, TextField } from '@mui/material'
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))
+
 export default function ExpressDelete() {
   let [data, setData] = useState('')
   const form = useRef()
@@ -41,53 +62,79 @@ export default function ExpressDelete() {
           </div>
         </div>
 
-        <form onSubmit={onSubmitForm} ref={form}>
-          <table className="table table-sm table-striped text-center table-bordered border-light">
-            <thead className="table-light">
-              <tr>
-                <th>แก้ไข</th>
-                <th>ชื่อขนส่ง</th>
-                <th>ค่าส่งเริ่มต้น</th>
-                <th>ค่าส่งชิ้นต่อไป</th>
-                <th>ค่าส่งสูงสุด</th>
-                <th>ส่งฟรีต่อเมื่อยอดถึง</th>
-                <th>วันที่เริ่มใช้</th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.map((doc) => {
-                let dt = new Date(Date.parse(doc.date_start))
-                let df = (
-                  <>
-                    {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                  </>
-                )
+        <div className="position-relative m-3">
+          <form onSubmit={onSubmitForm} ref={form}>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <strong>แก้ไข</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>ชื่อขนส่ง</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>ค่าส่งเริ่มต้น</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>ค่าส่งชิ้นต่อไป</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>ค่าส่งสูงสุด</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>ส่งฟรีต่อเมื่อยอดถึง</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>วันที่เริ่มใช้</strong>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
 
-                return (
-                  <tr key={doc._id}>
-                    {/* เมื่อคลิก radio บนรายการใด เราก็แนบ document ของรายการนั้น
-                      ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
-                  */}
-                    <td className=" text-center">
-                      <input type="radio" name="exname" value={doc._id} />
-                    </td>
+                <TableBody>
+                  {result.map((doc) => {
+                    let dt = new Date(Date.parse(doc.date_start))
+                    let df = (
+                      <>
+                        {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                      </>
+                    )
 
-                    <td>{doc.exname}</td>
-                    <td>{doc.fprice}</td>
-                    <td>{doc.sprice}</td>
-                    <td>{doc.maxprice}</td>
-                    <td>{doc.whenfprice}</td>
-                    <td>{df}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-          <br />
-          <div className=" text-center">
-            <button className="btn btn-danger btn-sm ">ลบรายการที่เลือก</button>
-          </div>
-        </form>
+                    return (
+                      <StyledTableRow key={doc._id}>
+                        {/* เมื่อคลิก radio บนรายการใด เราก็แนบ document ของรายการนั้น
+                            ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
+                        */}
+                        <TableCell
+                          name="_id"
+                          padding="radio"
+                          defaultValue={doc._id}
+                          onClick={() => onClickRadio(doc)}
+                        >
+                          <Checkbox color="primary" />
+                        </TableCell>
+
+                        <TableCell>{doc.exname}</TableCell>
+                        <TableCell>{doc.fprice}</TableCell>
+                        <TableCell>{doc.sprice}</TableCell>
+                        <TableCell>{doc.maxprice}</TableCell>
+                        <TableCell>{doc.whenfprice}</TableCell>
+                        <TableCell>{df}</TableCell>
+                      </StyledTableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <br />
+            <div className=" text-center">
+              <button className="btn btn-danger btn-sm ">
+                ลบรายการที่เลือก
+              </button>
+            </div>
+          </form>
+        </div>
       </>
     )
 

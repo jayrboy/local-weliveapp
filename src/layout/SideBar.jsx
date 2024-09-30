@@ -24,6 +24,8 @@ import EqualizerIcon from '@mui/icons-material/Equalizer'
 import InfoIcon from '@mui/icons-material/Info'
 import CommentIcon from '@mui/icons-material/Comment'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
+
 import { login } from '../redux/userSlice'
 
 import { Button } from '@mui/material'
@@ -125,27 +127,37 @@ const SideBar = () => {
                 >
                   ขาย
                 </MenuItem>
-              </SubMenu>
 
-              <SubMenu label="ร้านค้า" icon={<StorefrontIcon />}>
-                <MenuItem
-                  icon={<PersonSearchOutlinedIcon />}
-                  onClick={() => navigate('/customer/search')}
-                >
-                  ค้นหาลูกค้า
-                </MenuItem>
-                <MenuItem
-                  icon={<ContentPasteSearchIcon />}
-                  onClick={() => navigate('/order/search')}
-                >
-                  ค้นหาคำสั่งซื้อ
-                </MenuItem>
                 <MenuItem
                   icon={<CommentIcon />}
                   onClick={() => navigate('/order')}
                 >
                   <span className=" text-success">คำสั่งซื้อ</span>
                 </MenuItem>
+              </SubMenu>
+
+              <SubMenu label="ร้านค้า" icon={<StorefrontIcon />}>
+                <MenuItem
+                  icon={<AccountBalanceIcon />}
+                  onClick={() => navigate('/bookbank')}
+                >
+                  บัญชีธนาคาร
+                </MenuItem>
+
+                <MenuItem
+                  icon={<ContentPasteSearchIcon />}
+                  onClick={() => navigate('/order/search')}
+                >
+                  ค้นหาคำสั่งซื้อ
+                </MenuItem>
+
+                <MenuItem
+                  icon={<PersonSearchOutlinedIcon />}
+                  onClick={() => navigate('/customer/search')}
+                >
+                  ค้นหาลูกค้า
+                </MenuItem>
+
                 <MenuItem
                   icon={<SettingsSuggestOutlinedIcon />}
                   onClick={() => navigate('/express')}
@@ -158,7 +170,6 @@ const SideBar = () => {
                 >
                   <span className=" ">เช็คเอาท์</span>
                 </MenuItem>
-
                 <MenuItem
                   icon={<PaidOutlinedIcon />}
                   onClick={() => navigate('/sales')}
