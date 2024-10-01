@@ -137,7 +137,7 @@ export default function SaleOrderList() {
                         </Tooltip>
                       </Typography>
                     ) : (
-                      <Typography className="text-danger">
+                      <Typography className="text-warning">
                         ยังไม่ชำระเงิน
                       </Typography>
                     )}

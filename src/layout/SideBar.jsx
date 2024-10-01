@@ -128,13 +128,6 @@ const SideBar = () => {
                 >
                   ขาย
                 </MenuItem>
-
-                <MenuItem
-                  icon={<CommentIcon />}
-                  onClick={() => navigate('/order')}
-                >
-                  <span className=" text-success">คำสั่งซื้อ</span>
-                </MenuItem>
               </SubMenu>
 
               <SubMenu label="ร้านค้า" icon={<StorefrontIcon />}>
@@ -150,6 +143,13 @@ const SideBar = () => {
                   onClick={() => navigate('/express')}
                 >
                   ตั้งค่าราคาขนส่ง
+                </MenuItem>
+
+                <MenuItem
+                  icon={<CommentIcon />}
+                  onClick={() => navigate('/order')}
+                >
+                  <span className=" text-success">คำสั่งซื้อ</span>
                 </MenuItem>
 
                 <MenuItem

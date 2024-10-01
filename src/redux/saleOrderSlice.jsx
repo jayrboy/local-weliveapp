@@ -8,6 +8,7 @@ const url = 'https://api-weliveapp.azurewebsites.net/api/sale-order'
 const initialState = {
   orders: [],
   order: {},
+  filteredOrders: [],
   totalQuantity: 0, // จำนวนสินค้ารวมที่คำนวณได้
   totalPrice: 0, // ราคารวมที่คำนวณได้
   totalExpressPrice: 0, // ค่าขนส่งที่คำนวณได้
@@ -81,6 +82,12 @@ const saleOrderSlice = createSlice({
         state.totalExpressPrice = 50
       }
     },
+    searchNameFacebook: (state, action) => {
+      const searchTerm = action.payload.toLowerCase()
+      state.filteredOrders = state.orders.filter(
+        (order) => order.name.toLowerCase().includes(searchTerm) // แก้ไขตาม key ที่ถูกต้อง
+      )
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -114,6 +121,7 @@ export const {
   calculateTotalQuantity,
   calculateTotalPrice,
   calculateTotalExpressPrice,
+  searchNameFacebook,
 } = saleOrderSlice.actions
 
 export default saleOrderSlice.reducer

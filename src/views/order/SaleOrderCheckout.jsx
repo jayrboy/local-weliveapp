@@ -61,7 +61,7 @@ export default function SaleOrderCheckout() {
   }
 
   const filteredOrders = orders.filter(
-    (order) => order.complete && order.sended && !order.isDelete
+    (order) => order.complete && !order.isDelete
   )
 
   return (
@@ -105,10 +105,8 @@ export default function SaleOrderCheckout() {
                 {' '}
                 พบข้อมูลทั้งหมด{' '}
                 {
-                  orders.filter(
-                    (order) =>
-                      order.complete && order.sended && !orders.isDelete
-                  ).length
+                  orders.filter((order) => order.complete && !orders.isDelete)
+                    .length
                 }{' '}
                 รายการ
               </small>

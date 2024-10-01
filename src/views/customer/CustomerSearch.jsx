@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { searchNameFacebook } from '../../redux/saleOrderSlice'
+
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import { MdOutlineSearch } from 'react-icons/md'
 
 import Paper from '@mui/material/Paper'
@@ -12,6 +14,8 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
 import { Button } from '@mui/material'
+import ErrorIcon from '@mui/icons-material/Error'
+import { Tooltip, Typography } from '@mui/material'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -24,9 +28,22 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }))
 
 export default function CustomerSearch() {
-  let { orders, totalQuantity, totalPrice } = useSelector(
-    (store) => store.saleOrder
-  )
+  const dispatch = useDispatch()
+  let { orders } = useSelector((store) => store.saleOrder)
+
+  // สร้าง state สำหรับการค้นหา
+  let [searchName, setSearchName] = useState('')
+  let [searchAddress, setSearchAddress] = useState('')
+  let [searchTel, setSearchTel] = useState('')
+
+  // กรองข้อมูล orders ตามค่าการค้นหา
+  const filteredOrders = orders.filter((order) => {
+    return (
+      order.name.toLowerCase().includes(searchName.toLowerCase()) &&
+      order.address.toLowerCase().includes(searchAddress.toLowerCase()) &&
+      order.tel.includes(searchTel)
+    )
+  })
 
   return (
     <>
@@ -49,18 +66,24 @@ export default function CustomerSearch() {
               className="form-control form-control-sm ms-1"
               placeholder="ชื่อลูกค้า"
               style={{ width: '150px' }}
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)} // อัปเดตค่าชื่อลูกค้า
             />
             <input
               type="text"
               className="form-control form-control-sm ms-1"
               placeholder="ที่อยู่"
               style={{ width: '150px' }}
+              value={searchAddress}
+              onChange={(e) => setSearchAddress(e.target.value)} // อัปเดตค่าที่อยู่
             />
             <input
               type="text"
               className="form-control form-control-sm ms-1"
               placeholder=" เบอร์โทรศัพท์"
               style={{ width: '150px' }}
+              value={searchTel}
+              onChange={(e) => setSearchTel(e.target.value)} // อัปเดตค่าเบอร์โทรศัพท์
             />
             &nbsp;
             <Button variant="contained">
@@ -71,7 +94,7 @@ export default function CustomerSearch() {
         <TableContainer component={Paper}>
           <Table>
             <caption className="ms-3">
-              <small> พบข้อมูลทั้งหมด {orders.length} รายการ</small>
+              <small> พบข้อมูลทั้งหมด {filteredOrders.length} รายการ</small>
             </caption>
             <TableHead>
               <TableRow>
@@ -102,37 +125,49 @@ export default function CustomerSearch() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders &&
-                orders.map((order, index) => {
+              {filteredOrders.length > 0 &&
+                filteredOrders.map((order, index) => {
                   return (
-                    <React.Fragment key={index}>
-                      <StyledTableRow>
-                        <TableCell>
-                          <Link
-                            to={`/order/${order._id}`}
-                            state={{ _id: order._id }}
-                            target="_blank"
+                    <StyledTableRow key={index}>
+                      <TableCell>
+                        <Link
+                          to={`/order/${order._id}`}
+                          state={{ _id: order._id }}
+                          target="_blank"
+                        >
+                          {order.name}
+                        </Link>
+                      </TableCell>
+                      <TableCell>{order.address}</TableCell>
+                      <TableCell>{order.district}</TableCell>
+                      <TableCell>{order.sub_area}</TableCell>
+                      <TableCell>{order.sub_district}</TableCell>
+                      <TableCell>{order.postcode}</TableCell>
+                      <TableCell>{order.tel}</TableCell>
+                      <TableCell>
+                        {order.sended ? (
+                          <p className="text-success">ส่งสินค้าแล้ว</p>
+                        ) : order.isDelete ? (
+                          <p className="text-danger">ปฏิเสธ/หมดเวลา</p>
+                        ) : (
+                          <Typography
+                            sx={{
+                              display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
+                              alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                              textAlign: 'center',
+                            }}
                           >
-                            {order.name}
-                          </Link>
-                        </TableCell>
-                        <TableCell>{order.address}</TableCell>
-                        <TableCell>{order.district}</TableCell>
-                        <TableCell>{order.sub_area}</TableCell>
-                        <TableCell>{order.sub_district}</TableCell>
-                        <TableCell>{order.postcode}</TableCell>
-                        <TableCell>{order.tel}</TableCell>
-                        <TableCell>
-                          {order.sended ? (
-                            <p className="text-success">ส่งแล้ว</p>
-                          ) : order.isDelete ? (
-                            <p className="text-danger">การส่งล้มเหลว</p>
-                          ) : (
-                            <p className="text-warning">ยังไม่ได้ส่ง</p>
-                          )}
-                        </TableCell>
-                      </StyledTableRow>
-                    </React.Fragment>
+                            <span className="text-warning">
+                              รอแพ็คสินค้า/จัดส่ง
+                            </span>
+                            &nbsp;
+                            <Tooltip title="กรุณาแนบเลขพัสดุที่ออเดอร์ลูกค้า">
+                              <ErrorIcon color="warning" />
+                            </Tooltip>
+                          </Typography>
+                        )}
+                      </TableCell>
+                    </StyledTableRow>
                   )
                 })}
             </TableBody>

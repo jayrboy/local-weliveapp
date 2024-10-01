@@ -13,6 +13,8 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
 import { Button, IconButton } from '@mui/material'
+import ErrorIcon from '@mui/icons-material/Error'
+import { Tooltip, Typography } from '@mui/material'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -54,9 +56,9 @@ export default function SaleOrderSearch() {
   }
 
   const ordersWithTotals = calculateTotals(orders)
-  const filteredOrders = ordersWithTotals.filter(
-    (order) => order.complete && !order.sended
-  )
+  // const filteredOrders = ordersWithTotals.filter(
+  //   (order) => order.complete && !order.sended
+  // )
 
   return (
     <>
@@ -94,15 +96,7 @@ export default function SaleOrderSearch() {
         <TableContainer component={Paper}>
           <Table>
             <caption className="ms-3">
-              <small>
-                {' '}
-                พบข้อมูลทั้งหมด{' '}
-                {
-                  orders.filter((order) => order.complete && !order.isDelete)
-                    .length
-                }{' '}
-                รายการ
-              </small>
+              <small> พบข้อมูลทั้งหมด {orders.length} รายการ</small>
             </caption>
             <TableHead>
               <TableRow>
@@ -133,7 +127,7 @@ export default function SaleOrderSearch() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredOrders.map((order, index) => {
+              {ordersWithTotals.map((order, index) => {
                 let udt = new Date(Date.parse(order.updatedAt))
                 let udf = (
                   <>
@@ -164,7 +158,27 @@ export default function SaleOrderSearch() {
                         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
                     </TableCell>
                     <TableCell>
-                      <p className="text-warning">รอแพ็คสินค้าและจัดส่ง</p>
+                      {order.sended ? (
+                        <p className="text-success">ส่งสินค้าแล้ว</p>
+                      ) : order.isDelete ? (
+                        <p className="text-danger">ปฏิเสธ/หมดเวลา</p>
+                      ) : (
+                        <Typography
+                          sx={{
+                            display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
+                            alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                            textAlign: 'center',
+                          }}
+                        >
+                          <span className="text-warning">
+                            รอแพ็คสินค้า/จัดส่ง
+                          </span>
+                          &nbsp;
+                          <Tooltip title="กรุณาแนบเลขพัสดุที่ออเดอร์ลูกค้า">
+                            <ErrorIcon color="warning" />
+                          </Tooltip>
+                        </Typography>
+                      )}
                     </TableCell>
                     <TableCell>{order.express}</TableCell>
                     <TableCell>
