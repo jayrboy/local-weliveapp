@@ -1,7 +1,10 @@
+import { baseURL } from '../../App'
+import { toast } from 'react-toastify'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { MdGrid3X3 } from 'react-icons/md'
 import { MdOutlineSearch } from 'react-icons/md'
+import PrintIcon from '@mui/icons-material/Print'
 
 import Paper from '@mui/material/Paper'
 import TableContainer from '@mui/material/TableContainer'
@@ -11,6 +14,9 @@ import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
+import Button from '@mui/material/Button'
+import { IconButton } from '@mui/material'
+import DownloadIcon from '@mui/icons-material/Download'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -24,6 +30,32 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function SaleOrderCheckout() {
   let { orders } = useSelector((store) => store.saleOrder)
+
+  const downloadPDF = (orderId) => {
+    try {
+      const url = `${baseURL}/api/sale-order/download-pdf/${orderId}`
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `order-${orderId}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+    } catch (error) {
+      toast.error('Error downloading PDF')
+    }
+  }
+  const printPDF = (orderId) => {
+    const url = `${baseURL}/api/sale-order/print-pdf/${orderId}`
+    const newWindow = window.open(url, '_blank')
+    if (newWindow) {
+      newWindow.onload = () => {
+        newWindow.focus()
+        newWindow.print()
+      }
+    } else {
+      toast.error('Error opening new window for printing')
+    }
+  }
 
   return (
     <>
@@ -81,6 +113,9 @@ export default function SaleOrderCheckout() {
                 <TableCell>
                   <strong className="text-success">อนุมัติโดย</strong>
                 </TableCell>
+                <TableCell>
+                  <strong>ใบเสร็จ/ใบปะหน้าพัสดุ</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -117,6 +152,27 @@ export default function SaleOrderCheckout() {
                     <TableCell>{order.express}</TableCell>
                     <TableCell>{udf}</TableCell>
                     <TableCell>{order.updateBy}</TableCell>
+                    <TableCell>
+                      <Button
+                        type="button"
+                        variant="contained"
+                        color="primary"
+                        onClick={() => downloadPDF(order._id)}
+                        size="small"
+                      >
+                        <DownloadIcon />
+                      </Button>
+                      &nbsp;
+                      <Button
+                        type="button"
+                        variant="contained"
+                        color="inherit"
+                        onClick={() => printPDF(order._id)}
+                        size="small"
+                      >
+                        <PrintIcon />
+                      </Button>
+                    </TableCell>
                   </StyledTableRow>
                 )
               })}
