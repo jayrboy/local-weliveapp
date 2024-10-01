@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
@@ -12,6 +12,8 @@ import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
 
 import { MdOutlineSearch } from 'react-icons/md'
+import { toast } from 'react-toastify'
+import { baseURL } from '../../App'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -27,6 +29,21 @@ export default function SaleOrder() {
   let { orders, totalQuantity, totalPrice } = useSelector(
     (store) => store.saleOrder
   )
+
+  const downloadPDF = (orderId) => {
+    try {
+      const url = `${baseURL}/api/sale-order/download-pdf/${orderId}`
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `order-${orderId}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      toast(`พิมพ์ใบเสร็จ/ใบปะหน้าพัสดุขนาด A6`)
+    } catch (error) {
+      toast.error('Error downloading PDF')
+    }
+  }
 
   return (
     <>
@@ -90,6 +107,9 @@ export default function SaleOrder() {
                 <TableCell>
                   <strong>กำไร</strong>
                 </TableCell>
+                <TableCell>
+                  <strong>Download</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -121,6 +141,14 @@ export default function SaleOrder() {
                       <TableCell>{2}</TableCell>
                       <TableCell>{3}</TableCell>
                       <TableCell>{4}</TableCell>
+                      <TableCell>
+                        <button
+                          type="button"
+                          onClick={() => downloadPDF(order._id)}
+                        >
+                          ดาวน์โหลด PDF
+                        </button>
+                      </TableCell>
                     </StyledTableRow>
                   </React.Fragment>
                 )
