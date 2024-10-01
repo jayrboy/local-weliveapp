@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { MdArrowDropDown } from 'react-icons/md'
@@ -27,10 +27,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }))
 
 export default function SaleOrderSearch() {
-  let { orders, totalQuantity, totalPrice } = useSelector(
-    (store) => store.saleOrder
-  )
+  let { orders } = useSelector((store) => store.saleOrder)
 
+  // State for search criteria
+  const [searchDate, setSearchDate] = useState('')
+  const [customerName, setCustomerName] = useState('')
+
+  // Calculate totals for quantity and price
   const calculateTotals = (orders) => {
     return orders.map((order) => {
       const totalQuantity = order.orders.reduce(
@@ -49,23 +52,37 @@ export default function SaleOrderSearch() {
     })
   }
 
-  function dropExpress() {
-    var myEx = document.getElementById('myEx')
-    document.getElementById('SelectExpress').value =
-      myEx.options[myEx.selectedIndex].text
-  }
+  // Filter orders based on search criteria
+  const filteredOrders = orders.filter((order) => {
+    const orderDate = new Date(order.updatedAt)
+    const formattedDate = `${orderDate.getFullYear()}-${String(
+      orderDate.getMonth() + 1
+    ).padStart(2, '0')}-${String(orderDate.getDate()).padStart(2, '0')}`
 
-  const ordersWithTotals = calculateTotals(orders)
-  // const filteredOrders = ordersWithTotals.filter(
-  //   (order) => order.complete && !order.sended
-  // )
+    const matchesDate = searchDate ? formattedDate === searchDate : true
+
+    const matchesCustomerName = customerName
+      ? new RegExp(`^${customerName.split('').join('.*')}`, 'i').test(
+          order.name
+        )
+      : true
+
+    return matchesDate && matchesCustomerName
+  })
+
+  const ordersWithTotals = calculateTotals(filteredOrders)
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    // This is where the filtering is already applied
+  }
 
   return (
     <>
       <div className="row m-3">
         <div className="col-lg-12">
           <h3 className="text-start">
-            <Link to="/admin/home" className="  text-decoration-none">
+            <Link to="/admin/home" className="text-decoration-none">
               WE LIVE |
             </Link>{' '}
             <span className="text-success"> ค้นหาคำสั่งซื้อ </span>
@@ -73,22 +90,26 @@ export default function SaleOrderSearch() {
         </div>
       </div>
 
-      <div className="position-relativ m-3">
-        <form>
+      <div className="position-relative m-3">
+        <form onSubmit={handleSearch}>
           <div className="d-flex mb-1 justify-content-end">
             <input
               type="date"
               className="form-control form-control-sm ms-1"
               style={{ width: '150px' }}
+              value={searchDate}
+              onChange={(e) => setSearchDate(e.target.value)}
             />
             <input
               type="text"
               className="form-control form-control-sm ms-1"
               style={{ width: '150px' }}
               placeholder="ชื่อลูกค้า"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
             />
             &nbsp;
-            <Button variant="contained">
+            <Button type="submit" variant="contained">
               <MdOutlineSearch />
             </Button>
           </div>
@@ -96,7 +117,7 @@ export default function SaleOrderSearch() {
         <TableContainer component={Paper}>
           <Table>
             <caption className="ms-3">
-              <small> พบข้อมูลทั้งหมด {orders.length} รายการ</small>
+              <small> พบข้อมูลทั้งหมด {ordersWithTotals.length} รายการ</small>
             </caption>
             <TableHead>
               <TableRow>
@@ -127,13 +148,11 @@ export default function SaleOrderSearch() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {ordersWithTotals.map((order, index) => {
+              {ordersWithTotals.map((order) => {
                 let udt = new Date(Date.parse(order.updatedAt))
-                let udf = (
-                  <>
-                    {udt.getDate()}-{udt.getMonth() + 1}-{udt.getFullYear()}
-                  </>
-                )
+                let udf = `${udt.getDate()}-${
+                  udt.getMonth() + 1
+                }-${udt.getFullYear()}`
                 return (
                   <StyledTableRow key={order._id}>
                     <TableCell>{udf}</TableCell>
@@ -165,8 +184,8 @@ export default function SaleOrderSearch() {
                       ) : (
                         <Typography
                           sx={{
-                            display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
-                            alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                            display: 'flex',
+                            alignItems: 'center',
                             textAlign: 'center',
                           }}
                         >

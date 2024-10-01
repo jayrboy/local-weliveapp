@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react'
 import { baseURL } from '../../App'
 import { toast } from 'react-toastify'
 import { Link } from 'react-router-dom'
@@ -17,7 +18,6 @@ import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import { IconButton } from '@mui/material'
 import DownloadIcon from '@mui/icons-material/Download'
-import { useEffect } from 'react'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -31,6 +31,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function SaleOrderCheckout() {
   let { orders } = useSelector((store) => store.saleOrder)
+
+  // State for search fields
+  const [searchDate, setSearchDate] = useState('')
+  const [searchOrderId, setSearchOrderId] = useState('')
+  const [searchTracking, setSearchTracking] = useState('')
 
   useEffect(() => {}, [orders])
 
@@ -47,6 +52,7 @@ export default function SaleOrderCheckout() {
       toast.error('Error downloading PDF')
     }
   }
+
   const printPDF = (orderId) => {
     const url = `${baseURL}/api/sale-order/print-pdf/${orderId}`
     const newWindow = window.open(url, '_blank')
@@ -60,9 +66,30 @@ export default function SaleOrderCheckout() {
     }
   }
 
-  const filteredOrders = orders.filter(
-    (order) => order.complete && !order.isDelete
-  )
+  // Filter orders based on search fields
+  const filteredOrders = orders.filter((order) => {
+    const orderDate = new Date(order.createdAt)
+    const formattedDate = `${orderDate.getFullYear()}-${String(
+      orderDate.getMonth() + 1
+    ).padStart(2, '0')}-${String(orderDate.getDate()).padStart(2, '0')}`
+
+    const matchesDate = searchDate ? formattedDate === searchDate : true
+    const matchesOrderId = searchOrderId
+      ? order._id.includes(searchOrderId)
+      : true
+    const matchesTracking = searchTracking
+      ? order.express.includes(searchTracking)
+      : true
+
+    return (
+      order.complete &&
+      order.sended &&
+      !order.isDelete &&
+      matchesDate &&
+      matchesOrderId &&
+      matchesTracking
+    )
+  })
 
   return (
     <>
@@ -85,12 +112,24 @@ export default function SaleOrderCheckout() {
               name="expressDate"
               type="date"
               style={{ width: '150px' }}
+              value={searchDate}
+              onChange={(e) => setSearchDate(e.target.value)}
             />
             <input
               className="form-control form-control-sm ms-1"
-              type="expressID"
+              type="text"
+              placeholder="เลขออเดอร์"
+              style={{ width: '150px' }}
+              value={searchOrderId}
+              onChange={(e) => setSearchOrderId(e.target.value)}
+            />
+            <input
+              className="form-control form-control-sm ms-1"
+              type="text"
               placeholder="เลขพัสดุ"
               style={{ width: '150px' }}
+              value={searchTracking}
+              onChange={(e) => setSearchTracking(e.target.value)}
             />
             &nbsp;
             <Button variant="contained">
@@ -98,26 +137,19 @@ export default function SaleOrderCheckout() {
             </Button>
           </div>
         </form>
+
         <TableContainer component={Paper}>
           <Table>
             <caption className="ms-3">
-              <small>
-                {' '}
-                พบข้อมูลทั้งหมด{' '}
-                {
-                  orders.filter((order) => order.complete && !orders.isDelete)
-                    .length
-                }{' '}
-                รายการ
-              </small>
+              <small> พบข้อมูลทั้งหมด {filteredOrders.length} รายการ</small>
             </caption>
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <MdGrid3X3 />
+                  <strong>Order ID</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>สั่งซื้อ</strong>
+                  <strong>วันที่สั่งซื้อ</strong>
                 </TableCell>
                 <TableCell>
                   <strong>ชื่อ Facebook</strong>
@@ -126,7 +158,7 @@ export default function SaleOrderCheckout() {
                   <strong>เลขพัสดุ</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>เวลาเช็คเอ้าท์</strong>
+                  <strong>วันที่เช็คเอ้าท์</strong>
                 </TableCell>
                 <TableCell>
                   <strong className="text-success">อนุมัติโดย</strong>
@@ -137,27 +169,20 @@ export default function SaleOrderCheckout() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredOrders.map((order, i) => {
-                // คำนวณค่า itempr * among - discount
-
+              {filteredOrders.map((order) => {
                 let dt = new Date(Date.parse(order.createdAt))
-                let df = (
-                  <>
-                    {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                  </>
-                )
+                let df = `${dt.getDate()}-${
+                  dt.getMonth() + 1
+                }-${dt.getFullYear()}`
 
                 let udt = new Date(Date.parse(order.updatedAt))
-                let udf = (
-                  <>
-                    {udt.getDate()}-{udt.getMonth() + 1}-{udt.getFullYear()}
-                  </>
-                )
-                console.log(orders)
+                let udf = `${udt.getDate()}-${
+                  udt.getMonth() + 1
+                }-${udt.getFullYear()}`
 
                 return (
                   <StyledTableRow key={order._id}>
-                    <TableCell>{i + 1}</TableCell>
+                    <TableCell>{order._id}</TableCell>
                     <TableCell>{df}</TableCell>
                     <TableCell>
                       <Link
@@ -199,6 +224,7 @@ export default function SaleOrderCheckout() {
           </Table>
         </TableContainer>
       </div>
+
       <br />
       <div className="d-flex justify-content-center mx-auto">
         <Link to="/dashboard" className="btn btn-light btn-sm">
