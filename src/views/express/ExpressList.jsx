@@ -13,7 +13,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
 
-import { Button, Checkbox, TextField } from '@mui/material'
+import { Button, Checkbox, TextField, Radio } from '@mui/material'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -35,6 +35,7 @@ export default function ExpressList() {
   const whenfprice = useRef()
   const date_start = useRef()
   const token = localStorage.getItem('token')
+  let [selectedId, setSelectedId] = useState('')
 
   useEffect(() => {
     fetch(`${baseURL}/api/ex/read`, {
@@ -106,13 +107,13 @@ export default function ExpressList() {
                       {/* เมื่อคลิก radio บนรายการใด เราก็แนบ document ของรายการนั้น
                           ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
                       */}
-                      <TableCell
-                        name="_id"
-                        padding="radio"
-                        defaultValue={doc._id}
-                        onClick={() => onClickRadio(doc)}
-                      >
-                        <Checkbox color="primary" />
+                      <TableCell>
+                        <Radio
+                          color="primary"
+                          checked={selectedId === doc.id}
+                          onChange={() => onClickRadio(doc)}
+                          value={doc.id}
+                        />
                       </TableCell>
 
                       <TableCell>{doc.exname}</TableCell>
@@ -128,7 +129,7 @@ export default function ExpressList() {
                 {/* สร้างฟอร์มไว้ที่แถวสุดท้าย */}
                 <TableRow>
                   <TableCell>
-                    <Button variant="contained" color="warning">
+                    <Button type="submit" variant="contained" color="warning">
                       แก้ไข
                     </Button>
                   </TableCell>
@@ -197,6 +198,7 @@ export default function ExpressList() {
   }
 
   const onSubmitForm = (event) => {
+    console.log('Submit')
     event.preventDefault()
     if (!window.confirm('ยืนยันการแก้ไขรายการนี้')) {
       return

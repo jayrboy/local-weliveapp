@@ -25,6 +25,7 @@ import InfoIcon from '@mui/icons-material/Info'
 import CommentIcon from '@mui/icons-material/Comment'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
+import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 
 import { login } from '../redux/userSlice'
 
@@ -145,6 +146,13 @@ const SideBar = () => {
                 </MenuItem>
 
                 <MenuItem
+                  icon={<LocalShippingIcon />}
+                  onClick={() => navigate('/express')}
+                >
+                  ตั้งค่าราคาขนส่ง
+                </MenuItem>
+
+                <MenuItem
                   icon={<ContentPasteSearchIcon />}
                   onClick={() => navigate('/order/search')}
                 >
@@ -159,23 +167,17 @@ const SideBar = () => {
                 </MenuItem>
 
                 <MenuItem
-                  icon={<SettingsSuggestOutlinedIcon />}
-                  onClick={() => navigate('/express')}
-                >
-                  ตั้งค่าราคาขนส่ง
-                </MenuItem>
-                <MenuItem
                   icon={<CallMissedOutgoingIcon />}
                   onClick={() => navigate('/checkout')}
                 >
                   <span className=" ">เช็คเอาท์</span>
                 </MenuItem>
-                <MenuItem
+                {/* <MenuItem
                   icon={<PaidOutlinedIcon />}
                   onClick={() => navigate('/sales')}
                 >
                   <span className=" text-success">ยอดขาย</span>
-                </MenuItem>
+                </MenuItem> */}
               </SubMenu>
 
               {/* Mange Admin & User */}
@@ -225,7 +227,7 @@ const SideBar = () => {
                 icon={<EqualizerIcon />}
                 onClick={() => navigate('/analysis')}
               >
-                รายงานสรุปยอด
+                <span className="text-success">รายงานสรุปยอด</span>
               </MenuItem>
               <MenuItem icon={<InfoIcon />} onClick={() => navigate('/info')}>
                 วิธีการใช้งาน

@@ -163,6 +163,9 @@ const BookBank = () => {
       <form>
         <TableContainer component={Paper}>
           <Table>
+            <caption className="ms-3">
+              <small>พบข้อมูลทั้งหมด {user.bank_account.length} รายการ</small>
+            </caption>
             <TableHead>
               <TableRow>
                 <TableCell>

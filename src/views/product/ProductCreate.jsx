@@ -48,9 +48,11 @@ function ProductCreate(props) {
           form.current.reset()
           toast.success('ข้อมูลถูกจัดเก็บแล้ว')
           setOpenCreate(false)
-          navigate('/admin/stock')
+          navigate('/stock')
         } else {
-          toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
+          toast.warning(
+            'มีรหัสสินค้านี้อยู่ในสต็อกแล้ว กรุณาเปลี่ยนรหัสสินค้าใหม่'
+          )
         }
       })
       .catch((e) => toast.error(e))
@@ -78,11 +80,15 @@ function ProductCreate(props) {
             type="text"
             name="code"
             className="form-control form-control-sm"
-            {...register('code', { required: true, maxLength: 30 })}
+            {...register('code', {
+              required: 'กรุณาระบุรหัสสินค้า',
+              maxLength: {
+                value: 3,
+                message: 'รหัสสินค้าต้องไม่เกิน 3 ตัวอักษร',
+              },
+            })}
           />
-          {errors.name && (
-            <div style={err}>กรุณาระบุรหัสสินค้า ตัวอย่าง &quot;A01&quot;</div>
-          )}
+          {errors.code && <div style={err}>{errors.code.message}</div>}
           <label className="form-label mt-2">ชื่อสินค้า</label>
           <input
             type="text"

@@ -82,10 +82,10 @@ const Stock = () => {
                     <strong>รายการที่</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>รหัสสินค้า</strong>
+                    <strong>สินค้า</strong>
                   </TableCell>
                   <TableCell className="text-center">
-                    <strong>จำนวนสินค้า</strong>
+                    <strong>จำนวน</strong>
                   </TableCell>
                   <TableCell className="text-center">
                     <strong>ต้นทุน</strong>
@@ -109,6 +109,13 @@ const Stock = () => {
                         &nbsp;&nbsp;{index + 1}
                       </TableCell>
                       <TableCell>
+                        <div
+                          className="btn btn-danger"
+                          style={{ fontSize: '20px' }}
+                        >
+                          {product.code}
+                        </div>
+                        &nbsp;&nbsp;&nbsp;
                         <Link
                           to={`/admin/product-graph/${product._id}`}
                           state={{ _id: product._id }}
@@ -133,71 +140,68 @@ const Stock = () => {
             </Table>
           </TableContainer>
           {/* <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
-                <caption className="ms-3">
-                  {numDocs === 0 ? (
-                    <>ไม่พบข้อมูล</>
-                  ) : (
-                    <small>พบข้อมูลทั้งหมด {result.totalDocs} รายการ</small>
-                  )}
-                </caption>
-                <thead className="table-light">
-                  <tr style={numDocs === 0 ? hidden : null}>
-                    <th>
-                      <MdGrid3X3 />
-                    </th>
-                    <th>รหัส</th>
-                    <th>สินค้า</th>
-                    <th>จำนวน</th>
-                    <th>ราคา</th>
-                    <th>ต้นทุน</th>
-                    <th>วันที่</th>
-                    <th>CF</th>
-                    <th>Paid</th>
-                    <th>เหลือ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {result.docs.map((doc) => {
-                    let dt = new Date(Date.parse(doc.date_added))
-                    let df = (
-                      <>
-                        {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                      </>
-                    )
-                    let p = new Intl.NumberFormat().format(doc.price)
-                    let c = new Intl.NumberFormat().format(doc.cost)
+            <caption className="ms-3">
+              {numDocs === 0 ? (
+                <>ไม่พบข้อมูล</>
+              ) : (
+                <small>พบข้อมูลทั้งหมด {result.totalDocs} รายการ</small>
+              )}
+            </caption>
+            <thead className="table-light">
+              <tr style={numDocs === 0 ? hidden : null}>
+                <th>
+                  <MdGrid3X3 />
+                </th>
+                <th>รหัส</th>
+                <th>สินค้า</th>
+                <th>จำนวน</th>
+                <th>ราคา</th>
+                <th>ต้นทุน</th>
+                <th>วันที่</th>
+                <th>CF</th>
+                <th>Paid</th>
+                <th>เหลือ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.docs.map((doc) => {
+                let dt = new Date(Date.parse(doc.date_added))
+                let df = (
+                  <>
+                    {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                  </>
+                )
+                let p = new Intl.NumberFormat().format(doc.price)
+                let c = new Intl.NumberFormat().format(doc.cost)
 
-                    return (
-                      <tr key={doc._id}>
-                        <td>
-                          <input
-                            type="radio"
-                            name="_id"
-                            value={doc._id}
-                            className="form-check-input"
-                          />
-                        </td>
-                        <td>
-                          <Link
-                            to={`/order/${doc._id}`}
-                            state={{ _id: doc._id }}
-                          >
-                            {doc.code}
-                          </Link>
-                        </td>
-                        <td>{doc.name}</td>
-                        <td>{doc.stock_quantity}</td>
-                        <td>{p}</td>
-                        <td>{c}</td>
-                        <td>{df}</td>
-                        <td>{doc.cf}</td>
-                        <td>{doc.paid}</td>
-                        <td>{doc.remaining}</td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table> */}
+                return (
+                  <tr key={doc._id}>
+                    <td>
+                      <input
+                        type="radio"
+                        name="_id"
+                        value={doc._id}
+                        className="form-check-input"
+                      />
+                    </td>
+                    <td>
+                      <Link to={`/order/${doc._id}`} state={{ _id: doc._id }}>
+                        {doc.code}
+                      </Link>
+                    </td>
+                    <td>{doc.name}</td>
+                    <td>{doc.stock_quantity}</td>
+                    <td>{p}</td>
+                    <td>{c}</td>
+                    <td>{df}</td>
+                    <td>{doc.cf}</td>
+                    <td>{doc.paid}</td>
+                    <td>{doc.remaining}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table> */}
         </div>
       </form>
     )

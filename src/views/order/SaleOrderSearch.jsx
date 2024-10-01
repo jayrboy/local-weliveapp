@@ -12,6 +12,7 @@ import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
+import { Button, IconButton } from '@mui/material'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -53,7 +54,9 @@ export default function SaleOrderSearch() {
   }
 
   const ordersWithTotals = calculateTotals(orders)
-  const filteredOrders = ordersWithTotals.filter((order) => order.complete)
+  const filteredOrders = ordersWithTotals.filter(
+    (order) => order.complete && !order.sended
+  )
 
   return (
     <>
@@ -82,19 +85,27 @@ export default function SaleOrderSearch() {
               style={{ width: '150px' }}
               placeholder="ชื่อลูกค้า"
             />
-            <button className="btn btn-sm btn-primary ms-3">
+            &nbsp;
+            <Button variant="contained">
               <MdOutlineSearch />
-              &nbsp;ค้นหา
-            </button>
+            </Button>
           </div>
         </form>
         <TableContainer component={Paper}>
           <Table>
+            <caption className="ms-3">
+              <small>
+                {' '}
+                พบข้อมูลทั้งหมด{' '}
+                {
+                  orders.filter((order) => order.complete && !order.isDelete)
+                    .length
+                }{' '}
+                รายการ
+              </small>
+            </caption>
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <strong>#</strong>
-                </TableCell>
                 <TableCell>
                   <strong>วันที่</strong>
                 </TableCell>
@@ -131,7 +142,6 @@ export default function SaleOrderSearch() {
                 )
                 return (
                   <StyledTableRow key={order._id}>
-                    <TableCell>{index + 1}</TableCell>
                     <TableCell>{udf}</TableCell>
                     <TableCell>
                       <Link

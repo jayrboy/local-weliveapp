@@ -67,6 +67,16 @@ export default function SaleOrderList() {
       <div className="position-relative m-3">
         <TableContainer component={Paper}>
           <Table>
+            <caption className="ms-3">
+              <small>
+                พบข้อมูลทั้งหมด{' '}
+                {
+                  orders.filter((order) => !order.complete && !order.isDelete)
+                    .length
+                }{' '}
+                รายการ
+              </small>
+            </caption>
             <TableHead>
               <TableRow>
                 <TableCell>

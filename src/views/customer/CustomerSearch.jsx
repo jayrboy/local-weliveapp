@@ -11,6 +11,7 @@ import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
+import { Button } from '@mui/material'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -61,19 +62,19 @@ export default function CustomerSearch() {
               placeholder=" เบอร์โทรศัพท์"
               style={{ width: '150px' }}
             />
-            <button className="btn btn-sm btn-primary ms-3">
+            &nbsp;
+            <Button variant="contained">
               <MdOutlineSearch />
-              &nbsp;ค้นหา
-            </button>
+            </Button>
           </div>
         </form>
         <TableContainer component={Paper}>
           <Table>
+            <caption className="ms-3">
+              <small> พบข้อมูลทั้งหมด {orders.length} รายการ</small>
+            </caption>
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <strong>#</strong>
-                </TableCell>
                 <TableCell>
                   <strong>ชื่อลูกค้า</strong>
                 </TableCell>
@@ -98,18 +99,14 @@ export default function CustomerSearch() {
                 <TableCell>
                   <strong>สถานะ</strong>
                 </TableCell>
-                <TableCell>
-                  <strong>จัดการ</strong>
-                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order, index) => {
-                return (
-                  <React.Fragment key={index}>
-                    {!order.isDelete && (
+              {orders &&
+                orders.map((order, index) => {
+                  return (
+                    <React.Fragment key={index}>
                       <StyledTableRow>
-                        <TableCell>{index + 1}</TableCell>
                         <TableCell>
                           <Link
                             to={`/order/${order._id}`}
@@ -128,23 +125,16 @@ export default function CustomerSearch() {
                         <TableCell>
                           {order.sended ? (
                             <p className="text-success">ส่งแล้ว</p>
+                          ) : order.isDelete ? (
+                            <p className="text-danger">การส่งล้มเหลว</p>
                           ) : (
-                            <p className="text-danger">ยังไม่ได้ส่ง</p>
+                            <p className="text-warning">ยังไม่ได้ส่ง</p>
                           )}
                         </TableCell>
-                        <TableCell>
-                          <Link
-                            className="btn btn-sm btn-warning"
-                            to={'/customer/edit/' + 1}
-                          >
-                            แก้ไข
-                          </Link>
-                        </TableCell>
                       </StyledTableRow>
-                    )}
-                  </React.Fragment>
-                )
-              })}
+                    </React.Fragment>
+                  )
+                })}
             </TableBody>
           </Table>
         </TableContainer>

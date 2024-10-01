@@ -17,6 +17,7 @@ import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import { IconButton } from '@mui/material'
 import DownloadIcon from '@mui/icons-material/Download'
+import { useEffect } from 'react'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -30,6 +31,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function SaleOrderCheckout() {
   let { orders } = useSelector((store) => store.saleOrder)
+
+  useEffect(() => {}, [orders])
 
   const downloadPDF = (orderId) => {
     try {
@@ -56,6 +59,10 @@ export default function SaleOrderCheckout() {
       toast.error('Error opening new window for printing')
     }
   }
+
+  const filteredOrders = orders.filter(
+    (order) => order.complete && order.sended && !order.isDelete
+  )
 
   return (
     <>
@@ -85,14 +92,27 @@ export default function SaleOrderCheckout() {
               placeholder="เลขพัสดุ"
               style={{ width: '150px' }}
             />
-            <button className="btn btn-sm btn-primary ms-3">
+            &nbsp;
+            <Button variant="contained">
               <MdOutlineSearch />
-              &nbsp;ค้นหา
-            </button>
+            </Button>
           </div>
         </form>
         <TableContainer component={Paper}>
           <Table>
+            <caption className="ms-3">
+              <small>
+                {' '}
+                พบข้อมูลทั้งหมด{' '}
+                {
+                  orders.filter(
+                    (order) =>
+                      order.complete && order.sended && !orders.isDelete
+                  ).length
+                }{' '}
+                รายการ
+              </small>
+            </caption>
             <TableHead>
               <TableRow>
                 <TableCell>
@@ -114,12 +134,12 @@ export default function SaleOrderCheckout() {
                   <strong className="text-success">อนุมัติโดย</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>ใบเสร็จ/ใบปะหน้าพัสดุ</strong>
+                  <strong>พิมพ์ใบเสร็จ/ใบปะหน้าพัสดุ</strong>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order, i) => {
+              {filteredOrders.map((order, i) => {
                 // คำนวณค่า itempr * among - discount
 
                 let dt = new Date(Date.parse(order.createdAt))
@@ -135,6 +155,7 @@ export default function SaleOrderCheckout() {
                     {udt.getDate()}-{udt.getMonth() + 1}-{udt.getFullYear()}
                   </>
                 )
+                console.log(orders)
 
                 return (
                   <StyledTableRow key={order._id}>

@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
+import { DataGrid } from '@mui/x-data-grid'
 import Paper from '@mui/material/Paper'
 import TableContainer from '@mui/material/TableContainer'
+import Button from '@mui/material/Button'
 import Table from '@mui/material/Table'
 import TableRow from '@mui/material/TableRow'
 import TableHead from '@mui/material/TableHead'
@@ -15,15 +17,28 @@ import { MdOutlineSearch } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import { baseURL } from '../../App'
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}))
+function createData(name, calories, fat, carbs, protein, price) {
+  return {
+    name,
+    calories,
+    fat,
+    carbs,
+    protein,
+    price,
+    history: [
+      {
+        date: '2020-01-05',
+        customerId: '11091700',
+        amount: 3,
+      },
+      {
+        date: '2020-01-02',
+        customerId: 'Anonymous',
+        amount: 1,
+      },
+    ],
+  }
+}
 
 export default function SaleOrder() {
   let { orders, totalQuantity, totalPrice } = useSelector(
@@ -44,6 +59,10 @@ export default function SaleOrder() {
       toast.error('Error downloading PDF')
     }
   }
+
+  const filteredOrders = orders.filter(
+    (order) => order.complete && order.sended && !order.isDelete
+  )
 
   return (
     <>
@@ -72,6 +91,19 @@ export default function SaleOrder() {
         </div>
         <TableContainer component={Paper}>
           <Table>
+            <caption className="ms-3">
+              <small>
+                {' '}
+                พบข้อมูลทั้งหมด{' '}
+                {
+                  orders.filter(
+                    (order) =>
+                      order.complete && order.sended && !orders.isDelete
+                  ).length
+                }{' '}
+                รายการ
+              </small>
+            </caption>
             <TableHead>
               <TableRow>
                 <TableCell>
@@ -113,7 +145,7 @@ export default function SaleOrder() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order, i) => {
+              {filteredOrders.map((order, i) => {
                 // คำนวณค่า itempr * among - discount
                 let udt = new Date(Date.parse(order.updatedAt))
                 let udf = (
@@ -166,3 +198,13 @@ export default function SaleOrder() {
     </>
   )
 }
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))

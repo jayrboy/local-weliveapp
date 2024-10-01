@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { updateProduct } from '../../redux/dailyStockSlice'
+import { updateProduct } from '../../redux/productSlice'
 import { toast } from 'react-toastify'
 
 import CloseIcon from '@mui/icons-material/Close'
@@ -27,10 +27,10 @@ function DailyProductCreate(props) {
 
     // console.log(formEnt)
 
+    // เรียกใช้ action updateProduct และส่งข้อมูลที่แก้ไขไปยัง reducer
     dispatch(updateProduct({ index, formEnt }))
 
     setOpenEdit(false)
-
     toast('แก้ไขสินค้าสำเร็จ')
   }
 
