@@ -18,6 +18,10 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material'
 
 import CreditScoreIcon from '@mui/icons-material/CreditScore'
@@ -42,7 +46,6 @@ export default function CustomerByOrderV3() {
   let { user } = useSelector((store) => store.user)
   let { order, isLoading, totalQuantity, totalPrice, totalExpressPrice } =
     useSelector((store) => store.saleOrder)
-  // console.log(order.picture_payment)
 
   const { id } = useParams()
 
@@ -50,6 +53,23 @@ export default function CustomerByOrderV3() {
   const [isDisabled, setIsDisabled] = useState(true) // สร้าง state สำหรับเก็บสถานะของปุ่ม
 
   const [imageBase64, setImageBase64] = useState('')
+
+  //! Debugging
+  const [province, setProvince] = useState([])
+  const [amphure, setAmphure] = useState([])
+  const [district, setDistrict] = useState([])
+
+  const [selectedProvince, setSelectedProvince] = useState('') // ค่าที่เลือกจังหวัด
+  const [selectedAmphure, setSelectedAmphure] = useState('') // ค่าที่เลือกอำเภอ/เขต
+  const [selectedDistrict, setSelectedDistrict] = useState('') // ค่าที่เลือกตำบล/แขวง
+  const [zipCode, setZipCode] = useState('') // ค่าที่เลือกไปรษณีย์
+
+  useEffect(() => {
+    fetch(`${baseURL}/api/province`)
+      .then((res) => res.json())
+      .then((data) => setProvince(data))
+      .catch((error) => toast.error('เกิดข้อผิดพลาด'))
+  }, [])
 
   // เรียก getOrder เพื่อดึงข้อมูลคำสั่งซื้อ
   useEffect(() => {
@@ -66,6 +86,10 @@ export default function CustomerByOrderV3() {
       dispatch(calculateTotalExpressPrice())
       try {
         setImageBase64(order.picture_payment)
+        setSelectedProvince(order.province) // ตั้งค่าจังหวัดตามข้อมูลเก่า
+        setSelectedAmphure(order.amphure) // ตั้งค่าอำเภอ
+        setSelectedDistrict(order.district) // ตั้งค่าตำบล
+        setZipCode(order.postcode) // ตั้งค่าไปรษณีย์
       } catch (error) {
         toast.warning('กรุณาแจ้งที่อยู่ / การชำระเงิน')
       }
@@ -86,9 +110,9 @@ export default function CustomerByOrderV3() {
     const file = e.target.files[0]
     if (file) {
       // ตรวจสอบขนาดไฟล์
-      if (file.size > 100 * 1024) {
+      if (file.size > 500 * 1024) {
         // 100 KB
-        toast.warning('ไฟล์ต้องมีขนาดไม่เกิน 100 KB')
+        toast.warning('ไฟล์ต้องมีขนาดไม่เกิน 500 KB')
         return
       }
       const reader = new FileReader()
@@ -152,6 +176,48 @@ export default function CustomerByOrderV3() {
     dispatch(editOrder())
   }
 
+  //TODO (1)
+  const onChangProvince = (event) => {
+    let value = event.target.value
+    // console.log('Value :', value)
+
+    setSelectedProvince(value)
+
+    fetch(`${baseURL}/api/province/amphure/${value}`)
+      .then((res) => res.json())
+      .then((data) => setAmphure(data))
+      .catch((error) => toast.error('เกิดข้อผิดพลาดในการค้นหาอำเภอ/เขต'))
+  }
+
+  const onChangAmphure = (event) => {
+    let value = event.target.value
+
+    setSelectedAmphure(value)
+
+    fetch(`${baseURL}/api/district/amphure/${value}`)
+      .then((res) => res.json())
+      .then((data) => setDistrict(data))
+      .catch((error) => toast.error('เกิดข้อผิดพลาดในการค้นหาตำบล/แขวง'))
+  }
+
+  const onChangDistrict = (event) => {
+    let value = event.target.value
+
+    setSelectedDistrict(value)
+
+    const selectedDistrictData = district.find((d) => d.id === value) // หาข้อมูลตำบลที่ตรงกับ id
+
+    if (selectedDistrictData) {
+      setZipCode(
+        selectedDistrictData.zip_code !== '0'
+          ? selectedDistrictData.zip_code
+          : ''
+      ) // ถ้า zip_code เป็น '0' ให้เว้นว่าง
+    } else {
+      setZipCode('') // ถ้าไม่พบข้อมูลตำบลให้เว้นว่าง
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -162,7 +228,21 @@ export default function CustomerByOrderV3() {
     formData.append('isPayment', true)
     formData.append('picture_payment', imageBase64) // ส่งรูปภาพเป็น Base64
 
-    // console.log(formData)
+    // ค้นหาชื่อจาก ID ที่เลือก
+    const selectedProvinceName =
+      province.find((p) => p.id === selectedProvince)?.name_th || ''
+    const selectedAmphureName =
+      amphure.find((a) => a.id === selectedAmphure)?.name_th || ''
+    const selectedDistrictName =
+      district.find((d) => d.id === selectedDistrict)?.name_th || ''
+
+    formData.append('province', selectedProvinceName) // เพิ่มชื่อจังหวัด
+    formData.append('amphure', selectedAmphureName) // เพิ่มชื่ออำเภอ
+    formData.append('district', selectedDistrictName) // เพิ่มชื่อตำบล
+
+    //! Debugging
+    const formEnt = Object.fromEntries(formData.entries())
+    console.log(formEnt)
 
     try {
       await axios.put(`${baseURL}/api/sale-order/payment`, formData, {
@@ -309,14 +389,14 @@ export default function CustomerByOrderV3() {
           แบบฟอร์มสำหรับกรอกข้อมูล
         </Typography>
 
-        <form onSubmit={handleSubmit} ref={form} encType="multipart/form-data">
+        <form onSubmit={handleSubmit} ref={form}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <TextField
+                label="ชื่อ-นามสกุล"
                 fullWidth
-                type="date"
-                name="date_added"
-                defaultValue={df}
+                name="name"
+                defaultValue={order.name}
                 disabled={order.isPayment}
                 required
               />
@@ -324,10 +404,11 @@ export default function CustomerByOrderV3() {
 
             <Grid item xs={4}>
               <TextField
-                label="ชื่อ-นามสกุล"
                 fullWidth
-                name="name"
-                defaultValue={order.name}
+                label="วันที่"
+                type="date"
+                name="date_added"
+                defaultValue={df}
                 disabled={order.isPayment}
                 required
               />
@@ -345,36 +426,70 @@ export default function CustomerByOrderV3() {
             </Grid>
 
             <Grid item xs={4}>
-              <TextField
-                label="ตำบล/แขวง"
-                fullWidth
-                name="district"
-                defaultValue={order.district}
-                disabled={order.isPayment}
-                required
-              />
+              <FormControl fullWidth>
+                <InputLabel id="province-select-label">จังหวัด</InputLabel>
+                <Select
+                  labelId="province-select-label"
+                  id="province-select"
+                  // name="province"
+                  value={selectedProvince}
+                  label="จังหวัด"
+                  onChange={(e) => onChangProvince(e)}
+                  disabled={order.isPayment}
+                >
+                  {province &&
+                    province.length > 0 &&
+                    province.map((p) => (
+                      <MenuItem key={p.id} value={p.id}>
+                        {p.name_th}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
             </Grid>
 
             <Grid item xs={4}>
-              <TextField
-                label="อำเภอ/เขต"
-                fullWidth
-                name="sub_area"
-                defaultValue={order.sub_area}
-                disabled={order.isPayment}
-                required
-              />
+              <FormControl fullWidth>
+                <InputLabel id="amphure-select-label">อำเภอ/เขต</InputLabel>
+                <Select
+                  labelId="amphure-select-label"
+                  id="amphure-select"
+                  // name="amphure"
+                  value={selectedAmphure}
+                  label="อำเภอ/เขต"
+                  onChange={(e) => onChangAmphure(e)}
+                  disabled={order.isPayment}
+                >
+                  {amphure &&
+                    amphure.map((a) => (
+                      <MenuItem key={a.id} value={a.id}>
+                        {a.name_th}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
             </Grid>
 
             <Grid item xs={4}>
-              <TextField
-                label="จังหวัด"
-                fullWidth
-                name="sub_district"
-                defaultValue={order.sub_district}
-                disabled={order.isPayment}
-                required
-              />
+              <FormControl fullWidth>
+                <InputLabel id="district-select-label">ตำบล/แขวง</InputLabel>
+                <Select
+                  labelId="district-select-label"
+                  id="district-select"
+                  label="ตำบล/แขวง"
+                  // name="district"
+                  value={selectedDistrict}
+                  onChange={(e) => onChangDistrict(e)}
+                  disabled={order.isPayment}
+                >
+                  {district &&
+                    district.map((d) => (
+                      <MenuItem key={d.id} value={d.id}>
+                        {d.name_th}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
             </Grid>
 
             <Grid item xs={6}>
@@ -382,7 +497,7 @@ export default function CustomerByOrderV3() {
                 label="รหัสไปรษณีย์"
                 fullWidth
                 name="postcode"
-                defaultValue={order.postcode}
+                value={zipCode} // เ ใช้ value แทน defaultValue
                 disabled={order.isPayment}
                 required
               />
