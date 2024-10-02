@@ -2,6 +2,7 @@ import { baseURL } from '../App'
 import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
 import {
   createBankAccount,
   updateBankAccount,
@@ -12,23 +13,32 @@ import {
   removeBankAccount,
 } from '../redux/userSlice'
 
-import Paper from '@mui/material/Paper'
-import TableContainer from '@mui/material/TableContainer'
-import Table from '@mui/material/Table'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import { styled } from '@mui/material/styles'
+import {
+  styled,
+  Paper,
+  TableContainer,
+  Table,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  TextField,
+  Button,
+  IconButton,
+  Radio,
+  Box,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+} from '@mui/material'
 
-import IconButton from '@mui/material/IconButton'
-import { MdOutlineSearch } from 'react-icons/md'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
-import ListAltIcon from '@mui/icons-material/ListAlt'
-import { Button, Radio, TextField } from '@mui/material'
 import { ConstructionOutlined } from '@mui/icons-material'
-import { toast } from 'react-toastify'
+import ListAltIcon from '@mui/icons-material/ListAlt'
 import DeleteIcon from '@mui/icons-material/Delete'
+
+import { MdOutlineSearch } from 'react-icons/md'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -58,6 +68,16 @@ const BookBank = () => {
 
   const token = localStorage.getItem('token')
   let [isCreateBank, setIsCreateBank] = useState(false)
+
+  const banks = [
+    { name: 'ธนาคารกรุงเทพ', value: 'BBL' },
+    { name: 'ธนาคารกสิกรไทย', value: 'KBANK' },
+    { name: 'ธนาคารกรุงไทย', value: 'KTB' },
+    { name: 'ธนาคารไทยพาณิชย์', value: 'SCB' },
+    { name: 'ธนาคารกรุงศรีอยุธยา', value: 'BAY' },
+    { name: 'ธนาคารทหารไทยธนชาต', value: 'TTB' },
+    { name: 'ธนาคารออมสิน', value: 'GSB' },
+  ]
 
   useEffect(() => {
     if (isCreateAccount) {
@@ -236,7 +256,7 @@ const BookBank = () => {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <TextField
+                    {/* <TextField
                       type="text"
                       name="bank"
                       value={bankData.bank}
@@ -244,7 +264,25 @@ const BookBank = () => {
                         setBankData({ ...bankData, bank: e.target.value })
                       }
                       placeholder="ธนาคาร"
-                    />
+                    /> */}
+                    <FormControl fullWidth>
+                      <InputLabel id="bank-select-label">เลือกบัญชี</InputLabel>
+                      <Select
+                        labelId="bank-select-label"
+                        id="bank-select"
+                        value={bankData.bank || ''}
+                        label="เลือกบัญชี"
+                        onChange={(e) =>
+                          setBankData({ ...bankData, bank: e.target.value })
+                        }
+                      >
+                        {banks.map((b, index) => (
+                          <MenuItem key={index} value={b.value}>
+                            {b.name} - {b.value}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </TableCell>
                   <TableCell>
                     <TextField
@@ -293,7 +331,7 @@ const BookBank = () => {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <TextField
+                    {/* <TextField
                       type="text"
                       name="bank"
                       onChange={(e) =>
@@ -302,7 +340,25 @@ const BookBank = () => {
                       placeholder="ธนาคาร"
                       error={Boolean(errors.bank)}
                       helperText={errors.bank}
-                    />
+                    /> */}
+                    <FormControl fullWidth>
+                      <InputLabel id="bank-select-label">เลือกบัญชี</InputLabel>
+                      <Select
+                        labelId="bank-select-label"
+                        id="bank-select"
+                        value={bankData.bank || ''}
+                        label="เลือกบัญชี"
+                        onChange={(e) =>
+                          setBankData({ ...bankData, bank: e.target.value })
+                        }
+                      >
+                        {banks.map((b, index) => (
+                          <MenuItem key={index} value={b.value}>
+                            {b.name} - {b.value}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </TableCell>
                   <TableCell>
                     <TextField
