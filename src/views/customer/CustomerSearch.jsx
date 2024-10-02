@@ -140,8 +140,8 @@ export default function CustomerSearch() {
                       </TableCell>
                       <TableCell>{order.address}</TableCell>
                       <TableCell>{order.district}</TableCell>
-                      <TableCell>{order.sub_area}</TableCell>
-                      <TableCell>{order.sub_district}</TableCell>
+                      <TableCell>{order.amphure}</TableCell>
+                      <TableCell>{order.province}</TableCell>
                       <TableCell>{order.postcode}</TableCell>
                       <TableCell>{order.tel}</TableCell>
                       <TableCell>
