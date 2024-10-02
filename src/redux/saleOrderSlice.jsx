@@ -88,6 +88,9 @@ const saleOrderSlice = createSlice({
         (order) => order.name.toLowerCase().includes(searchTerm) // แก้ไขตาม key ที่ถูกต้อง
       )
     },
+    editOrder: (state, action) => {
+      state.order.isPayment = false
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -122,6 +125,7 @@ export const {
   calculateTotalPrice,
   calculateTotalExpressPrice,
   searchNameFacebook,
+  editOrder,
 } = saleOrderSlice.actions
 
 export default saleOrderSlice.reducer

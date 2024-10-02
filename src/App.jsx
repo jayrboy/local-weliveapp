@@ -55,6 +55,7 @@ import TermOfServices from './views/TermOfServices'
 
 import Profile from './views/Profile'
 import BookBank from './views/BookBank'
+import CustomerByOrderV3 from './views/customer/CustomerByOrderV3'
 
 // export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 export const baseURL = 'https://api-weliveapp.azurewebsites.net'
@@ -199,8 +200,12 @@ function App() {
           }
         />
 
+        {/* เก็บรูปภาพเป็น text ด้วยไลบรารี Quill */}
         {/* <Route path="/order/:id" element={<CustomerByOrder />} /> */}
-        <Route path="/order/:id" element={<CustomerByOrderV2 />} />
+        {/* <Route path="/order/:id" element={<CustomerByOrderV2 />} /> */}
+
+        {/* เก็บรูปภาพเป็น text ด้วย React.jsx และ Node.js */}
+        <Route path="/order/:id" element={<CustomerByOrderV3 />} />
 
         {/* Admin */}
         <Route
