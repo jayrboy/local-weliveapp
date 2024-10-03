@@ -27,8 +27,8 @@ export default function HeaderBar() {
   const onClickLogout = () => {
     dispatch(logout())
     handleClose()
-    // navigate('/auth/login')
-    navigate('/login')
+    navigate('/auth/login')
+    // navigate('/login')
   }
 
   const [anchorEl, setAnchorEl] = useState(null)

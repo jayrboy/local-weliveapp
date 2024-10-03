@@ -1,10 +1,16 @@
-import React from 'react'
+import { baseURL } from '../App'
+import React, { useState } from 'react'
 import Logo from '../assets/logo-192-1.png'
 import { useNavigate, Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { Paper, Box, Grid, Typography } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import { login } from '../redux/userSlice'
+import { Paper, Box, Grid, Typography, Button } from '@mui/material'
 import FacebookLoginSDK from '../components/FacebookLoginSDK'
 import LoadingFn from '../components/LoadingFn'
+
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
 function Copyright(props) {
   return (
@@ -28,13 +34,51 @@ function Copyright(props) {
 const LoginFB = () => {
   const navigate = useNavigate()
   const { isLoading } = useSelector((state) => state.user)
+  const dispatch = useDispatch()
+  let [isDisable, setIsDisable] = useState(false)
 
   function roleRedirect(role) {
     if (role === 'admin') {
-      navigate('/admin/home')
+      navigate('/dashboard')
     } else {
-      navigate('/admin/home')
+      navigate('/dashboard')
     }
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    setIsDisable(true)
+
+    let formData = {
+      username: 'admin',
+      password: '1234',
+    }
+
+    return await axios({
+      method: 'POST',
+      url: `${baseURL}/api/login`,
+      data: formData,
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((result) => {
+        console.log(result.data)
+        toast.success(result.data.payload.user.username + ' login successfully')
+        dispatch(
+          login({
+            username: result.data.payload.user.username,
+            role: result.data.payload.user.role,
+            picture: result.data.payload.user.picture,
+            token: result.data.token,
+          })
+        )
+        localStorage.setItem('token', result.data.token)
+
+        //TODO: remove comment, this redirect shouldn't need to be re-render from path login.
+        roleRedirect(result.data.payload.user.role)
+      })
+      .catch((err) => {
+        toast.error(err.response.data)
+      })
   }
 
   return (
@@ -80,7 +124,6 @@ const LoginFB = () => {
               <Box display="flex" alignItems="center" sx={{ mb: 3 }}>
                 <img src={Logo} alt="Logo" style={{ height: '100px' }} />
               </Box>
-
               {/* Heading */}
               <Typography
                 variant="h5"
@@ -92,6 +135,28 @@ const LoginFB = () => {
               <Typography variant="body1" sx={{ mb: 4, color: '#666' }}>
                 for Store Online
               </Typography>
+
+              {/* Login Admin */}
+              <Box>
+                <Button
+                  type="button"
+                  variant="contained"
+                  color="inherit"
+                  sx={{ mb: 2 }}
+                  startIcon={<AccountCircleIcon />}
+                  onClick={handleSubmit}
+                  disabled={isDisable}
+                  style={{
+                    color: 'black',
+                    textTransform: 'capitalize',
+                    fontSize: '16px',
+                    height: '40px',
+                    width: '300px',
+                  }}
+                >
+                  เข้าสู่ระบบด้วยบัญชีแอดมิน
+                </Button>
+              </Box>
 
               {/* Facebook Login */}
               <FacebookLoginSDK />

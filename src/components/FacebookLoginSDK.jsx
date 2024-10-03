@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { login, onLoading, onLoaded } from '../redux/userSlice'
 
-import { Button } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { FaFacebook } from 'react-icons/fa'
 
 import { toast } from 'react-toastify'
@@ -75,7 +75,7 @@ const FacebookLoginSDK = () => {
   }
 
   return (
-    <>
+    <Box>
       <Button
         type="button"
         fullWidth={true}
@@ -92,7 +92,7 @@ const FacebookLoginSDK = () => {
       >
         เข้าสู่ระบบด้วยบัญชี Facebook
       </Button>
-    </>
+    </Box>
   )
 }
 
