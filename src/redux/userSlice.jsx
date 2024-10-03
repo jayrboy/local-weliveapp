@@ -55,6 +55,7 @@ export const userSlice = createSlice({
         bank: action.payload.bank,
         bankName: action.payload.bankName,
         promptPay: action.payload.promptPay,
+        qrCode: action.payload.qrCode,
       }
       state.user.bank_account.push(newBankAccount) // เพิ่มข้อมูลใหม่เข้าไปใน bank_account
     },

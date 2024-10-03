@@ -1,6 +1,6 @@
 import { baseURL } from '../App'
 import React, { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import {
@@ -37,8 +37,11 @@ import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { ConstructionOutlined } from '@mui/icons-material'
 import ListAltIcon from '@mui/icons-material/ListAlt'
 import DeleteIcon from '@mui/icons-material/Delete'
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch'
 
 import { MdOutlineSearch } from 'react-icons/md'
+
+import promptPayImg from '../assets/promptPay.jpg'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -52,6 +55,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const BookBank = () => {
   const dispatch = useDispatch()
+  const navigator = useNavigate()
+
   let { user, isCreateAccount, isEditAccount } = useSelector(
     (state) => state.user
   )
@@ -63,6 +68,7 @@ const BookBank = () => {
     bank: '',
     bankName: '',
     promptPay: '',
+    qrCode: '',
   })
   let [errors, setErrors] = useState({})
 
@@ -78,6 +84,8 @@ const BookBank = () => {
     { name: 'ธนาคารทหารไทยธนชาต', value: 'TTB' },
     { name: 'ธนาคารออมสิน', value: 'GSB' },
   ]
+
+  const [imageBase64, setImageBase64] = useState('')
 
   useEffect(() => {
     if (isCreateAccount) {
@@ -139,6 +147,7 @@ const BookBank = () => {
       bank: doc.bank,
       bankName: doc.bankName,
       promptPay: doc.promptPay,
+      qrCode: doc.qrCode,
     })
     setSelectedId(doc.id)
   }
@@ -147,6 +156,27 @@ const BookBank = () => {
     dispatch(updateBankAccount(bankData))
     setSelectedId('')
     dispatch(onEditAccount())
+  }
+
+  //! Handle Image Change
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      // Check file size
+      if (file.size > 500 * 1024) {
+        // 500 KB
+        toast.warning('ไฟล์ต้องมีขนาดไม่เกิน 500 KB')
+        return
+      }
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setBankData((prevData) => ({
+          ...prevData,
+          qrCode: reader.result, // Set image as Base64
+        }))
+      }
+      reader.readAsDataURL(file) // Read the file as Data URL
+    }
   }
 
   const onCreateBank = () => {
@@ -160,7 +190,6 @@ const BookBank = () => {
       setErrors(newErrors)
       return // หยุดการทำงานหากมีข้อผิดพลาด
     }
-
     setSelectedId('')
     dispatch(createBankAccount(bankData)) // ส่งข้อมูลไปยัง Redux
     setIsCreateBank(false) // ปิดฟอร์มหลังจากสร้างบัญชี
@@ -203,11 +232,12 @@ const BookBank = () => {
                 <TableCell>
                   <strong>พร้อมเพย์</strong>
                 </TableCell>
-                {selectedId && (
-                  <TableCell>
-                    <strong>จัดการ</strong>
-                  </TableCell>
-                )}
+                <TableCell>
+                  <strong>QR Code</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>จัดการ</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -226,6 +256,16 @@ const BookBank = () => {
                     <TableCell>{doc.bankName}</TableCell>
                     <TableCell>{doc.bankID}</TableCell>
                     <TableCell>{doc.promptPay}</TableCell>
+                    <TableCell>
+                      <img
+                        src={doc.qrCode}
+                        alt=""
+                        style={{
+                          height: '100px', // ความสูงปรับตามสัดส่วน
+                          objectFit: 'cover', // ปรับการแสดงผลของรูปภาพ
+                        }}
+                      />
+                    </TableCell>
                     <TableCell>
                       {selectedId && (
                         <IconButton
@@ -317,6 +357,24 @@ const BookBank = () => {
                       placeholder="พร้อมเพย์"
                     />
                   </TableCell>
+                  <TableCell>
+                    <input
+                      accept="image/*"
+                      id="upload-button-file"
+                      type="file"
+                      style={{ display: 'none' }}
+                      onChange={handleImageChange}
+                    />
+                    <label htmlFor="upload-button-file">
+                      <Button
+                        variant="contained"
+                        component="span"
+                        color="inherit"
+                      >
+                        Reupload
+                      </Button>
+                    </label>
+                  </TableCell>
                 </TableRow>
               )}
               {isCreateBank && (
@@ -331,16 +389,6 @@ const BookBank = () => {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    {/* <TextField
-                      type="text"
-                      name="bank"
-                      onChange={(e) =>
-                        setBankData({ ...bankData, bank: e.target.value })
-                      }
-                      placeholder="ธนาคาร"
-                      error={Boolean(errors.bank)}
-                      helperText={errors.bank}
-                    /> */}
                     <FormControl fullWidth>
                       <InputLabel id="bank-select-label">เลือกบัญชี</InputLabel>
                       <Select
@@ -384,6 +432,7 @@ const BookBank = () => {
                       helperText={errors.bankID}
                     />
                   </TableCell>
+
                   <TableCell>
                     <TextField
                       type="text"
@@ -393,6 +442,35 @@ const BookBank = () => {
                       }
                       placeholder="พร้อมเพย์"
                     />
+                  </TableCell>
+
+                  <TableCell>
+                    <img
+                      src={bankData.qrCode}
+                      style={{
+                        height: '100px', // ความสูงปรับตามสัดส่วน
+                        objectFit: 'cover', // ปรับการแสดงผลของรูปภาพ
+                      }}
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <input
+                      accept="image/*"
+                      id="upload-button-file"
+                      type="file"
+                      style={{ display: 'none' }}
+                      onChange={handleImageChange}
+                    />
+                    <label htmlFor="upload-button-file">
+                      <Button
+                        variant="contained"
+                        component="span"
+                        color="inherit"
+                      >
+                        Upload
+                      </Button>
+                    </label>
                   </TableCell>
                 </TableRow>
               )}
