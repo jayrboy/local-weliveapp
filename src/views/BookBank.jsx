@@ -40,6 +40,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch'
 
 import { MdOutlineSearch } from 'react-icons/md'
+import { MdGrid3X3 } from 'react-icons/md'
 
 import promptPayImg from '../assets/promptPay.jpg'
 
@@ -84,8 +85,6 @@ const BookBank = () => {
     { name: 'ธนาคารทหารไทยธนชาต', value: 'TTB' },
     { name: 'ธนาคารออมสิน', value: 'GSB' },
   ]
-
-  const [imageBase64, setImageBase64] = useState('')
 
   useEffect(() => {
     if (isCreateAccount) {
@@ -139,25 +138,6 @@ const BookBank = () => {
     }
   }, [user])
 
-  const onClickRadio = (doc) => {
-    setIsCreateBank(false) // ปิดฟอร์มหลังจากสร้างบัญชี
-    setBankData({
-      id: doc.id,
-      bankID: doc.bankID,
-      bank: doc.bank,
-      bankName: doc.bankName,
-      promptPay: doc.promptPay,
-      qrCode: doc.qrCode,
-    })
-    setSelectedId(doc.id)
-  }
-
-  const onEditBank = () => {
-    dispatch(updateBankAccount(bankData))
-    setSelectedId('')
-    dispatch(onEditAccount())
-  }
-
   //! Handle Image Change
   const handleImageChange = (e) => {
     const file = e.target.files[0]
@@ -196,6 +176,25 @@ const BookBank = () => {
     dispatch(onCreateAccount())
   }
 
+  const onClickRadio = (doc) => {
+    setIsCreateBank(false) // ปิดฟอร์มหลังจากสร้างบัญชี
+    setBankData({
+      id: doc.id,
+      bankID: doc.bankID,
+      bank: doc.bank,
+      bankName: doc.bankName,
+      promptPay: doc.promptPay,
+      qrCode: doc.qrCode,
+    })
+    setSelectedId(doc.id)
+  }
+
+  const onEditBank = () => {
+    dispatch(updateBankAccount(bankData))
+    setSelectedId('')
+    dispatch(onEditAccount())
+  }
+
   let showData = (
     <div className="position-relative m-3">
       <div className="d-flex mb-1 justify-content-end mb-2">
@@ -209,16 +208,20 @@ const BookBank = () => {
           {isCreateBank ? 'ปิดฟอร์ม' : 'เพิ่มบัญชีใหม่'}
         </Button>
       </div>
+
       <form>
         <TableContainer component={Paper}>
           <Table>
             <caption className="ms-3">
               <small>พบข้อมูลทั้งหมด {user.bank_account.length} รายการ</small>
             </caption>
+
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <strong>#</strong>
+                  <strong>
+                    <MdGrid3X3 />
+                  </strong>
                 </TableCell>
                 <TableCell>
                   <strong>ธนาคาร</strong>
@@ -235,11 +238,14 @@ const BookBank = () => {
                 <TableCell>
                   <strong>QR Code</strong>
                 </TableCell>
-                <TableCell>
-                  <strong>จัดการ</strong>
-                </TableCell>
+                {(selectedId || isCreateBank) && (
+                  <TableCell>
+                    <strong>จัดการ</strong>
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
+
             <TableBody>
               {user.bank_account.map((doc) => {
                 return (
@@ -266,8 +272,8 @@ const BookBank = () => {
                         }}
                       />
                     </TableCell>
-                    <TableCell>
-                      {selectedId && (
+                    {(selectedId || isCreateBank) && (
+                      <TableCell>
                         <IconButton
                           variant="contained"
                           color="error"
@@ -279,11 +285,115 @@ const BookBank = () => {
                         >
                           <DeleteIcon />
                         </IconButton>
-                      )}
-                    </TableCell>
+                      </TableCell>
+                    )}
                   </StyledTableRow>
                 )
               })}
+
+              {isCreateBank && (
+                <TableRow>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={onCreateBank}
+                    >
+                      {isCreateBank ? 'บันทึก' : 'กำลังบันทึก...'}
+                    </Button>
+                  </TableCell>
+
+                  <TableCell>
+                    <FormControl fullWidth>
+                      <InputLabel id="bank-select-label">เลือกบัญชี</InputLabel>
+                      <Select
+                        labelId="bank-select-label"
+                        id="bank-select"
+                        value={bankData.bank || ''}
+                        label="เลือกบัญชี"
+                        onChange={(e) =>
+                          setBankData({ ...bankData, bank: e.target.value })
+                        }
+                      >
+                        {banks.map((b, index) => (
+                          <MenuItem key={index} value={b.value}>
+                            {b.name} - {b.value}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </TableCell>
+
+                  <TableCell>
+                    <TextField
+                      type="text"
+                      name="bankName"
+                      onChange={(e) =>
+                        setBankData({ ...bankData, bankName: e.target.value })
+                      }
+                      placeholder="ชื่อบัญชี"
+                      error={Boolean(errors.bankName)}
+                      helperText={errors.bankName}
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <TextField
+                      type="text"
+                      name="bankID"
+                      onChange={(e) =>
+                        setBankData({ ...bankData, bankID: e.target.value })
+                      }
+                      placeholder="เลขบัญชี"
+                      error={Boolean(errors.bankID)}
+                      helperText={errors.bankID}
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <TextField
+                      type="text"
+                      name="promptPay"
+                      onChange={(e) =>
+                        setBankData({ ...bankData, promptPay: e.target.value })
+                      }
+                      placeholder="พร้อมเพย์"
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <img
+                      src={bankData.qrCode}
+                      style={{
+                        height: '100px', // ความสูงปรับตามสัดส่วน
+                        objectFit: 'cover', // ปรับการแสดงผลของรูปภาพ
+                      }}
+                    />
+                  </TableCell>
+
+                  {isCreateBank && (
+                    <TableCell>
+                      <input
+                        accept="image/*"
+                        id="upload-button-file"
+                        type="file"
+                        style={{ display: 'none' }}
+                        onChange={handleImageChange}
+                      />
+                      <label htmlFor="upload-button-file">
+                        <Button
+                          variant="contained"
+                          component="span"
+                          color="inherit"
+                        >
+                          Upload
+                        </Button>
+                      </label>
+                    </TableCell>
+                  )}
+                </TableRow>
+              )}
+
               {selectedId && (
                 <TableRow>
                   <TableCell>
@@ -296,15 +406,6 @@ const BookBank = () => {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    {/* <TextField
-                      type="text"
-                      name="bank"
-                      value={bankData.bank}
-                      onChange={(e) =>
-                        setBankData({ ...bankData, bank: e.target.value })
-                      }
-                      placeholder="ธนาคาร"
-                    /> */}
                     <FormControl fullWidth>
                       <InputLabel id="bank-select-label">เลือกบัญชี</InputLabel>
                       <Select
@@ -357,92 +458,6 @@ const BookBank = () => {
                       placeholder="พร้อมเพย์"
                     />
                   </TableCell>
-                  <TableCell>
-                    <input
-                      accept="image/*"
-                      id="upload-button-file"
-                      type="file"
-                      style={{ display: 'none' }}
-                      onChange={handleImageChange}
-                    />
-                    <label htmlFor="upload-button-file">
-                      <Button
-                        variant="contained"
-                        component="span"
-                        color="inherit"
-                      >
-                        Reupload
-                      </Button>
-                    </label>
-                  </TableCell>
-                </TableRow>
-              )}
-              {isCreateBank && (
-                <TableRow>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={onCreateBank}
-                    >
-                      {isCreateBank ? 'บันทึก' : 'กำลังบันทึก...'}
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <FormControl fullWidth>
-                      <InputLabel id="bank-select-label">เลือกบัญชี</InputLabel>
-                      <Select
-                        labelId="bank-select-label"
-                        id="bank-select"
-                        value={bankData.bank || ''}
-                        label="เลือกบัญชี"
-                        onChange={(e) =>
-                          setBankData({ ...bankData, bank: e.target.value })
-                        }
-                      >
-                        {banks.map((b, index) => (
-                          <MenuItem key={index} value={b.value}>
-                            {b.name} - {b.value}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      type="text"
-                      name="bankName"
-                      onChange={(e) =>
-                        setBankData({ ...bankData, bankName: e.target.value })
-                      }
-                      placeholder="ชื่อบัญชี"
-                      error={Boolean(errors.bankName)}
-                      helperText={errors.bankName}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      type="text"
-                      name="bankID"
-                      onChange={(e) =>
-                        setBankData({ ...bankData, bankID: e.target.value })
-                      }
-                      placeholder="เลขบัญชี"
-                      error={Boolean(errors.bankID)}
-                      helperText={errors.bankID}
-                    />
-                  </TableCell>
-
-                  <TableCell>
-                    <TextField
-                      type="text"
-                      name="promptPay"
-                      onChange={(e) =>
-                        setBankData({ ...bankData, promptPay: e.target.value })
-                      }
-                      placeholder="พร้อมเพย์"
-                    />
-                  </TableCell>
 
                   <TableCell>
                     <img
@@ -454,24 +469,26 @@ const BookBank = () => {
                     />
                   </TableCell>
 
-                  <TableCell>
-                    <input
-                      accept="image/*"
-                      id="upload-button-file"
-                      type="file"
-                      style={{ display: 'none' }}
-                      onChange={handleImageChange}
-                    />
-                    <label htmlFor="upload-button-file">
-                      <Button
-                        variant="contained"
-                        component="span"
-                        color="inherit"
-                      >
-                        Upload
-                      </Button>
-                    </label>
-                  </TableCell>
+                  {selectedId && (
+                    <TableCell>
+                      <input
+                        accept="image/*"
+                        id="upload-button-file"
+                        type="file"
+                        style={{ display: 'none' }}
+                        onChange={handleImageChange}
+                      />
+                      <label htmlFor="upload-button-file">
+                        <Button
+                          variant="contained"
+                          component="span"
+                          color="inherit"
+                        >
+                          {bankData.qrCode ? 'Reupload' : 'Upload'}
+                        </Button>
+                      </label>
+                    </TableCell>
+                  )}
                 </TableRow>
               )}
             </TableBody>

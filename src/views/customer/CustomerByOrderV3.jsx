@@ -315,8 +315,21 @@ export default function CustomerByOrderV3() {
                 <br />
                 ชื่อบัญชี {b.bankName}
                 <br />
-                พร้อมเพย์ {b.promptPay}
                 <br />
+                {b.qrCode ? (
+                  <div className="text-center">
+                    <img
+                      src={b.qrCode}
+                      alt="PromptPay"
+                      style={{
+                        height: '300px', // ความสูงปรับตามสัดส่วน
+                        objectFit: 'cover', // ปรับการแสดงผลของรูปภาพ
+                      }}
+                    />
+                  </div>
+                ) : (
+                  `พร้อมเพย์ ${b.promptPay}`
+                )}
                 --------------------------------------------
               </React.Fragment>
             ))}
