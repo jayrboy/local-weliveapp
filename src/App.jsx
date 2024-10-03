@@ -58,8 +58,8 @@ import BookBank from './views/BookBank'
 import CustomerByOrderV3 from './views/customer/CustomerByOrderV3'
 
 // export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
-// export const baseURL = 'https://api-weliveapp.azurewebsites.net'
-export const baseURL = 'http://localhost:8000'
+export const baseURL = 'https://api-weliveapp.azurewebsites.net'
+// export const baseURL = 'http://localhost:8000'
 
 function App() {
   const navigate = useNavigate()
