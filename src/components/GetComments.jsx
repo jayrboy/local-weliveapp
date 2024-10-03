@@ -99,6 +99,7 @@ const GetComments = () => {
   // (3) Check Message Code
   async function checkMessageCode(comment) {
     try {
+      const vendorId = localStorage.getItem('vendorId')
       let commentFb = comment.message.trim().toLowerCase() // นำ message ที่มาช่องว่างมา trim แล้วเปลี่ยนเป็น lowercase กรณีเจออักษรพิมพ์ใหญ่
       let idFb = comment.from.id
       let nameFb = comment.from.name
@@ -109,15 +110,14 @@ const GetComments = () => {
         let code = parts[0] // รหัสสินค้า
         let quantity = parseInt(parts[1]) // จำนวนสินค้า
 
+        //? อ่านข้อมูล "รายการขายสินค้ารายวัน" โดยอ่านข้อมูลเฉพาะสถานะ "new" ของวันล่าสุด
         let response = await fetch(`${baseURL}/api/daily/new-status`)
         let data = await response.json()
         let dailyStock = data
 
         dailyStock.products.forEach((p) => {
           if (code === p.code.toLowerCase()) {
-            console.log('ชื่อลูกค้า :', nameFb)
-            console.log('ชื่อสินค้า :', p.name)
-            console.log('จำนวนที่สั่ง :', quantity)
+            toast(`คุณ ${nameFb} สั่งซื้อ ${p.name} จำนวนที่สั่ง ${quantity}`)
 
             if (quantity <= p.remaining_cf) {
               // จำนวนสินค้าที่สั่งเข้ามา น้อยกว่า สินค้าคงเหลือ
@@ -138,9 +138,7 @@ const GetComments = () => {
             // จัดรูปข้อมูลสำหรับการส่ง API
             let orderData = {
               idFb: idFb,
-              name: nameFb,
-              email: '',
-              picture_profile: [],
+              nameFb: nameFb,
               orders: [
                 {
                   id: p._id,
@@ -149,19 +147,10 @@ const GetComments = () => {
                   price: p.price,
                 },
               ],
-              picture_payment: '',
-              address: '',
-              province: '',
-              amphure: '',
-              district: '',
-              postcode: '',
-              tel: '',
-              complete: false,
-              sended: false,
-              express: '',
+              vendorId: vendorId || '65feb6291f7e46ed630b4e20',
               date_added: new Date().toISOString(),
             }
-
+            // สร้างรายการออเดอร์ และเรียก getOrders เพื่ออัปเดต Redux state
             fetch(`${baseURL}/api/sale-order`, {
               method: 'POST',
               headers: {
@@ -169,27 +158,22 @@ const GetComments = () => {
               },
               body: JSON.stringify(orderData),
             })
-              .then(async (resp) => {
-                console.log('Document sales order saved')
-
-                // เรียก getOrders เพื่ออัปเดต Redux state
-                dispatch(getOrders())
-
-                // const psid = await getPSID(idFb, pageAccessToken) // ใช้ userAccessToken สำหรับ getPSID
-
-                // if (psid) {
-                //   await sendMessageToPSID(
-                //     psid,
-                //     `นี่คือลิงก์ออเดอร์ของคุณ: https://weliveapp.netlify.app/order/${data._id}`,
-                //     pageAccessToken // ใช้ pageAccessToken สำหรับการส่งข้อความ
-                //   )
-                // }
-              })
+              .then((resp) => dispatch(getOrders()))
               .catch((err) => console.log(err))
+
+            //! PSID ยังใช้งานจริงไม่ได้อยู่ในระหว่างรอการพัฒนา...
+            // const psid = await getPSID(idFb, pageAccessToken) // ใช้ userAccessToken สำหรับ getPSID
+            // if (psid) {
+            //   await sendMessageToPSID(
+            //     psid,
+            //     `นี่คือลิงก์ออเดอร์ของคุณ: https://weliveapp.netlify.app/order/${data._id}`,
+            //     pageAccessToken // ใช้ pageAccessToken สำหรับการส่งข้อความ
+            //   )
+            // }
           }
         })
 
-        // อัปเดต dailyStock ในฐานข้อมูล
+        //? อัปเดต dailyStock ในฐานข้อมูล และเรียก getAllDaily เพื่ออัปเดต Redux state
         fetch(`${baseURL}/api/daily/update`, {
           method: 'PUT',
           headers: {
@@ -197,16 +181,11 @@ const GetComments = () => {
           },
           body: JSON.stringify(dailyStock),
         })
-          .then((resp) => {
-            console.log('Document daily stock updated')
-
-            // เรียก getAllDaily เพื่ออัปเดต Redux state
-            dispatch(getAllDaily())
-          })
-          .catch((err) => console.log(err))
+          .then((resp) => dispatch(getAllDaily()))
+          .catch((err) => toast.warning('อัปเดตรายการสินค้าไม่สำเร็จ'))
       }
 
-      //TODO: check Cancel (cc)
+      //! Check Cancel - ลูกค้าคอมเม้นท์ "cc" หรือ "CC" ยกเลิกออเดอร์
       // if (commentFb && commentFb.startsWith('CC')) {
       //   let parts = commentFb.split(' ') // split "cf a2=2" into an array ["cf","a2=2"]
       //   console.log('Have message "cc or CC" :', commentFb)

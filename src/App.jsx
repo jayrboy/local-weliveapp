@@ -122,13 +122,14 @@ function App() {
                 pages: data.pages,
               })
             )
+            localStorage.setItem('vendorId', data._id)
             setLoading(false)
           } else {
             throw new Error('Invalid token')
           }
         })
         .catch((err) => {
-          toast.error('Token หมดอายุหรือไม่ถูกต้อง: ' + err.message)
+          toast.error('Token หมดอายุ/ไม่ถูกต้อง')
           setLoading(false)
           window.location.reload()
           localStorage.clear()
