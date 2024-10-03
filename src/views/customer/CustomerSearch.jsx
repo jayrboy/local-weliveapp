@@ -146,25 +146,45 @@ export default function CustomerSearch() {
                       <TableCell>{order.tel}</TableCell>
                       <TableCell>
                         {order.sended ? (
-                          <p className="text-success">ส่งสินค้าแล้ว</p>
-                        ) : order.isDelete ? (
-                          <p className="text-danger">ปฏิเสธ/หมดเวลา</p>
-                        ) : (
-                          <Typography
-                            sx={{
-                              display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
-                              alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
-                              textAlign: 'center',
-                            }}
-                          >
-                            <span className="text-warning">
-                              รอแพ็คสินค้า/จัดส่ง
-                            </span>
-                            &nbsp;
-                            <Tooltip title="กรุณาแนบเลขพัสดุที่ออเดอร์ลูกค้า">
-                              <ErrorIcon color="warning" />
-                            </Tooltip>
+                          <Typography className="text-success">
+                            ส่งสินค้าแล้ว
                           </Typography>
+                        ) : order.isDelete ? (
+                          <Typography className="text-danger">
+                            ปฏิเสธ/หมดเวลา
+                          </Typography>
+                        ) : (
+                          <>
+                            {order.isPayment ? (
+                              <Typography
+                                sx={{
+                                  display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
+                                  alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                                  textAlign: 'center',
+                                }}
+                              >
+                                <span className="text-warning">
+                                  รอแพ็คสินค้า/จัดส่ง
+                                </span>
+                                &nbsp;
+                                <Tooltip title="กรุณาแนบเลขพัสดุที่ออเดอร์ลูกค้า">
+                                  <ErrorIcon color="warning" />
+                                </Tooltip>
+                              </Typography>
+                            ) : (
+                              <Typography
+                                sx={{
+                                  display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
+                                  alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                                  textAlign: 'center',
+                                }}
+                              >
+                                <span className="text-secondary">
+                                  ยังไม่ชำระเงิน
+                                </span>
+                              </Typography>
+                            )}
+                          </>
                         )}
                       </TableCell>
                     </StyledTableRow>

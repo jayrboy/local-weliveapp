@@ -14,6 +14,7 @@ import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
 
 import { Button, Checkbox, TextField, Radio } from '@mui/material'
+import { toast } from 'react-toastify'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -53,7 +54,7 @@ export default function ExpressList() {
         }
       })
       .catch((e) => alert(e))
-  }, [])
+  }, [selectedId])
 
   const showData = (data) => {
     let updateForm = (
@@ -85,14 +86,27 @@ export default function ExpressList() {
                   <TableCell>
                     <MdGrid3X3 />
                   </TableCell>
-                  <TableCell>ชื่อขนส่ง</TableCell>
-                  <TableCell>ค่าส่งเริ่มต้น</TableCell>
-                  <TableCell>ค่าส่งชิ้นต่อไป</TableCell>
-                  <TableCell>ค่าส่งสูงสุด</TableCell>
-                  <TableCell>ส่งฟรีต่อเมื่อยอดถึง</TableCell>
-                  <TableCell>วันที่เริ่มใช้</TableCell>
+                  <TableCell>
+                    <strong>ชื่อขนส่ง</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>ค่าส่งเริ่มต้น</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>ค่าส่งชิ้นต่อไป</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>ค่าส่งสูงสุด</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>ส่งฟรีต่อเมื่อยอดถึง</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>วันที่เริ่มใช้</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
                 {data.map((doc) => {
                   let dt = new Date(Date.parse(doc.date_start))
@@ -110,9 +124,9 @@ export default function ExpressList() {
                       <TableCell>
                         <Radio
                           color="primary"
-                          checked={selectedId === doc.id}
+                          checked={selectedId == doc._id}
                           onChange={() => onClickRadio(doc)}
-                          value={doc.id}
+                          value={doc._id}
                         />
                       </TableCell>
 
@@ -197,14 +211,39 @@ export default function ExpressList() {
     setData(updateForm)
   }
 
+  //เมื่อ radio บนรายการใดถูกคลิก (ในที่นี้เลือกใช้ click แทน change)
+  //ก็อ่านข้อมูลในแต่ละฟิลต์จาก document ที่ผ่านเข้ามา แล้วเติมลงในฟอร์ม
+  const onClickRadio = (doc) => {
+    setSelectedId(doc._id)
+
+    exname.current.value = doc.exname
+    fprice.current.value = doc.fprice
+    sprice.current.value = doc.sprice
+    maxprice.current.value = doc.maxprice
+    whenfprice.current.value = doc.whenfprice
+    // date_start.current.value = doc.date_start
+
+    let dt = new Date(Date.parse(doc.date_start))
+    let y = dt.getFullYear()
+    let m = dt.getMonth() + 1
+    //ค่าที่จะกำหนดให้แก่อินพุตชนิด date ต้องเป็นรูปแบบ yyyy-mm-dd
+    //สำหรับเดือนและวันที่ หากเป็นเลขตัวเดียวต้องเติม 0 ข้างหน้า
+    m = m >= 10 ? m : '0' + m
+    let d = dt.getDate()
+    d = d >= 10 ? d : '0' + d
+    date_start.current.value = `${y}-${m}-${d}`
+  }
+
   const onSubmitForm = (event) => {
-    console.log('Submit')
     event.preventDefault()
-    if (!window.confirm('ยืนยันการแก้ไขรายการนี้')) {
-      return
-    }
+    // if (!window.confirm('ยืนยันการแก้ไขรายการนี้')) {
+    //   return
+    // }
     const fd = new FormData(form.current)
+    fd.append('_id', selectedId)
+
     const fe = Object.fromEntries(fd.entries())
+    // console.log('Submit :', fe)
 
     fetch(`${baseURL}/api/ex/update`, {
       method: 'POST',
@@ -220,31 +259,10 @@ export default function ExpressList() {
           //แล้วส่งกลับมา เราก็นำมาแสดงผลอีกครั้ง
           showData(result)
           form.current.reset()
-          alert('ข้อมูลถูกแก้ไขแล้ว')
+          toast.success('บันทึกข้อมูลสำเร็จ')
         }
       })
-      .catch((err) => alert(err))
-  }
-
-  //เมื่อ radio บนรายการใดถูกคลิก (ในที่นี้เลือกใช้ click แทน change)
-  //ก็อ่านข้อมูลในแต่ละฟิลต์จาก document ที่ผ่านเข้ามา แล้วเติมลงในฟอร์ม
-  const onClickRadio = (doc) => {
-    exname.current.value = doc.exname
-    fprice.current.value = doc.fprice
-    sprice.current.value = doc.sprice
-    maxprice.current.value = doc.maxprice
-    whenfprice.current.value = doc.whenfprice
-    date_start.current.value = doc.date_start
-
-    let dt = new Date(Date.parse(doc.date_start))
-    let y = dt.getFullYear()
-    let m = dt.getMonth() + 1
-    //ค่าที่จะกำหนดให้แก่อินพุตชนิด date ต้องเป็นรูปแบบ yyyy-mm-dd
-    //สำหรับเดือนและวันที่ หากเป็นเลขตัวเดียวต้องเติม 0 ข้างหน้า
-    m = m >= 10 ? m : '0' + m
-    let d = dt.getDate()
-    d = d >= 10 ? d : '0' + d
-    date_start.current.value = `${y}-${m}-${d}`
+      .catch((err) => toast.warning('แก้ไขข้อมูลไม่สำเร็จ'))
   }
 
   return (

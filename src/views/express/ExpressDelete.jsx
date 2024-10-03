@@ -2,16 +2,20 @@ import { baseURL } from '../../App'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
-import Paper from '@mui/material/Paper'
-import TableContainer from '@mui/material/TableContainer'
-import Table from '@mui/material/Table'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import { styled } from '@mui/material/styles'
-
-import { Button, Checkbox, TextField } from '@mui/material'
+import {
+  Paper,
+  TableContainer,
+  Table,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  styled,
+  Button,
+  Radio,
+  TextField,
+} from '@mui/material'
+import { toast } from 'react-toastify'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -24,6 +28,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }))
 
 export default function ExpressDelete() {
+  let [selectedId, setSelectedId] = useState('')
   let [data, setData] = useState('')
   const form = useRef()
   const navigate = useNavigate()
@@ -46,7 +51,7 @@ export default function ExpressDelete() {
       })
       .catch((err) => alert(err))
     // eslint-disable-next-line
-  }, [])
+  }, [selectedId])
 
   const showData = (result) => {
     let deleteForm = (
@@ -106,13 +111,13 @@ export default function ExpressDelete() {
                         {/* เมื่อคลิก radio บนรายการใด เราก็แนบ document ของรายการนั้น
                             ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
                         */}
-                        <TableCell
-                          name="_id"
-                          padding="radio"
-                          defaultValue={doc._id}
-                          onClick={() => onClickRadio(doc)}
-                        >
-                          <Checkbox color="primary" />
+                        <TableCell>
+                          <Radio
+                            color="primary"
+                            checked={selectedId == doc._id}
+                            onChange={() => setSelectedId(doc._id)}
+                            value={doc._id}
+                          />
                         </TableCell>
 
                         <TableCell>{doc.exname}</TableCell>
@@ -148,6 +153,7 @@ export default function ExpressDelete() {
     }
 
     const fd = new FormData(form.current)
+    fd.append('_id', selectedId)
     const fe = Object.fromEntries(fd.entries())
 
     if (Object.keys(fe).length === 0) {
@@ -166,18 +172,18 @@ export default function ExpressDelete() {
       .then((response) => response.json())
       .then((result) => {
         if (result.error) {
-          alert(result.error)
+          toast.error('เกิดข้อผิดพลาด')
         } else {
           if (result.length === 0) {
             setData('ไม่มีรายการข้อมูล')
           } else {
             showData(result)
           }
-          alert('ข้อมูลถูกลบแล้ว')
+          toast.success('ลบข้อมูลสำเร็จ')
         }
         navigate('/express/delete')
       })
-      .catch((err) => alert(err))
+      .catch((err) => toast.error('โปรดติดต่อทีมงาน'))
   }
 
   return <>{data}</>

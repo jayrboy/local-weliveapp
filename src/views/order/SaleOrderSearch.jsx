@@ -142,9 +142,9 @@ export default function SaleOrderSearch() {
                 <TableCell>
                   <strong>เลขพัสดุสินค้า</strong>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <strong>ขนส่ง</strong>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -178,29 +178,49 @@ export default function SaleOrderSearch() {
                     </TableCell>
                     <TableCell>
                       {order.sended ? (
-                        <p className="text-success">ส่งสินค้าแล้ว</p>
-                      ) : order.isDelete ? (
-                        <p className="text-danger">ปฏิเสธ/หมดเวลา</p>
-                      ) : (
-                        <Typography
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            textAlign: 'center',
-                          }}
-                        >
-                          <span className="text-warning">
-                            รอแพ็คสินค้า/จัดส่ง
-                          </span>
-                          &nbsp;
-                          <Tooltip title="กรุณาแนบเลขพัสดุที่ออเดอร์ลูกค้า">
-                            <ErrorIcon color="warning" />
-                          </Tooltip>
+                        <Typography className="text-success">
+                          ส่งสินค้าแล้ว
                         </Typography>
+                      ) : order.isDelete ? (
+                        <Typography className="text-danger">
+                          ปฏิเสธ/หมดเวลา
+                        </Typography>
+                      ) : (
+                        <>
+                          {order.isPayment ? (
+                            <Typography
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                textAlign: 'center',
+                              }}
+                            >
+                              <span className="text-warning">
+                                รอแพ็คสินค้า/จัดส่ง
+                              </span>
+                              &nbsp;
+                              <Tooltip title="กรุณาแนบเลขพัสดุที่ออเดอร์ลูกค้า">
+                                <ErrorIcon color="warning" />
+                              </Tooltip>
+                            </Typography>
+                          ) : (
+                            <Typography
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                textAlign: 'center',
+                              }}
+                            >
+                              <span className="text-secondary">
+                                ยังไม่ชำระเงิน
+                              </span>
+                            </Typography>
+                          )}
+                        </>
                       )}
                     </TableCell>
                     <TableCell>{order.express}</TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <select className="btn btn-sm btn-outline-secondary">
                         <option>เลือกขนส่ง</option>
                         <option>J&T</option>
@@ -208,7 +228,7 @@ export default function SaleOrderSearch() {
                         <option>Flash</option>
                         <option>EMS</option>
                       </select>
-                    </TableCell>
+                    </TableCell> */}
                   </StyledTableRow>
                 )
               })}
