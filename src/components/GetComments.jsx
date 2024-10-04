@@ -17,7 +17,8 @@ import {
 const GetComments = () => {
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.user) // Long-lived user access token
-  const liveVideoId = localStorage.getItem('liveVideoId')
+  // const liveVideoId = localStorage.getItem('liveVideoId')
+  let liveVideoId = ''
 
   // let liveVideoId = ''
   useEffect(() => {
