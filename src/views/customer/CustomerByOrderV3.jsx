@@ -22,16 +22,23 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Link,
+  IconButton,
+  Snackbar,
+  OutlinedInput,
 } from '@mui/material'
 
+import InputAdornment from '@mui/material/InputAdornment'
 import CreditScoreIcon from '@mui/icons-material/CreditScore'
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 import ErrorIcon from '@mui/icons-material/Error'
+import CachedIcon from '@mui/icons-material/Cached'
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CancelIcon from '@mui/icons-material/Cancel'
+import ShareIcon from '@mui/icons-material/Share'
 
-import { FaRegArrowAltCircleDown } from 'react-icons/fa'
 import { TbTruckDelivery } from 'react-icons/tb'
-import { TfiReload } from 'react-icons/tfi'
-import { RiErrorWarningFill } from 'react-icons/ri'
 
 import {
   getOrder,
@@ -40,6 +47,8 @@ import {
   calculateTotalExpressPrice,
 } from '../../redux/saleOrderSlice'
 import LoadingFn from '../../components/LoadingFn'
+
+import moment from 'moment'
 
 export default function CustomerByOrderV3() {
   const dispatch = useDispatch()
@@ -65,6 +74,31 @@ export default function CustomerByOrderV3() {
   const [zipCode, setZipCode] = useState('') // ค่าที่เลือกไปรษณีย์
 
   const [bankAccount, setBankAccount] = useState([])
+
+  let [currentTime, setCurrentTime] = useState('')
+  let createdAt = order?.createdAt // เวลาที่ได้จาก Redux (createdAt)
+  const threeDaysInMs = 3 * 24 * 60 * 60 * 1000 // 3 วันในหน่วยมิลลิวินาที
+
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (createdAt) {
+      const startDate = moment(createdAt) // แปลง createdAt เป็น moment object
+
+      const intervalId = setInterval(() => {
+        const now = moment()
+        setCurrentTime(now.format('D MMMM YYYY, h:mm:ss a'))
+
+        //TODO: ตรวจสอบว่าเวลาปัจจุบันเลย 3 วันหรือยัง
+        // if (now.diff(startDate) >= threeDaysInMs) {
+        //   handleThreeDaysPassed()
+        //   clearInterval(intervalId) // หยุดการทำงานเมื่อครบ 3 วัน
+        // }
+      }, 1000)
+
+      return () => clearInterval(intervalId)
+    }
+  }, [createdAt])
 
   useEffect(() => {
     if (!zipCode) {
@@ -121,6 +155,12 @@ export default function CustomerByOrderV3() {
     return <LoadingFn />
   }
 
+  const handleThreeDaysPassed = () => {
+    toast.error('ออเดอร์นี้ไม่ชำระเงินภายใน 3 วัน!')
+    console.log('ออเดอร์นี้ไม่ชำระเงินภายใน 3 วัน')
+    // ใส่ฟังก์ชันที่คุณต้องการเรียกเมื่อครบ 3 วัน
+  }
+
   const handleImageChange = (e) => {
     const file = e.target.files[0]
     if (file) {
@@ -141,16 +181,14 @@ export default function CustomerByOrderV3() {
   const cancelPayment = async () => {
     const formData = new FormData()
     formData.append('_id', order._id)
-    formData.append('isPayment', false)
-    formData.append('picture_payment', '') //เก็บรูปภาพเป็น "text"
+    formData.append('isDelete', true)
+    formData.append('updateBy', user.name)
 
     try {
-      await axios.put(`${baseURL}/api/sale-order/j`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      await axios.put(`${baseURL}/api/sale-order/reject`, formData, {
+        headers: { 'Content-Type': 'application/json' },
       })
-      toast.success('ปฎิเสธการชำระข้อมูลสำเร็จ')
+      toast.success('ปฎิเสธการชำระเงินสำเร็จ')
       dispatch(getOrder(id))
     } catch (error) {
       console.error(error)
@@ -273,6 +311,19 @@ export default function CustomerByOrderV3() {
     }
   }
 
+  const handleClick = () => {
+    // คัดลอกข้อความไปยังคลิปบอร์ด
+    navigator.clipboard.writeText(order.express).then(() => {
+      // แสดง Snackbar หลังคัดลอกสำเร็จ
+      setOpen(true)
+
+      // รอสักครู่ก่อนเปลี่ยนไปยังหน้าใหม่ (เช่น 2 วินาทีเพื่อให้ Snackbar แสดงผล)
+      setTimeout(() => {
+        window.location.href = 'https://th.kerryexpress.com/th/home'
+      }, 2000) // รอ 2 วินาทีก่อนเปลี่ยนหน้า
+    })
+  }
+
   let dt = new Date(Date.parse(order.date_added))
   let df = dt.toISOString().substring(0, 10) // แปลงเป็นรูปแบบ YYYY-MM-DD สำหรับ TextField ใน MUI
 
@@ -280,31 +331,43 @@ export default function CustomerByOrderV3() {
 
   return (
     <div className="container position-relative mt-3 mx-auto">
-      <h3 className="text-start mb-3">
+      <Typography variant="h4">
         <span className="text-success ms-2 text-center">
           รายการสั่งซื้อของคุณ {order.name}
           {order.complete && (
             <>
-              <p className="mt-3 text-success">
+              <span className="mt-3 text-success">
+                &nbsp;
                 <CreditScoreIcon /> ชำระเงินแล้ว
-              </p>
+              </span>
               {order.sended && (
                 <>
-                  <p className="mt-3 text-warning">
+                  <span className="mt-3 text-warning">
+                    &nbsp;
                     <LocalShippingIcon /> จัดส่งแล้ว
-                  </p>
+                  </span>
                 </>
               )}
             </>
           )}
         </span>
-      </h3>
+      </Typography>
 
       <div className="card shadow">
         <div className="text-center">
           <br />
-          <span> Order :</span>
-          <span className="text-danger">#{id}</span>
+          <p>
+            <code>**</code>โปรดชำระเงินภายใน 3 วัน หรือ 72 ชั่วโมง
+            <code>**</code>
+            <br />
+            เนื่องจากจำนวนออเดอร์ที่สั่งเข้ามามีจำนวนมาก อาจทำให้สินค้าหมด
+            สามารถแนปสลิปสั่งซื้อ Pre-Order จะได้สินค้าล่าช้าประมาณ 7 - 14 วัน
+          </p>
+          <p>{currentTime}</p>
+          Order :
+          <span className="text-danger">
+            <strong>#{id}</strong>
+          </span>
           <br />
           {bankAccount &&
             bankAccount.map((b) => (
@@ -371,7 +434,19 @@ export default function CustomerByOrderV3() {
               order.orders.map((o, index) => (
                 <TableRow key={o.id}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell>{o.name}</TableCell>
+                  <TableCell>
+                    <Typography
+                      noWrap
+                      style={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        maxWidth: '150px', // ปรับขนาดตามต้องการ
+                      }}
+                    >
+                      {o.name}
+                    </Typography>
+                  </TableCell>
                   <TableCell>{o.quantity}</TableCell>
                   <TableCell>
                     {o.price
@@ -464,7 +539,7 @@ export default function CustomerByOrderV3() {
                   <TextField
                     label="จังหวัด"
                     fullWidth
-                    name="sub_district"
+                    name="province"
                     defaultValue={order.province}
                     disabled={order.isPayment}
                     required
@@ -573,7 +648,6 @@ export default function CustomerByOrderV3() {
                 name="postcode"
                 value={zipCode} // เ ใช้ value แทน defaultValue
                 disabled={order.isPayment}
-                required
               />
             </Grid>
 
@@ -633,9 +707,25 @@ export default function CustomerByOrderV3() {
                   onChange={handleImageChange}
                 />
                 <label htmlFor="upload-button-file">
-                  <Button variant="contained" component="span" color="inherit">
-                    {imageBase64 ? 'อัปโหลดรูปภาพใหม่' : 'อัปโหลดรูปภาพ'}
-                  </Button>
+                  {imageBase64 ? (
+                    <Button
+                      startIcon={<CachedIcon />}
+                      variant="contained"
+                      component="span"
+                      color="inherit"
+                    >
+                      อัปโหลดรูปภาพใหม่
+                    </Button>
+                  ) : (
+                    <Button
+                      startIcon={<ReceiptLongIcon />}
+                      variant="contained"
+                      component="span"
+                      color="inherit"
+                    >
+                      อัปโหลดรูปภาพ
+                    </Button>
+                  )}
                 </label>
               </Grid>
             )}
@@ -653,6 +743,7 @@ export default function CustomerByOrderV3() {
                   variant="contained"
                   color="warning"
                   onClick={onEditData}
+                  disabled={order.sended}
                 >
                   แก้ไขข้อมูล
                 </Button>
@@ -684,7 +775,7 @@ export default function CustomerByOrderV3() {
                     textAlign: 'center',
                   }}
                 >
-                  รอติดตามเลขพัสดุสินค้า &nbsp;
+                  ติดตามเลขพัสดุสินค้า &nbsp;
                   <TbTruckDelivery color="green" size={25} />
                 </Typography>
               </Grid>
@@ -710,18 +801,31 @@ export default function CustomerByOrderV3() {
                   </Typography>
                 ) : (
                   <>
-                    {order.isPayment != '' && (
+                    {order.isPayment && (
                       <>
-                        <Typography
-                          sx={{
-                            display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
-                            alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
-                            textAlign: 'center',
-                          }}
-                        >
-                          รอยืนยันการชำระเงิน&nbsp;
-                          <ErrorIcon color="warning" />
-                        </Typography>
+                        {order.isDelete ? (
+                          <Typography
+                            sx={{
+                              display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
+                              alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                              textAlign: 'center',
+                            }}
+                          >
+                            ออเดอร์นี้ถูกปฎิเสธ/หมดเวลาการชำระเงิน&nbsp;
+                            <ErrorIcon color="error" />
+                          </Typography>
+                        ) : (
+                          <Typography
+                            sx={{
+                              display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
+                              alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
+                              textAlign: 'center',
+                            }}
+                          >
+                            รอยืนยันการชำระเงิน&nbsp;
+                            <ErrorIcon color="warning" />
+                          </Typography>
+                        )}
                       </>
                     )}
                   </>
@@ -731,55 +835,95 @@ export default function CustomerByOrderV3() {
 
             {user.role && !order.complete && (
               <>
-                <Grid
-                  item
-                  xs={6}
-                  container
-                  direction="column"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <Button
-                    type="button"
-                    variant="contained"
-                    color="error"
-                    onClick={cancelPayment}
+                {order.isDelete ? (
+                  <Grid
+                    item
+                    xs={12}
+                    container
+                    direction="column"
+                    alignItems="center"
+                    justifyContent="center"
                   >
-                    ปฎิเสธการชำระเงิน
-                  </Button>
-                </Grid>
+                    <Button type="button" variant="contained" color="error">
+                      ปฎิเสธ/หมดเวลา
+                    </Button>
+                  </Grid>
+                ) : (
+                  <>
+                    <Grid
+                      item
+                      xs={6}
+                      container
+                      direction="column"
+                      alignItems="start"
+                      justifyContent="center"
+                    >
+                      <Button
+                        type="button"
+                        variant="contained"
+                        color="error"
+                        onClick={cancelPayment}
+                        startIcon={<CancelIcon />}
+                      >
+                        ปฎิเสธการชำระเงิน
+                      </Button>
+                    </Grid>
 
-                <Grid
-                  item
-                  xs={6}
-                  container
-                  direction="column"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <Button
-                    type="button"
-                    variant="contained"
-                    color="success"
-                    onClick={confirmPayment}
-                  >
-                    ยืนยันการชำระเงิน
-                  </Button>
-                </Grid>
+                    <Grid
+                      item
+                      xs={6}
+                      container
+                      direction="column"
+                      alignItems="end"
+                      justifyContent="center"
+                    >
+                      <Button
+                        type="button"
+                        variant="contained"
+                        color="success"
+                        onClick={confirmPayment}
+                        endIcon={<CheckCircleIcon />}
+                      >
+                        ยืนยันการชำระเงิน
+                      </Button>
+                    </Grid>
+                  </>
+                )}
               </>
             )}
 
             {order.complete && (
-              <Grid item xs={12}>
-                <TextField
-                  label="เลขติดตามพัสดุสินค้า"
-                  fullWidth
-                  name="express"
-                  defaultValue={order.express}
-                  disabled={order.sended}
-                  required
-                />
-              </Grid>
+              <>
+                <Grid item xs={12}>
+                  <TextField
+                    label="เลขติดตามพัสดุสินค้า"
+                    fullWidth
+                    name="express"
+                    defaultValue={order.express}
+                    disabled={order.sended}
+                    required
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={handleClick} color="primary">
+                            <ShareIcon />
+                          </IconButton>
+                          <Snackbar
+                            message="คัดลอกเลขพัสดุแล้ว"
+                            anchorOrigin={{
+                              vertical: 'top',
+                              horizontal: 'center',
+                            }}
+                            autoHideDuration={2000}
+                            onClose={() => setOpen(false)}
+                            open={open}
+                          />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+              </>
             )}
 
             {(user.role == 'admin' || user.role == 'user') && (
@@ -830,6 +974,8 @@ export default function CustomerByOrderV3() {
           </Grid>
         </form>
       </Paper>
+      <br />
+      <br />
     </div>
   )
 }

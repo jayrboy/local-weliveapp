@@ -104,7 +104,7 @@ const GetComments = () => {
       let idFb = comment.from.id
       let nameFb = comment.from.name
 
-      //TODO: check Confirm (cf)
+      // check Confirm (cf)
       if (commentFb && commentFb.includes('=')) {
         let parts = commentFb.split('=') // split "t2=5" into an array["t2", "5"]
         let code = parts[0] // รหัสสินค้า
@@ -185,11 +185,25 @@ const GetComments = () => {
           .catch((err) => toast.warning('อัปเดตรายการสินค้าไม่สำเร็จ'))
       }
 
-      //! Check Cancel - ลูกค้าคอมเม้นท์ "cc" หรือ "CC" ยกเลิกออเดอร์
-      // if (commentFb && commentFb.startsWith('CC')) {
-      //   let parts = commentFb.split(' ') // split "cf a2=2" into an array ["cf","a2=2"]
-      //   console.log('Have message "cc or CC" :', commentFb)
-      // }
+      //TODO: Check Cancel - ลูกค้าคอมเม้นท์ "cc" หรือ "CC" ยกเลิกออเดอร์
+      if (commentFb && commentFb.startsWith('CC')) {
+        let parts = commentFb.split(' ') // split "CC" into an array ["cc"]
+        console.log('Have message "cc or CC" :', commentFb)
+
+        let orderData = {
+          idFb: idFb,
+          isPayment: false,
+          isDelete: true,
+        }
+
+        fetch(`${baseURL}/api/sale-order/cc`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData),
+        })
+          .then((resp) => dispatch(getOrders()))
+          .catch((err) => console.log(err))
+      }
     } catch (e) {
       console.log('checked message code error :', e)
     }

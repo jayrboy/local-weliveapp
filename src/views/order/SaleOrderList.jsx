@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+
 import { useSelector } from 'react-redux'
 
 import Paper from '@mui/material/Paper'
@@ -83,7 +84,7 @@ export default function SaleOrderList() {
                   <strong>รายการที่</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>ชื่อลูกค้า</strong>
+                  <strong>ชื่อ Facebook</strong>
                 </TableCell>
                 <TableCell>
                   <strong>จำนวน</strong>
@@ -107,7 +108,7 @@ export default function SaleOrderList() {
                         state={{ _id: order._id }}
                         target="_blank"
                       >
-                        <Typography>{order.name}</Typography>
+                        <Typography>{order.nameFb}</Typography>
                       </Link>
                     </Tooltip>
                   </TableCell>
