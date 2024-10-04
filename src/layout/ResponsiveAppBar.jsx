@@ -70,13 +70,20 @@ const settings = [
 
 const ResponsiveAppBar = () => {
   const { user } = useSelector((state) => state.user)
+  const token = localStorage.getItem('token')
   // console.log('ResponsiveAppBar', user)
   // console.log('profile_picture', user.picture[0].data.url)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  useEffect(() => {}, [navigate])
+  useEffect(() => {}, [navigate, dispatch])
+
+  useEffect(() => {
+    if (token) {
+      navigate('/dashboard')
+    }
+  }, [navigate])
 
   const onClickLogout = () => {
     dispatch(logout())
