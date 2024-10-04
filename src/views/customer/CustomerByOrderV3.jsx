@@ -203,17 +203,21 @@ export default function CustomerByOrderV3() {
 
   const confirmPayment = async () => {
     try {
-      await axios.put(`${baseURL}/api/sale-order/complete/${id}`, {
-        orders: order.orders.map((o) => ({
-          order_id: o._id,
-          quantity: o.quantity,
-        })),
+      const response = await fetch(`${baseURL}/api/sale-order/complete/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order.orders), // ต้องแปลงเป็น JSON ก่อนส่ง
       })
 
+      if (!response.ok) {
+        throw new Error('Failed to update order status')
+      }
+
       toast.success('อัพเดตสถานะแล้ว')
-      window.location.reload()
+      dispatch(getOrder(id))
     } catch (error) {
       toast.error('Payment: There was an error!')
+      console.error('Error:', error)
     }
   }
 
