@@ -184,15 +184,22 @@ export default function CustomerByOrderV3() {
   }
 
   const cancelPayment = async () => {
-    const formData = new FormData()
-    formData.append('_id', order._id)
-    formData.append('isDelete', true)
-    formData.append('updateBy', user.name)
+    let formData = {
+      _id: order._id,
+      isDelete: true,
+      updateBy: user.name,
+    }
 
     try {
-      await axios.put(`${baseURL}/api/sale-order/reject`, formData, {
+      const response = await fetch(`${baseURL}/api/sale-order/reject`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData), // ต้องแปลงเป็น JSON ก่อนส่ง
       })
+
+      if (!response.ok) {
+        throw new Error('Failed to update order status')
+      }
       toast.success('ปฎิเสธการชำระเงินสำเร็จ')
       dispatch(getOrder(id))
     } catch (error) {
@@ -203,10 +210,15 @@ export default function CustomerByOrderV3() {
 
   const confirmPayment = async () => {
     try {
+      let formData = {
+        orders: order.orders,
+        updateBy: user.name,
+      }
+
       const response = await fetch(`${baseURL}/api/sale-order/complete/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(order.orders), // ต้องแปลงเป็น JSON ก่อนส่ง
+        body: JSON.stringify(formData), // ต้องแปลงเป็น JSON ก่อนส่ง
       })
 
       if (!response.ok) {
