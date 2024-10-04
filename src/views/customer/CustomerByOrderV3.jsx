@@ -1,36 +1,34 @@
-import axios from 'axios'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
-import { editOrder } from '../../redux/saleOrderSlice'
 
 import { baseURL } from '../../App'
+
+import axios from 'axios'
+import {
+  getOrder,
+  editOrder,
+  calculateTotalQuantity,
+  calculateTotalPrice,
+  calculateTotalExpressPrice,
+} from '../../redux/saleOrderSlice'
+
 import {
   TextField,
   Button,
   Grid,
   Typography,
   Paper,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Link,
   IconButton,
   Snackbar,
-  OutlinedInput,
+  InputAdornment,
 } from '@mui/material'
 
-import InputAdornment from '@mui/material/InputAdornment'
-import CreditScoreIcon from '@mui/icons-material/CreditScore'
-import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 import ErrorIcon from '@mui/icons-material/Error'
 import CachedIcon from '@mui/icons-material/Cached'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
@@ -40,30 +38,19 @@ import ShareIcon from '@mui/icons-material/Share'
 
 import { TbTruckDelivery } from 'react-icons/tb'
 
-import {
-  getOrder,
-  calculateTotalQuantity,
-  calculateTotalPrice,
-  calculateTotalExpressPrice,
-} from '../../redux/saleOrderSlice'
 import LoadingFn from '../../components/LoadingFn'
 
-import moment from 'moment'
+import OrderHeader from '../../components/order/OrderHeader'
+import OrderTable from '../../components/order/OrderTable'
 
 export default function CustomerByOrderV3() {
+  const { id } = useParams()
   const dispatch = useDispatch()
   let { user } = useSelector((store) => store.user)
   let { order, isLoading, totalQuantity, totalPrice, totalExpressPrice } =
     useSelector((store) => store.saleOrder)
+  const [bankAccount, setBankAccount] = useState([])
 
-  const { id } = useParams()
-
-  let form = useRef()
-  const [isDisabled, setIsDisabled] = useState(true) // สร้าง state สำหรับเก็บสถานะของปุ่ม
-
-  const [imageBase64, setImageBase64] = useState('')
-
-  //! Debugging
   const [province, setProvince] = useState([])
   const [amphure, setAmphure] = useState([])
   const [district, setDistrict] = useState([])
@@ -73,41 +60,10 @@ export default function CustomerByOrderV3() {
   const [selectedDistrict, setSelectedDistrict] = useState('') // ค่าที่เลือกตำบล/แขวง
   const [zipCode, setZipCode] = useState('') // ค่าที่เลือกไปรษณีย์
 
-  const [bankAccount, setBankAccount] = useState([])
-
-  let [currentTime, setCurrentTime] = useState('')
-  let createdAt = order?.createdAt // เวลาที่ได้จาก Redux (createdAt)
-  const threeDaysInMs = 3 * 24 * 60 * 60 * 1000 // 3 วันในหน่วยมิลลิวินาที
-
+  const [imageBase64, setImageBase64] = useState('')
+  let form = useRef()
+  const [isDisabled, setIsDisabled] = useState(true) // สร้าง state สำหรับเก็บสถานะของปุ่ม
   const [open, setOpen] = useState(false)
-
-  useEffect(() => {
-    if (createdAt) {
-      const startDate = moment(createdAt) // แปลง createdAt เป็น moment object
-
-      const intervalId = setInterval(() => {
-        const now = moment()
-        setCurrentTime(now.format('D MMMM YYYY, h:mm:ss a'))
-
-        //TODO: ตรวจสอบว่าเวลาปัจจุบันเลย 3 วันหรือยัง
-        // if (now.diff(startDate) >= threeDaysInMs) {
-        //   handleThreeDaysPassed()
-        //   clearInterval(intervalId) // หยุดการทำงานเมื่อครบ 3 วัน
-        // }
-      }, 1000)
-
-      return () => clearInterval(intervalId)
-    }
-  }, [createdAt])
-
-  useEffect(() => {
-    if (!zipCode) {
-      fetch(`${baseURL}/api/province`)
-        .then((res) => res.json())
-        .then((data) => setProvince(data))
-        .catch((error) => toast.error('เกิดข้อผิดพลาดในการดึงรายการจังหวัด'))
-    }
-  }, [])
 
   // เรียก getOrder เพื่อดึงข้อมูลคำสั่งซื้อ
   useEffect(() => {
@@ -115,6 +71,20 @@ export default function CustomerByOrderV3() {
       dispatch(getOrder(id))
     }
   }, [id])
+
+  useEffect(() => {
+    if (order && order.vendorId) {
+      fetch(`${baseURL}/api/user/bank-account/${order.vendorId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log(data)
+          setBankAccount(data)
+        })
+        .catch((error) =>
+          toast.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีธนาคาร')
+        )
+    }
+  }, [order.vendorId])
 
   // คำนวณ totalQuantity, totalPrice, และค่าขนส่ง เมื่อข้อมูล order อัปเดต
   useEffect(() => {
@@ -138,27 +108,57 @@ export default function CustomerByOrderV3() {
   }, [imageBase64]) // เรียกใช้เมื่อ image เปลี่ยนแปลง
 
   useEffect(() => {
-    if (order && order.vendorId) {
-      fetch(`${baseURL}/api/user/bank-account/${order.vendorId}`)
+    if (!zipCode) {
+      fetch(`${baseURL}/api/province`)
         .then((res) => res.json())
-        .then((data) => {
-          // console.log(data)
-          setBankAccount(data)
-        })
-        .catch((error) =>
-          toast.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีธนาคาร')
-        )
+        .then((data) => setProvince(data))
+        .catch((error) => toast.error('เกิดข้อผิดพลาดในการดึงรายการจังหวัด'))
     }
-  }, [order.vendorId])
+  }, [])
 
   if (isLoading) {
     return <LoadingFn />
   }
 
-  const handleThreeDaysPassed = () => {
-    toast.error('ออเดอร์นี้ไม่ชำระเงินภายใน 3 วัน!')
-    console.log('ออเดอร์นี้ไม่ชำระเงินภายใน 3 วัน')
-    // ใส่ฟังก์ชันที่คุณต้องการเรียกเมื่อครบ 3 วัน
+  const onChangProvince = (event) => {
+    let value = event.target.value
+    // console.log('Value :', value)
+
+    setSelectedProvince(value)
+
+    fetch(`${baseURL}/api/province/amphure/${value}`)
+      .then((res) => res.json())
+      .then((data) => setAmphure(data))
+      .catch((error) => toast.error('เกิดข้อผิดพลาดในการค้นหาอำเภอ/เขต'))
+  }
+
+  const onChangAmphure = (event) => {
+    let value = event.target.value
+
+    setSelectedAmphure(value)
+
+    fetch(`${baseURL}/api/district/amphure/${value}`)
+      .then((res) => res.json())
+      .then((data) => setDistrict(data))
+      .catch((error) => toast.error('เกิดข้อผิดพลาดในการค้นหาตำบล/แขวง'))
+  }
+
+  const onChangDistrict = (event) => {
+    let value = event.target.value
+
+    setSelectedDistrict(value)
+
+    const selectedDistrictData = district.find((d) => d.id === value) // หาข้อมูลตำบลที่ตรงกับ id
+
+    if (selectedDistrictData) {
+      setZipCode(
+        selectedDistrictData.zip_code !== '0'
+          ? selectedDistrictData.zip_code
+          : ''
+      ) // ถ้า zip_code เป็น '0' ให้เว้นว่าง
+    } else {
+      setZipCode('') // ถ้าไม่พบข้อมูลตำบลให้เว้นว่าง
+    }
   }
 
   const handleImageChange = (e) => {
@@ -176,6 +176,11 @@ export default function CustomerByOrderV3() {
       }
       reader.readAsDataURL(file) // อ่านไฟล์เป็น Data URL
     }
+  }
+
+  const onEditData = (e) => {
+    e.preventDefault(e)
+    dispatch(editOrder())
   }
 
   const cancelPayment = async () => {
@@ -224,51 +229,17 @@ export default function CustomerByOrderV3() {
     }
   }
 
-  const onEditData = (e) => {
-    e.preventDefault(e)
-    dispatch(editOrder())
-  }
+  const handleClick = () => {
+    // คัดลอกข้อความไปยังคลิปบอร์ด
+    navigator.clipboard.writeText(order.express).then(() => {
+      // แสดง Snackbar หลังคัดลอกสำเร็จ
+      setOpen(true)
 
-  //TODO (1)
-  const onChangProvince = (event) => {
-    let value = event.target.value
-    // console.log('Value :', value)
-
-    setSelectedProvince(value)
-
-    fetch(`${baseURL}/api/province/amphure/${value}`)
-      .then((res) => res.json())
-      .then((data) => setAmphure(data))
-      .catch((error) => toast.error('เกิดข้อผิดพลาดในการค้นหาอำเภอ/เขต'))
-  }
-
-  const onChangAmphure = (event) => {
-    let value = event.target.value
-
-    setSelectedAmphure(value)
-
-    fetch(`${baseURL}/api/district/amphure/${value}`)
-      .then((res) => res.json())
-      .then((data) => setDistrict(data))
-      .catch((error) => toast.error('เกิดข้อผิดพลาดในการค้นหาตำบล/แขวง'))
-  }
-
-  const onChangDistrict = (event) => {
-    let value = event.target.value
-
-    setSelectedDistrict(value)
-
-    const selectedDistrictData = district.find((d) => d.id === value) // หาข้อมูลตำบลที่ตรงกับ id
-
-    if (selectedDistrictData) {
-      setZipCode(
-        selectedDistrictData.zip_code !== '0'
-          ? selectedDistrictData.zip_code
-          : ''
-      ) // ถ้า zip_code เป็น '0' ให้เว้นว่าง
-    } else {
-      setZipCode('') // ถ้าไม่พบข้อมูลตำบลให้เว้นว่าง
-    }
+      // รอสักครู่ก่อนเปลี่ยนไปยังหน้าใหม่ (เช่น 2 วินาทีเพื่อให้ Snackbar แสดงผล)
+      setTimeout(() => {
+        window.location.href = 'https://th.kerryexpress.com/th/home'
+      }, 2000) // รอ 2 วินาทีก่อนเปลี่ยนหน้า
+    })
   }
 
   const handleSubmit = async (e) => {
@@ -311,192 +282,22 @@ export default function CustomerByOrderV3() {
     }
   }
 
-  const handleClick = () => {
-    // คัดลอกข้อความไปยังคลิปบอร์ด
-    navigator.clipboard.writeText(order.express).then(() => {
-      // แสดง Snackbar หลังคัดลอกสำเร็จ
-      setOpen(true)
-
-      // รอสักครู่ก่อนเปลี่ยนไปยังหน้าใหม่ (เช่น 2 วินาทีเพื่อให้ Snackbar แสดงผล)
-      setTimeout(() => {
-        window.location.href = 'https://th.kerryexpress.com/th/home'
-      }, 2000) // รอ 2 วินาทีก่อนเปลี่ยนหน้า
-    })
-  }
-
   let dt = new Date(Date.parse(order.date_added))
   let df = dt.toISOString().substring(0, 10) // แปลงเป็นรูปแบบ YYYY-MM-DD สำหรับ TextField ใน MUI
 
-  let sum = totalPrice + totalExpressPrice
-
   return (
     <div className="container position-relative mt-3 mx-auto">
-      <Typography variant="h4">
-        <span className="text-success ms-2 text-center">
-          รายการสั่งซื้อของคุณ {order.name}
-          {order.complete && (
-            <>
-              <span className="mt-3 text-success">
-                &nbsp;
-                <CreditScoreIcon /> ชำระเงินแล้ว
-              </span>
-              {order.sended && (
-                <>
-                  <span className="mt-3 text-warning">
-                    &nbsp;
-                    <LocalShippingIcon /> จัดส่งแล้ว
-                  </span>
-                </>
-              )}
-            </>
-          )}
-        </span>
-      </Typography>
-
-      <div className="card shadow">
-        <div className="text-center">
-          <br />
-          <p>
-            <code>**</code>โปรดชำระเงินภายใน 3 วัน หรือ 72 ชั่วโมง
-            <code>**</code>
-            <br />
-            เนื่องจากจำนวนออเดอร์ที่สั่งเข้ามามีจำนวนมาก อาจทำให้สินค้าหมด
-            สามารถแนปสลิปสั่งซื้อ Pre-Order จะได้สินค้าล่าช้าประมาณ 7 - 14 วัน
-          </p>
-          <p>{currentTime}</p>
-          Order :
-          <span className="text-danger">
-            <strong>#{id}</strong>
-          </span>
-          <br />
-          {bankAccount &&
-            bankAccount.map((b) => (
-              <React.Fragment key={b.id}>
-                --------------------------------------------
-                <br />
-                ธนาคาร {b.bank} เลขบัญชี {b.bankID}
-                <br />
-                ชื่อบัญชี {b.bankName}
-                <br />
-                <br />
-                {b.qrCode ? (
-                  <div className="text-center">
-                    <img
-                      src={b.qrCode}
-                      alt="PromptPay"
-                      style={{
-                        height: '300px', // ความสูงปรับตามสัดส่วน
-                        objectFit: 'cover', // ปรับการแสดงผลของรูปภาพ
-                      }}
-                    />
-                  </div>
-                ) : (
-                  `พร้อมเพย์ ${b.promptPay}`
-                )}
-                --------------------------------------------
-              </React.Fragment>
-            ))}
-          <br />
-          🙏 รบกวนขอความกรุณาลูกค้า 💢 โอนยอดบิลต่อบิลนะคะ
-          แล้วค่อยเอฟใหม่ได้คะ💢
-          <br /> 💢หากมียอดค้างหักลบยอดเอง โอนได้เลยคะ
-          รบกวนแนบรูปยอดค้างไว้ได้เลยคะ ขอบคุณมากค่ะ🙏
-          <br /> 🙏 ถ้าสินค้ามีตำหนิกรุณารีบแจ้ง รับเปลี่ยน
-          หรือคืนสินค้ามีตำหนิจากร้าน ส่งผิดสีผิดแบบ ผิดไซส์ เท่านั้นคะ
-          ขอบพระคุณมากคะ🙏
-          <br />
-          <br />
-        </div>
-      </div>
-
-      <TableContainer component={Paper} className="mt-3 mb-3">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <strong>รายการที่</strong>
-              </TableCell>
-              <TableCell>
-                <strong>สินค้า</strong>
-              </TableCell>
-              <TableCell>
-                <strong>จำนวน</strong>
-              </TableCell>
-              <TableCell>
-                <strong>ราคา (฿)</strong>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {order.orders &&
-              order.orders.length > 0 &&
-              order.orders.map((o, index) => (
-                <TableRow key={o.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>
-                    <Typography
-                      noWrap
-                      style={{
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        maxWidth: '150px', // ปรับขนาดตามต้องการ
-                      }}
-                    >
-                      {o.name}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>{o.quantity}</TableCell>
-                  <TableCell>
-                    {o.price
-                      .toFixed(0)
-                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                  </TableCell>
-                </TableRow>
-              ))}
-            <TableRow>
-              <TableCell colSpan={3} className="text-end">
-                จำนวนสินค้ารวม
-              </TableCell>
-              <TableCell>{totalQuantity}</TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell colSpan={3} className="text-end">
-                ราคาสินค้ารวม
-              </TableCell>
-              <TableCell>
-                {totalPrice
-                  .toFixed(0)
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-              </TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell colSpan={3} className="text-end">
-                ค่าขนส่ง
-              </TableCell>
-              <TableCell>{totalExpressPrice}</TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell colSpan={3} className="text-end">
-                ที่ต้องชำระ
-              </TableCell>
-              <TableCell>
-                {sum.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
-
+      <OrderHeader id={id} order={order} bankAccount={bankAccount} />
+      <OrderTable
+        order={order}
+        totalQuantity={totalQuantity}
+        totalPrice={totalPrice}
+        totalExpressPrice={totalExpressPrice}
+      />
       <Paper elevation={3} className="mt-4 p-4">
         <Typography variant="h6" gutterBottom>
           แบบฟอร์มสำหรับกรอกข้อมูล
         </Typography>
-
         <form onSubmit={handleSubmit} ref={form}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -865,7 +666,7 @@ export default function CustomerByOrderV3() {
                         onClick={cancelPayment}
                         startIcon={<CancelIcon />}
                       >
-                        ปฎิเสธการชำระเงิน
+                        ปฎิเสธ
                       </Button>
                     </Grid>
 
@@ -884,7 +685,7 @@ export default function CustomerByOrderV3() {
                         onClick={confirmPayment}
                         endIcon={<CheckCircleIcon />}
                       >
-                        ยืนยันการชำระเงิน
+                        ยืนยัน
                       </Button>
                     </Grid>
                   </>
