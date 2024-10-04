@@ -44,6 +44,9 @@ export default function DailyStock() {
   }, [status])
 
   const onChangeRole = (id, event) => {
+    if (!window.confirm('ยืนยันเก็บเป็นประวัติย้อนหลัง')) {
+      return
+    }
     // อัพเดทสถานะ
     const newRole = {
       id: id,
@@ -188,9 +191,7 @@ export default function DailyStock() {
                               <strong>CF</strong>
                             </TableCell>
                             <TableCell>
-                              <strong className="text-danger">
-                                จ่ายแล้ว/เหลือ
-                              </strong>
+                              <strong className="text-danger">เหลือ</strong>
                             </TableCell>
                           </TableRow>
                         </TableHead>
@@ -215,13 +216,11 @@ export default function DailyStock() {
                               <td>{p.limit}</td>
                               <td>{p.cf}</td>
                               {p.remaining_cf < 0 ? (
-                                <td className="text-center text-danger">
-                                  {p.paid} / {p.remaining_cf}
+                                <td className="text-danger">
+                                  <strong>{p.remaining_cf}</strong>
                                 </td>
                               ) : (
-                                <td>
-                                  {p.paid} / {p.remaining_cf}
-                                </td>
+                                <td>{p.remaining_cf}</td>
                               )}
                             </TableRow>
                           ))}

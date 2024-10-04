@@ -15,6 +15,8 @@ import ErrorIcon from '@mui/icons-material/Error'
 import { Tooltip, Typography } from '@mui/material'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 
+import { MdGrid3X3 } from 'react-icons/md'
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
@@ -81,15 +83,17 @@ export default function SaleOrderList() {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <strong>รายการที่</strong>
+                  <strong>
+                    <MdGrid3X3 />
+                  </strong>
                 </TableCell>
                 <TableCell>
                   <strong>ชื่อ Facebook</strong>
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-center">
                   <strong>จำนวน</strong>
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-center">
                   <strong>ราคารวม (฿)</strong>
                 </TableCell>
                 <TableCell>
@@ -112,25 +116,19 @@ export default function SaleOrderList() {
                       </Link>
                     </Tooltip>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     {order.totalQuantity
                       .toFixed(0)
                       .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     {order.totalPrice
                       .toFixed(0)
                       .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
                   </TableCell>
                   <TableCell>
                     {order.isPayment ? (
-                      <Typography
-                        sx={{
-                          display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
-                          alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
-                          textAlign: 'center',
-                        }}
-                      >
+                      <Typography>
                         <span className="text-secondary">ชำระเงินแล้ว</span>
                         &nbsp;
                         <Tooltip title="กรุณายืนยันการชำระเงิน">

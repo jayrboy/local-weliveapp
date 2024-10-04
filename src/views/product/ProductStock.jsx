@@ -74,7 +74,11 @@ const Stock = () => {
       <form onSubmit={onSubmitForm} ref={form}>
         <div className="m-3">
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table
+              sx={{ minWidth: 650 }}
+              size="small"
+              aria-label="a dense table"
+            >
               <caption>พบข้อมูลทั้งหมด {result.docs.length} รายการ</caption>
               <TableHead>
                 <TableRow>
@@ -84,14 +88,20 @@ const Stock = () => {
                   <TableCell>
                     <strong>สินค้า</strong>
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell>
                     <strong>จำนวน</strong>
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell>
                     <strong>ต้นทุน</strong>
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell>
                     <strong>ราคา</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>CF</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>จ่ายแล้ว</strong>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -124,15 +134,11 @@ const Stock = () => {
                         </Link>
                       </TableCell>
 
-                      <TableCell className="text-center">
-                        {product.stock_quantity}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        {product.cost}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        {product.price}
-                      </TableCell>
+                      <TableCell>{product.stock_quantity}</TableCell>
+                      <TableCell>{product.cost}</TableCell>
+                      <TableCell>{product.price}</TableCell>
+                      <TableCell>{product.cf}</TableCell>
+                      <TableCell>{product.paid}</TableCell>
                     </StyledTableRow>
                   )
                 })}
