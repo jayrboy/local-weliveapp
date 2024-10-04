@@ -20,29 +20,29 @@ const GetComments = () => {
   const liveVideoId = localStorage.getItem('liveVideoId')
 
   // let liveVideoId = ''
-  // useEffect(() => {
-  //   const fetchLiveVideos = async () => {
-  //     let liveVdo = await getLiveVideos(user.userAccessToken)
-  //     console.log('Live Video: ', liveVdo)
+  useEffect(() => {
+    const fetchLiveVideos = async () => {
+      let liveVdo = await getLiveVideos(user.userAccessToken)
+      console.log('Live Video: ', liveVdo)
 
-  //     if (liveVdo && liveVdo.status == 'LIVE') {
-  //       let embed_html = liveVdo.embed_html
-  //       let videoIdMatch = embed_html.match(/videos%2F(\d+)/)
+      if (liveVdo && liveVdo.status == 'LIVE') {
+        let embed_html = liveVdo.embed_html
+        let videoIdMatch = embed_html.match(/videos%2F(\d+)/)
 
-  //       if (videoIdMatch) {
-  //         let videoId = videoIdMatch[1]
-  //         liveVideoId = videoId
-  //         toast.success(`Title: ${liveVdo.title}, Video ID: ${videoId}`)
-  //       } else {
-  //         toast.error('ไม่พบ video ID ใน embed_html')
-  //       }
-  //     } else {
-  //       toast.warning('กรุณาเปิดการถ่ายทอดสดที่ Facebook')
-  //     }
-  //   }
+        if (videoIdMatch) {
+          let videoId = videoIdMatch[1]
+          liveVideoId = videoId
+          toast.success(`Title: ${liveVdo.title}, Video ID: ${videoId}`)
+        } else {
+          toast.error('ไม่พบ video ID ใน embed_html')
+        }
+      } else {
+        toast.warning('กรุณาเปิดการถ่ายทอดสดที่ Facebook')
+      }
+    }
 
-  //   fetchLiveVideos()
-  // }, [])
+    fetchLiveVideos()
+  }, [])
 
   useEffect(() => {
     let firstRound = true

@@ -11,6 +11,8 @@ import LoadingFn from '../components/LoadingFn'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
+import PeopleIcon from '@mui/icons-material/People'
 
 function Copyright(props) {
   return (
@@ -43,6 +45,41 @@ const LoginFB = () => {
     } else {
       navigate('/dashboard')
     }
+  }
+
+  async function handleUser() {
+    setIsDisable(true)
+
+    let formData = {
+      username: 'user',
+      password: '1234',
+    }
+
+    return await axios({
+      method: 'POST',
+      url: `${baseURL}/api/login`,
+      data: formData,
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((result) => {
+        console.log(result.data)
+        toast.success(result.data.payload.user.username + ' login successfully')
+        dispatch(
+          login({
+            username: result.data.payload.user.username,
+            role: result.data.payload.user.role,
+            picture: result.data.payload.user.picture,
+            token: result.data.token,
+          })
+        )
+        localStorage.setItem('token', result.data.token)
+
+        //TODO: remove comment, this redirect shouldn't need to be re-render from path login.
+        roleRedirect(result.data.payload.user.role)
+      })
+      .catch((err) => {
+        toast.error(err.response.data)
+      })
   }
 
   async function handleSubmit(event) {
@@ -136,14 +173,13 @@ const LoginFB = () => {
                 for Store Online
               </Typography>
 
-              {/* Login Admin */}
               <Box>
                 <Button
                   type="button"
                   variant="contained"
                   color="inherit"
                   sx={{ mb: 2 }}
-                  startIcon={<AccountCircleIcon />}
+                  startIcon={<AdminPanelSettingsIcon />}
                   onClick={handleSubmit}
                   disabled={isDisable}
                   style={{
@@ -155,6 +191,28 @@ const LoginFB = () => {
                   }}
                 >
                   เข้าสู่ระบบด้วยบัญชีแอดมิน
+                </Button>
+              </Box>
+
+              {/* Login Admin */}
+              <Box>
+                <Button
+                  type="button"
+                  variant="contained"
+                  color="inherit"
+                  sx={{ mb: 2 }}
+                  startIcon={<PeopleIcon />}
+                  onClick={handleUser}
+                  disabled={isDisable}
+                  style={{
+                    color: 'black',
+                    textTransform: 'capitalize',
+                    fontSize: '16px',
+                    height: '40px',
+                    width: '300px',
+                  }}
+                >
+                  เข้าสู่ระบบด้วยบัญชีผู้ใช้
                 </Button>
               </Box>
 

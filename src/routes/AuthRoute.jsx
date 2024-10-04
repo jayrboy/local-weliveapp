@@ -11,6 +11,7 @@ import axios from 'axios'
 
 import NotFound from '../views/NotFound'
 import LiveVideoModal from '../components/LiveVideoModal'
+import LiveVideoModalV2 from '../components/LiveVideoModalV2'
 
 const AuthRoute = ({ children }) => {
   const dispatch = useDispatch()
@@ -53,7 +54,8 @@ const AuthRoute = ({ children }) => {
         <div className="app">
           <SideBar />
           <main className="content">
-            {isOpen && <LiveVideoModal />}
+            {/* {isOpen && <LiveVideoModal />} */}
+            {isOpen && <LiveVideoModalV2 />}
             <HeaderBar />
             <div className="content_body">
               <Box>{children}</Box>

@@ -3,10 +3,19 @@ import { RiLiveFill } from 'react-icons/ri'
 import { toast } from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
 import { closeModal, onLoading, onLoaded } from '../redux/liveSlice'
+import { Button } from '@mui/material'
 
 const LiveVideoModalV2 = () => {
   const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.user)
   const { isLoading } = useSelector((state) => state.live)
+  const [isDisabled, setIsDisabled] = useState(true)
+
+  useEffect(() => {
+    if (user.role === 'admin') {
+      setIsDisabled(false)
+    }
+  }, [])
 
   const onSubmitForm = (e) => {
     e.preventDefault()
@@ -41,32 +50,37 @@ const LiveVideoModalV2 = () => {
 
           <form onSubmit={onSubmitForm}>
             <p className="mt-3 text-center text-muted">
-              หมายเหตุ: ระบบจะดึง Comments หลังจากได้ ID ของ URL ที่เปิด Live
-              ของ Facebook
+              หมายเหตุ: เปิด Live Facebook ระบบจะดึง Comments ให้อัตโนมัติ
             </p>
 
             <div className="d-flex justify-content-between mt-4">
-              <button
+              <Button
                 type="button"
-                className="btn btn-secondary"
+                color="inherit"
                 onClick={() => {
                   dispatch(closeModal())
                 }}
               >
                 ปิด
-              </button>
+              </Button>
               {isLoading ? (
-                <button
+                <Button
                   type="button"
-                  className="btn btn-danger"
+                  variant="contained"
+                  color="error"
                   onClick={closeLiveVideo}
                 >
                   ยกเลิก Live สด
-                </button>
+                </Button>
               ) : (
-                <button type="submit" className="btn btn-primary">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={isDisabled}
+                >
                   ยืนยัน Live สด
-                </button>
+                </Button>
               )}
             </div>
           </form>
