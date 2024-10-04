@@ -1,7 +1,17 @@
 import { baseURL } from '../../App'
-import { useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { useState, useRef } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
+
+import {
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Button,
+  TextField,
+  FormHelperText,
+} from '@mui/material'
 
 import CloseIcon from '@mui/icons-material/Close'
 
@@ -9,10 +19,61 @@ export default function ExpressCreate() {
   const form = useRef()
   const navigate = useNavigate()
 
+  const [selectedExpress, setSelectedExpress] = useState('')
+  const [selectedUrl, setSelectedUrl] = useState('')
+  const [errors, setErrors] = useState({})
+
+  const expressList = [
+    {
+      value: 'ไปรษณีย์ไทย',
+      url: 'https://track.thailandpost.co.th/',
+    },
+    {
+      value: 'KERRY',
+      url: 'https://th.kerryexpress.com/th/track/?spm=a2o7e.lsc-im.0.0.2c6628f5ii8zFd&track=KERPU070489109',
+    },
+    {
+      value: 'FLASH',
+      url: 'https://www.flashexpress.co.th/fle/tracking?se=TH20015CSHZ95E',
+    },
+    {
+      value: 'J&T',
+      url: 'https://www.jtexpress.co.th/service/track',
+    },
+    { value: 'DHL', url: 'https://www.dhl.com/th-th/home/tracking.html' },
+  ]
+
+  const handleSelectChange = (event) => {
+    const selectedValue = event.target.value
+    const selectedExpressItem = expressList.find(
+      (express) => express.value === selectedValue
+    )
+    setSelectedExpress(selectedValue)
+    setSelectedUrl(selectedExpressItem?.url || '')
+    setErrors((prev) => ({ ...prev, selectedExpress: '' })) // clear error
+  }
+
+  const validateForm = (formData) => {
+    let tempErrors = {}
+    if (!selectedExpress) tempErrors.selectedExpress = 'กรุณาเลือกชื่อขนส่ง'
+    if (!formData.get('fprice')) tempErrors.fprice = 'กรุณากรอกค่าส่งเริ่มต้น'
+    return tempErrors
+  }
+
   const onSubmitForm = (event) => {
     event.preventDefault()
     const formData = new FormData(form.current)
+    formData.append('exname', selectedExpress)
+    formData.append('expressUrl', selectedUrl)
+
+    const validationErrors = validateForm(formData)
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+
     const formEnt = Object.fromEntries(formData.entries())
+    console.log(formEnt)
 
     fetch(`${baseURL}/api/ex/create`, {
       method: 'POST',
@@ -23,13 +84,13 @@ export default function ExpressCreate() {
       .then((result) => {
         if (result === 'true') {
           form.current.reset()
-          alert('ข้อมูลถูกจัดเก็บแล้ว')
+          toast.success('ข้อมูลถูกจัดเก็บแล้ว')
         } else {
-          alert('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
+          toast.error('เกิดข้อผิดพลาด ข้อมูลไม่ถูกบันทึก')
         }
         navigate('/express')
       })
-      .catch((e) => alert(e))
+      .catch((e) => toast.error(e))
   }
 
   return (
@@ -45,71 +106,89 @@ export default function ExpressCreate() {
           </button>
         </span>
         <form onSubmit={onSubmitForm} ref={form} className="p-4">
-          <label className="form-label">ชื่อขนส่ง</label>
-          <input
-            type="text"
-            name="exname"
-            placeholder="' J&T Express '"
-            className="form-control form-control-sm"
-            required
-          />
+          <FormControl
+            fullWidth
+            margin="normal"
+            error={!!errors.selectedExpress}
+          >
+            <InputLabel id="express-name-select-label">ชื่อขนส่ง</InputLabel>
+            <Select
+              labelId="express-name-select-label"
+              label="ชื่อขนส่ง"
+              id="express-name-select"
+              value={selectedExpress}
+              onChange={handleSelectChange}
+            >
+              {expressList.map((express) => (
+                <MenuItem key={express.value} value={express.value}>
+                  {express.value}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.selectedExpress && (
+              <FormHelperText>{errors.selectedExpress}</FormHelperText>
+            )}
+          </FormControl>
 
-          <label className="form-label mt-2">ค่าส่งเริ่มต้น</label>
-          <input
-            type="number"
+          <TextField
             name="fprice"
-            placeholder="' 50 ฿ '"
-            className="form-control form-control-sm"
-            required
+            label="ค่าส่งเริ่มต้น"
+            type="number"
+            fullWidth
+            margin="normal"
+            error={!!errors.fprice}
+            helperText={errors.fprice}
           />
 
-          <label className="form-label mt-2">ค่าส่งชิ้นต่อไป</label>
-          <input
-            type="number"
+          {/* <TextField
             name="sprice"
-            placeholder="' 30  '"
-            className="form-control form-control-sm"
+            label="ค่าส่งชิ้นต่อไป"
+            type="number"
+            fullWidth
+            margin="normal"
           />
 
-          <label className="form-label mt-2">ค่าส่งสูงสุด</label>
-          <input
-            type="number"
+          <TextField
             name="maxprice"
-            placeholder="' 100  '"
-            className="form-control form-control-sm"
-          />
-
-          <label className="form-label mt-2">ส่งฟรีต่อเมื่อยอดถึง</label>
-          <input
+            label="ค่าส่งสูงสุด"
             type="number"
+            fullWidth
+            margin="normal"
+          />
+
+          <TextField
             name="whenfprice"
-            placeholder="' 1000 '"
-            className="form-control form-control-sm"
+            label="ส่งฟรีต่อเมื่อยอดถึง"
+            type="number"
+            fullWidth
+            margin="normal"
           />
 
-          <label className="form-label mt-2">ค่าส่งเพิ่มเติมกรณี CODE</label>
-          <input
+          <TextField
+            name="selectcod"
+            label="ค่าส่งเพิ่มเติมกรณี CODE"
             type="text"
-            name="name"
-            placeholder="' 30 '"
-            className="form-control form-control-sm"
-          />
+            fullWidth
+            margin="normal"
+          /> */}
 
-          <label className="form-label mt-2">วันที่เริ่มต้น</label>
-          <input
-            type="Date"
+          <TextField
             name="date_start"
-            className="form-control form-control-sm mb-3"
+            label="วันที่เริ่มต้น"
+            type="date"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            fullWidth
+            margin="normal"
           />
 
-          <div className="d-flex justify-content-center ">
-            <button className="btn btn-outline-success btn-sm">
-              เพิ่มขนส่ง
-            </button>
+          <div className="d-flex justify-content-center">
+            <Button onClick={() => navigate('/express')}>ยกเลิก</Button>
             &nbsp;&nbsp;&nbsp;
-            <button className="btn btn-sm" onClick={() => navigate('/express')}>
-              ยกเลิก
-            </button>
+            <Button variant="contained" color="primary" type="submit">
+              เพิ่มขนส่ง
+            </Button>
           </div>
         </form>
       </div>

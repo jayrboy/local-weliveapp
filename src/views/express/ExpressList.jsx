@@ -28,12 +28,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function ExpressList() {
   let [data, setData] = useState('')
-  const form = useRef()
-  const exname = useRef()
-  const fprice = useRef()
-  const sprice = useRef()
-  const maxprice = useRef()
-  const whenfprice = useRef()
+  const form = useRef(null)
+  const exname = useRef(null)
+  const fprice = useRef(null)
+  // const sprice = useRef()
+  // const maxprice = useRef()
+  // const whenfprice = useRef()
   const date_start = useRef()
   const token = localStorage.getItem('token')
   let [selectedId, setSelectedId] = useState('')
@@ -56,161 +56,6 @@ export default function ExpressList() {
       .catch((e) => alert(e))
   }, [selectedId])
 
-  const showData = (data) => {
-    let updateForm = (
-      <div className="position-relative m-3">
-        <div className="d-flex justify-content-end mb-2">
-          <Link to="/express/delete">
-            <Button variant="contained" color="error">
-              ลบขนส่งออก
-            </Button>
-          </Link>
-
-          <Link to="/express/create" className="ms-3">
-            <Button variant="contained" color="primary">
-              เพิ่มขนส่งใหม่
-            </Button>
-          </Link>
-        </div>
-        <form onSubmit={onSubmitForm} ref={form}>
-          <TableContainer component={Paper}>
-            <Table>
-              <caption className="ms-3">
-                <small>
-                  เลือกรายการที่จะแก้ไข แล้วใส่ข้อมูลใหม่ลงไป จากนั้นคลิกปุ่ม
-                  แก้ไข
-                </small>
-              </caption>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <MdGrid3X3 />
-                  </TableCell>
-                  <TableCell>
-                    <strong>ชื่อขนส่ง</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>ค่าส่งเริ่มต้น</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>ค่าส่งชิ้นต่อไป</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>ค่าส่งสูงสุด</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>ส่งฟรีต่อเมื่อยอดถึง</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>วันที่เริ่มใช้</strong>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {data.map((doc) => {
-                  let dt = new Date(Date.parse(doc.date_start))
-                  let df = (
-                    <>
-                      {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                    </>
-                  )
-
-                  return (
-                    <StyledTableRow key={doc._id}>
-                      {/* เมื่อคลิก radio บนรายการใด เราก็แนบ document ของรายการนั้น
-                          ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
-                      */}
-                      <TableCell>
-                        <Radio
-                          color="primary"
-                          checked={selectedId == doc._id}
-                          onChange={() => onClickRadio(doc)}
-                          value={doc._id}
-                        />
-                      </TableCell>
-
-                      <TableCell>{doc.exname}</TableCell>
-                      <TableCell>{doc.fprice}</TableCell>
-                      <TableCell>{doc.sprice}</TableCell>
-                      <TableCell>{doc.maxprice}</TableCell>
-                      <TableCell>{doc.whenfprice}</TableCell>
-                      <TableCell>{df}</TableCell>
-                    </StyledTableRow>
-                  )
-                })}
-
-                {/* สร้างฟอร์มไว้ที่แถวสุดท้าย */}
-                <TableRow>
-                  <TableCell>
-                    <Button type="submit" variant="contained" color="warning">
-                      แก้ไข
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <input
-                      type="text"
-                      name="exname"
-                      placeholder="ชื่อขนส่ง "
-                      ref={exname}
-                      className="form-control form-control-sm"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <input
-                      type="text"
-                      name="fprice"
-                      placeholder="ค่าส่งเริ่มต้น"
-                      ref={fprice}
-                      className="form-control form-control-sm"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <input
-                      type="number"
-                      name="sprice"
-                      placeholder="ค่าส่งชิ้นต่อไป"
-                      ref={sprice}
-                      className="form-control form-control-sm"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <input
-                      type="number"
-                      name="maxprice"
-                      placeholder="ค่าส่งสูงสุด"
-                      ref={maxprice}
-                      className="form-control form-control-sm"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <input
-                      type="number"
-                      name="whenfprice"
-                      placeholder="ส่งฟรีเมื่อยอดถึง"
-                      ref={whenfprice}
-                      className="form-control form-control-sm"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <input
-                      type="date"
-                      name="date_start"
-                      ref={date_start}
-                      className="form-control form-control-sm"
-                    />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </form>
-      </div>
-    )
-
-    setData(updateForm)
-  }
-
   //เมื่อ radio บนรายการใดถูกคลิก (ในที่นี้เลือกใช้ click แทน change)
   //ก็อ่านข้อมูลในแต่ละฟิลต์จาก document ที่ผ่านเข้ามา แล้วเติมลงในฟอร์ม
   const onClickRadio = (doc) => {
@@ -218,10 +63,10 @@ export default function ExpressList() {
 
     exname.current.value = doc.exname
     fprice.current.value = doc.fprice
-    sprice.current.value = doc.sprice
-    maxprice.current.value = doc.maxprice
-    whenfprice.current.value = doc.whenfprice
-    // date_start.current.value = doc.date_start
+    // sprice.current.value = doc.sprice
+    // maxprice.current.value = doc.maxprice
+    // whenfprice.current.value = doc.whenfprice
+    date_start.current.value = doc.date_start
 
     let dt = new Date(Date.parse(doc.date_start))
     let y = dt.getFullYear()
@@ -232,6 +77,17 @@ export default function ExpressList() {
     let d = dt.getDate()
     d = d >= 10 ? d : '0' + d
     date_start.current.value = `${y}-${m}-${d}`
+  }
+
+  const onClickStatus = (doc) => {
+    fetch(`${baseURL}/api/ex/select`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(doc),
+    })
+      .then((res) => res.json())
+      .then((data) => showData(data))
+      .catch((error) => toast.error('Changed Status Error'))
   }
 
   const onSubmitForm = (event) => {
@@ -263,6 +119,190 @@ export default function ExpressList() {
         }
       })
       .catch((err) => toast.warning('แก้ไขข้อมูลไม่สำเร็จ'))
+  }
+
+  const showData = (data) => {
+    let updateForm = (
+      <div className="position-relative m-3">
+        {selectedId && (
+          <div className="d-flex justify-content-end mb-2">
+            <Link to="/express/delete">
+              <Button variant="contained" color="error">
+                ลบขนส่งออก
+              </Button>
+            </Link>
+
+            <Link to="/express/create" className="ms-3">
+              <Button variant="contained" color="primary">
+                เพิ่มขนส่งใหม่
+              </Button>
+            </Link>
+          </div>
+        )}
+        <form onSubmit={onSubmitForm} ref={form}>
+          <TableContainer component={Paper}>
+            <Table>
+              <caption className="ms-3">
+                <small>
+                  เลือกรายการที่จะแก้ไข แล้วใส่ข้อมูลใหม่ลงไป จากนั้นคลิกปุ่ม
+                  แก้ไข
+                </small>
+              </caption>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <MdGrid3X3 />
+                  </TableCell>
+                  <TableCell>
+                    <strong>ชื่อขนส่ง</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>ค่าส่งเริ่มต้น</strong>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <strong>สถานะ</strong>
+                  </TableCell>
+                  {/* <TableCell>
+                    <strong>ค่าส่งชิ้นต่อไป</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>ค่าส่งสูงสุด</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>ส่งฟรีต่อเมื่อยอดถึง</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>วันที่เริ่มใช้</strong>
+                  </TableCell> */}
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {data.map((doc) => {
+                  let dt = new Date(Date.parse(doc.date_start))
+                  let df = (
+                    <>
+                      {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
+                    </>
+                  )
+
+                  return (
+                    <StyledTableRow key={doc._id}>
+                      {/* เมื่อคลิก radio บนรายการใด เราก็แนบ document ของรายการนั้น
+                          ไปยังฟังก์ชันเป้าหมาย เพื่อใช้ในการอ่านข้อมูลจากแต่ละฟิลด์ไปแสดงที่ฟอร์ม
+                      */}
+                      <TableCell sx={{ width: '150px' }}>
+                        <Radio
+                          color="primary"
+                          checked={selectedId === doc._id}
+                          onChange={() => onClickRadio(doc)}
+                          value={doc._id}
+                        />
+                      </TableCell>
+
+                      <TableCell>{doc.exname}</TableCell>
+                      <TableCell>{doc.fprice}</TableCell>
+                      {/* <TableCell>{doc.sprice}</TableCell>
+                      <TableCell>{doc.maxprice}</TableCell>
+                      <TableCell>{doc.whenfprice}</TableCell>
+                      <TableCell>{df}</TableCell> */}
+                      <TableCell className="text-center">
+                        {doc.isSelectEx ? (
+                          <Button
+                            variant="contained"
+                            color="success"
+                            onClick={() => onClickStatus(doc)}
+                          >
+                            กำลังใช้งาน
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            color="inherit"
+                            onClick={() => onClickStatus(doc)}
+                          >
+                            ไม่ได้ใช้งาน
+                          </Button>
+                        )}
+                      </TableCell>
+                    </StyledTableRow>
+                  )
+                })}
+
+                {/* สร้างฟอร์มไว้ที่แถวสุดท้าย */}
+                {selectedId && (
+                  <TableRow>
+                    <TableCell>
+                      <Button type="submit" variant="contained" color="warning">
+                        แก้ไข
+                      </Button>
+                    </TableCell>
+
+                    <TableCell>
+                      <input
+                        type="text"
+                        name="exname"
+                        placeholder="ชื่อขนส่ง"
+                        ref={exname}
+                        className="form-control form-control-sm"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <input
+                        type="text"
+                        name="fprice"
+                        placeholder="ค่าส่งเริ่มต้น"
+                        ref={fprice}
+                        className="form-control form-control-sm"
+                      />
+                    </TableCell>
+
+                    {/* <TableCell>
+                    <input
+                      type="number"
+                      name="sprice"
+                      placeholder="ค่าส่งชิ้นต่อไป"
+                      ref={sprice}
+                      className="form-control form-control-sm"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <input
+                      type="number"
+                      name="maxprice"
+                      placeholder="ค่าส่งสูงสุด"
+                      ref={maxprice}
+                      className="form-control form-control-sm"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <input
+                      type="number"
+                      name="whenfprice"
+                      placeholder="ส่งฟรีเมื่อยอดถึง"
+                      ref={whenfprice}
+                      className="form-control form-control-sm"
+                    />
+                  </TableCell> */}
+
+                    <TableCell>
+                      <input
+                        type="date"
+                        name="date_start"
+                        ref={date_start}
+                        className="form-control form-control-sm"
+                      />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </form>
+      </div>
+    )
+
+    setData(updateForm)
   }
 
   return (
