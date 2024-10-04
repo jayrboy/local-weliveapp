@@ -91,6 +91,9 @@ const saleOrderSlice = createSlice({
     editOrder: (state, action) => {
       state.order.isPayment = false
     },
+    updateExpress: (state, action) => {
+      state.order.express = action.payload // ใช้ action.payload เพื่ออัปเดต express
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -126,6 +129,7 @@ export const {
   calculateTotalExpressPrice,
   searchNameFacebook,
   editOrder,
+  updateExpress,
 } = saleOrderSlice.actions
 
 export default saleOrderSlice.reducer

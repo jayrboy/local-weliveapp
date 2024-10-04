@@ -12,6 +12,7 @@ import {
   calculateTotalQuantity,
   calculateTotalPrice,
   calculateTotalExpressPrice,
+  updateExpress,
 } from '../../redux/saleOrderSlice'
 
 import {
@@ -64,6 +65,8 @@ export default function CustomerByOrderV3() {
   let form = useRef()
   const [isDisabled, setIsDisabled] = useState(true) // สร้าง state สำหรับเก็บสถานะของปุ่ม
   const [open, setOpen] = useState(false)
+
+  let [errors, setErrors] = useState({})
 
   // เรียก getOrder เพื่อดึงข้อมูลคำสั่งซื้อ
   useEffect(() => {
@@ -234,12 +237,22 @@ export default function CustomerByOrderV3() {
   }
 
   const confirmSended = async () => {
+    const newErrors = {}
+    if (!order.express) {
+      newErrors.express = 'กรุณากรอกเลขพัสดุสินค้า'
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return // หยุดการทำงานหากมีข้อผิดพลาด
+    }
+
     try {
       await axios.put(`${baseURL}/api/sale-order/sended/${id}`, {
         express: order.express, // Add this line to send the express value
       })
       toast.success('อัพเดตสถานะแล้ว')
-      window.location.reload()
+      dispatch(getOrder(id))
     } catch (error) {
       toast.error('Sended: There was an error!')
     }
@@ -253,7 +266,9 @@ export default function CustomerByOrderV3() {
 
       // รอสักครู่ก่อนเปลี่ยนไปยังหน้าใหม่ (เช่น 2 วินาทีเพื่อให้ Snackbar แสดงผล)
       setTimeout(() => {
-        window.location.href = 'https://th.kerryexpress.com/th/home'
+        if (order.express) {
+          window.location.href = 'https://th.kerryexpress.com/th/home'
+        }
       }, 2000) // รอ 2 วินาทีก่อนเปลี่ยนหน้า
     })
   }
@@ -296,6 +311,10 @@ export default function CustomerByOrderV3() {
       console.error(error)
       toast.error('Submit: There was an error!')
     }
+  }
+
+  const handleExpressChange = (e) => {
+    dispatch(updateExpress(e.target.value))
   }
 
   let dt = new Date(Date.parse(order.date_added))
@@ -613,7 +632,7 @@ export default function CustomerByOrderV3() {
                       textAlign: 'center',
                     }}
                   >
-                    รอยืนยันการส่งเลขพัสดุสินค้า&nbsp;
+                    รอดำเนินการแพ็คสินค้า/จัดส่ง&nbsp;
                     <ErrorIcon color="warning" />
                   </Typography>
                 ) : (
@@ -718,7 +737,9 @@ export default function CustomerByOrderV3() {
                     name="express"
                     defaultValue={order.express}
                     disabled={order.sended}
-                    required
+                    onChange={handleExpressChange} // เมื่อมีการเปลี่ยนแปลง ให้เรียก handleExpressChange
+                    error={Boolean(errors.express)}
+                    helperText={errors.express}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -740,12 +761,8 @@ export default function CustomerByOrderV3() {
                     }}
                   />
                 </Grid>
-              </>
-            )}
 
-            {(user.role == 'admin' || user.role == 'user') && (
-              <>
-                {order.complete && (
+                {user.role && (
                   <>
                     {order.sended ? (
                       <Grid
