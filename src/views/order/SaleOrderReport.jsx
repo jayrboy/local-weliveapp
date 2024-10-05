@@ -132,7 +132,9 @@ const SaleOrderReport = () => {
                   {isLoading ? (
                     <CircularProgress size={24} />
                   ) : (
-                    `${totalSum} บาท`
+                    `${totalSum
+                      .toFixed(0)
+                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')} บาท`
                   )}
                 </Typography>
               </CardContent>
@@ -170,7 +172,9 @@ const SaleOrderReport = () => {
                   {isLoading ? (
                     <CircularProgress size={24} />
                   ) : (
-                    `${averagePerBill} บาท`
+                    `${averagePerBill
+                      .toFixed(0)
+                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')} บาท`
                   )}
                 </Typography>
               </CardContent>

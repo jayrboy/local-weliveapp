@@ -34,6 +34,7 @@ const UserManage = () => {
   let [data, setData] = useState([])
   const { user } = useSelector((state) => state.user)
   // const dispatch = useDispatch()
+  console.log(data)
 
   useEffect(() => {
     loadData(user.token)
@@ -84,11 +85,19 @@ const UserManage = () => {
           <caption>พบข้อมูลทั้งหมด {data.length} รายการ</caption>
           <TableHead>
             <TableRow>
-              <TableCell>บัญชีผู้ใช้</TableCell>
-              <TableCell>ชื่อ</TableCell>
-              <TableCell>บทบาท</TableCell>
-              <TableCell>วันที่สร้าง</TableCell>
-              <TableCell>เข้าใช้งานล่าสุด</TableCell>
+              {/* <TableCell>บัญชีผู้ใช้</TableCell> */}
+              <TableCell>
+                <strong>ชื่อ Facebook</strong>
+              </TableCell>
+              <TableCell>
+                <strong>บทบาท</strong>
+              </TableCell>
+              <TableCell>
+                <strong>วันที่สร้าง</strong>
+              </TableCell>
+              <TableCell>
+                <strong>เข้าใช้งานล่าสุด</strong>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -111,8 +120,22 @@ const UserManage = () => {
                       key={index}
                       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     >
-                      <TableCell>{item.username}</TableCell>
-                      <TableCell>{item.name}</TableCell>
+                      {/* <TableCell>{item.username}</TableCell> */}
+                      <TableCell>
+                        <img
+                          src={
+                            item.picture[0].data.url ||
+                            'http://www.no-imagejpgasdfasd.com'
+                          }
+                          width={50}
+                          style={{
+                            cursor: 'pointer',
+                            borderRadius: '50%',
+                          }}
+                        />
+                        &nbsp;&nbsp;
+                        {item.name}
+                      </TableCell>
                       <TableCell>
                         <Select
                           value={item.role}
