@@ -3,9 +3,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
-  Box,
-  Select,
-  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -13,7 +10,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Avatar,
   styled,
   Tooltip,
   Typography,
@@ -21,7 +17,8 @@ import {
   TextField,
   IconButton,
   Grid,
-  FormControl,
+  Pagination,
+  Stack,
 } from '@mui/material'
 
 import {
@@ -50,6 +47,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const Stock = () => {
   let [data, setData] = useState('')
   let [page, setPage] = useState([])
+  let [totalPages, setTotalPages] = useState(1) // Track the total number of pages
   const form = useRef()
 
   let qStr = window.location.search
@@ -71,8 +69,10 @@ const Stock = () => {
       })
         .then((response) => response.json())
         .then((result) => {
+          // console.log('Result :', result)
           showData(result)
           paginate(result)
+          setTotalPages(result.totalPages) // Update the total number of pages
         })
         .catch((err) => toast.error(err))
     }
@@ -93,7 +93,11 @@ const Stock = () => {
               size="small"
               aria-label="a dense table"
             >
-              <caption>พบข้อมูลทั้งหมด {result.docs.length} รายการ</caption>
+              <caption>
+                พบข้อมูล {result.docs.length} รายการ จากทั้งหมด{' '}
+                {result.totalDocs} รายการ (หน้า {result.page} จาก{' '}
+                {result.totalPages})
+              </caption>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ width: '50px', textAlign: 'center' }}>
@@ -122,53 +126,51 @@ const Stock = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {result.docs.map((product, index) => {
-                  return (
-                    <StyledTableRow key={product._id}>
-                      <TableCell>
-                        <input
-                          type="radio"
-                          name="_id"
-                          value={product._id}
-                          className="ms-2 form-check-input"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Typography noWrap>
-                          <div
-                            className="btn btn-secondary"
-                            style={{ fontSize: '20px' }}
-                          >
-                            {product.code}
-                          </div>
-                          &nbsp;&nbsp;&nbsp;
+                {result.docs.map((product, index) => (
+                  <StyledTableRow key={product._id}>
+                    <TableCell>
+                      <input
+                        type="radio"
+                        name="_id"
+                        value={product._id}
+                        className="ms-2 form-check-input"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Typography noWrap>
+                        <span
+                          className="btn btn-secondary"
+                          style={{ fontSize: '20px' }}
+                        >
+                          {product.code}
+                        </span>
+                        &nbsp;&nbsp;&nbsp;
+                        <Tooltip title="ดูผลรายงานสินค้า">
                           <Link
                             to={`/admin/product-graph/${product._id}`}
                             state={{ _id: product._id }}
                           >
-                            <Tooltip title="ดูผลรายงานสินค้า">
-                              {product.name}
-                            </Tooltip>
+                            {product.name}
                           </Link>
-                        </Typography>
-                      </TableCell>
+                        </Tooltip>
+                      </Typography>
+                    </TableCell>
 
-                      <TableCell>{product.stock_quantity}</TableCell>
-                      <TableCell>
-                        {product.cost
-                          .toFixed(0)
-                          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                      </TableCell>
-                      <TableCell>
-                        {product.price
-                          .toFixed(0)
-                          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                      </TableCell>
-                      <TableCell>{product.cf}</TableCell>
-                      <TableCell>{product.paid}</TableCell>
-                    </StyledTableRow>
-                  )
-                })}
+                    <TableCell>{product.stock_quantity}</TableCell>
+                    <TableCell>
+                      {product.cost
+                        .toFixed(0)
+                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                    </TableCell>
+                    <TableCell>
+                      {product.price
+                        .toFixed(0)
+                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                    </TableCell>
+                    <TableCell>{product.cf}</TableCell>
+                    <TableCell>{product.paid}</TableCell>
+                  </StyledTableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -187,7 +189,7 @@ const Stock = () => {
 
     let links = []
     let q = params.get('q') || ''
-    let url = `/admin/stock?q=${q}&page=`
+    let url = `/stock?q=${q}&page=`
 
     let start = result.page - 2
     start = start < 1 ? 1 : start
@@ -278,6 +280,16 @@ const Stock = () => {
     }
   }
 
+  // Handle page change
+  const handlePageChange = (event, value) => {
+    console.log('Selected Page:', value)
+    setPage(value) // อัปเดต page state ตามค่า value ที่เลือก
+    // อาจจะต้องการนำค่า page ไปปรับ URL ด้วย
+    const newParams = new URLSearchParams(params)
+    newParams.set('page', value)
+    navigate(`/stock?${newParams.toString()}`) // ปรับ URL ตามหน้าใหม่
+  }
+
   return (
     <>
       <div className="m-3">
@@ -349,12 +361,17 @@ const Stock = () => {
 
       <>{data}</>
 
-      <div className="d-flex justify-content-center">
-        <ul className="pagination pagination-sm">
-          {page.map((p, i) => (
-            <React.Fragment key={i + 1}>{p}</React.Fragment>
-          ))}
-        </ul>
+      {/* Pagination Controls */}
+      <div className="d-flex justify-content-center mt-3">
+        <Stack spacing={2}>
+          <Pagination
+            count={totalPages} // Total pages from API
+            // page={page} // Current page
+            onChange={handlePageChange} // Page change handler
+            variant="outlined"
+            color="primary"
+          />
+        </Stack>
       </div>
       <br />
       <div className="d-flex justify-content-center mx-auto">
