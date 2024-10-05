@@ -32,7 +32,11 @@ import { FaPlus } from 'react-icons/fa'
 import ProductCreate from './ProductCreate'
 import ProductEdit from './ProductEdit'
 
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import TroubleshootIcon from '@mui/icons-material/Troubleshoot'
+import PublishIcon from '@mui/icons-material/Publish'
+import { read, utils, writeFile } from 'xlsx'
+import excelIcon from '../../assets/excelicon.png'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -61,6 +65,8 @@ const Stock = () => {
   let [idEdit, setIdEdit] = useState('')
 
   const token = localStorage.getItem('token')
+
+  let [products, setProducts] = useState([])
 
   useEffect(() => {
     if (!isOpenEdit) {
@@ -290,6 +296,50 @@ const Stock = () => {
     navigate(`/stock?${newParams.toString()}`) // ปรับ URL ตามหน้าใหม่
   }
 
+  const importFileExcel = async (event) => {
+    const file = event.target.files[0]
+
+    if (file) {
+      const fileReader = new FileReader()
+      fileReader.onload = (event) => {
+        const wb = read(event.target.result)
+        const sheets = wb.SheetNames
+
+        if (sheets.length) {
+          const rows = utils.sheet_to_json(wb.Sheets[sheets[0]])
+          // console.table(rows)
+
+          //TODO: for fetch api cell if want to save this data in DB
+          setProducts(rows)
+        }
+      }
+
+      fileReader.readAsArrayBuffer(file)
+      console.log('Import File Excel')
+    }
+  }
+
+  const exportFileExcel = async () => {
+    try {
+      const headings = [
+        ['สินค้า', 'จำนวน', 'ต้นทุน', 'ราคา', 'CF', 'จ่ายแล้ว', 'ยอด'],
+      ]
+
+      const wb = utils.book_new()
+      const ws = utils.json_to_sheet([])
+      utils.sheet_add_aoa(ws, headings)
+
+      //TODO: "products"
+      utils.sheet_add_json(ws, products, { origin: 'A1', skipHeader: false })
+      utils.book_append_sheet(wb, ws, 'Report')
+      writeFile(wb, 'Products Report.xlsx')
+
+      console.log('Export File Excel')
+    } catch (error) {
+      toast.error('Error exporting file')
+    }
+  }
+
   return (
     <>
       <div className="m-3">
@@ -301,13 +351,13 @@ const Stock = () => {
         </h3>
       </div>
 
-      {/* Search Params 'q' */}
       <Grid container spacing={1}>
+        {/* Search Params 'q' */}
         <Grid
           item
           xs={12}
-          md={6}
-          lg={6}
+          md={4}
+          lg={4}
           container
           alignItems="center"
           justifyContent="center"
@@ -333,11 +383,57 @@ const Stock = () => {
           </form>
         </Grid>
 
+        {/* Export / Import File Excel */}
         <Grid
           item
           xs={12}
-          md={6}
-          lg={6}
+          md={4}
+          lg={4}
+          container
+          alignItems="center"
+          justifyContent="center"
+        >
+          <input
+            type="file"
+            name="file"
+            id="upload-button-file"
+            style={{ display: 'none' }}
+            onChange={importFileExcel}
+          />
+          <label htmlFor="upload-button-file">
+            <Button
+              startIcon={<PublishIcon />}
+              variant="contained"
+              component="span"
+              color="inherit"
+            >
+              Import
+            </Button>
+          </label>
+          &nbsp;
+          <Button
+            type="button"
+            variant="contained"
+            color="inherit"
+            onClick={exportFileExcel}
+            startIcon={
+              <img
+                src={excelIcon} // แทนที่ด้วย URL ของรูปภาพที่คุณต้องการใช้
+                alt="Export"
+                style={{ width: '24px', height: '24px' }} // ปรับขนาดและระยะห่างตามต้องการ
+              />
+            }
+          >
+            Export
+          </Button>
+        </Grid>
+
+        {/* CRUD Buttons */}
+        <Grid
+          item
+          xs={12}
+          md={4}
+          lg={4}
           container
           alignItems="center"
           justifyContent="center"
