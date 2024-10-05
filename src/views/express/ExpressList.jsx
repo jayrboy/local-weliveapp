@@ -37,6 +37,8 @@ export default function ExpressList() {
   const date_start = useRef()
   const token = localStorage.getItem('token')
   let [selectedId, setSelectedId] = useState('')
+  let [expressName, setExpressName] = useState('')
+  let [expressUrl, setExpressUrl] = useState('')
 
   useEffect(() => {
     fetch(`${baseURL}/api/ex/read`, {
@@ -60,23 +62,28 @@ export default function ExpressList() {
   //ก็อ่านข้อมูลในแต่ละฟิลต์จาก document ที่ผ่านเข้ามา แล้วเติมลงในฟอร์ม
   const onClickRadio = (doc) => {
     setSelectedId(doc._id)
+    setExpressUrl(doc.expressUrl)
+    setExpressName(doc.exname)
+    try {
+      exname.current.value = doc.exname
+      fprice.current.value = doc.fprice
+      // sprice.current.value = doc.sprice
+      // maxprice.current.value = doc.maxprice
+      // whenfprice.current.value = doc.whenfprice
+      date_start.current.value = doc.date_start
 
-    exname.current.value = doc.exname
-    fprice.current.value = doc.fprice
-    // sprice.current.value = doc.sprice
-    // maxprice.current.value = doc.maxprice
-    // whenfprice.current.value = doc.whenfprice
-    date_start.current.value = doc.date_start
-
-    let dt = new Date(Date.parse(doc.date_start))
-    let y = dt.getFullYear()
-    let m = dt.getMonth() + 1
-    //ค่าที่จะกำหนดให้แก่อินพุตชนิด date ต้องเป็นรูปแบบ yyyy-mm-dd
-    //สำหรับเดือนและวันที่ หากเป็นเลขตัวเดียวต้องเติม 0 ข้างหน้า
-    m = m >= 10 ? m : '0' + m
-    let d = dt.getDate()
-    d = d >= 10 ? d : '0' + d
-    date_start.current.value = `${y}-${m}-${d}`
+      let dt = new Date(Date.parse(doc.date_start))
+      let y = dt.getFullYear()
+      let m = dt.getMonth() + 1
+      //ค่าที่จะกำหนดให้แก่อินพุตชนิด date ต้องเป็นรูปแบบ yyyy-mm-dd
+      //สำหรับเดือนและวันที่ หากเป็นเลขตัวเดียวต้องเติม 0 ข้างหน้า
+      m = m >= 10 ? m : '0' + m
+      let d = dt.getDate()
+      d = d >= 10 ? d : '0' + d
+      date_start.current.value = `${y}-${m}-${d}`
+    } catch (error) {
+      console.log('Error Radio :', error)
+    }
   }
 
   const onClickStatus = (doc) => {
@@ -97,6 +104,8 @@ export default function ExpressList() {
     // }
     const fd = new FormData(form.current)
     fd.append('_id', selectedId)
+    fd.append('expressUrl', expressUrl)
+    fd.append('exname', expressName)
 
     const fe = Object.fromEntries(fd.entries())
     // console.log('Submit :', fe)
@@ -124,7 +133,7 @@ export default function ExpressList() {
   const showData = (data) => {
     let updateForm = (
       <div className="position-relative m-3">
-        {selectedId && (
+        {/* {selectedId && (
           <div className="d-flex justify-content-end mb-2">
             <Link to="/express/delete">
               <Button variant="contained" color="error">
@@ -138,7 +147,7 @@ export default function ExpressList() {
               </Button>
             </Link>
           </div>
-        )}
+        )} */}
         <form onSubmit={onSubmitForm} ref={form}>
           <TableContainer component={Paper}>
             <Table>
@@ -245,6 +254,7 @@ export default function ExpressList() {
                         placeholder="ชื่อขนส่ง"
                         ref={exname}
                         className="form-control form-control-sm"
+                        disabled
                       />
                     </TableCell>
                     <TableCell>

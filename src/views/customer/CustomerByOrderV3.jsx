@@ -67,6 +67,7 @@ export default function CustomerByOrderV3() {
   const [open, setOpen] = useState(false)
 
   let [errors, setErrors] = useState({})
+  let [expressUrl, setExpressUrl] = useState('')
 
   // เรียก getOrder เพื่อดึงข้อมูลคำสั่งซื้อ
   useEffect(() => {
@@ -109,6 +110,19 @@ export default function CustomerByOrderV3() {
       setIsDisabled(false)
     }
   }, [imageBase64]) // เรียกใช้เมื่อ image เปลี่ยนแปลง
+
+  useEffect(() => {
+    if (bankAccount) {
+      fetch(`${baseURL}/api/ex/url`)
+        .then((res) => res.json())
+        .then((data) => {
+          setExpressUrl(data) // ตั้งค่าลิงก์ปรษณีย์
+        })
+        .catch((error) =>
+          toast.error('เกิดข้อผิดพลาดในการดึงข้อมูลลิงก์ URL บริษัทขนส่ง')
+        )
+    }
+  }, [expressUrl])
 
   useEffect(() => {
     if (!zipCode) {
@@ -267,7 +281,8 @@ export default function CustomerByOrderV3() {
       // รอสักครู่ก่อนเปลี่ยนไปยังหน้าใหม่ (เช่น 2 วินาทีเพื่อให้ Snackbar แสดงผล)
       setTimeout(() => {
         if (order.express) {
-          window.location.href = 'https://th.kerryexpress.com/th/home'
+          // window.location.href = 'https://th.kerryexpress.com/th/home'
+          window.location.href = expressUrl
         }
       }, 2000) // รอ 2 วินาทีก่อนเปลี่ยนหน้า
     })
