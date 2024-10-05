@@ -1,8 +1,22 @@
 import { Link } from 'react-router-dom'
 import { Chart as ChartJS, defaults } from 'chart.js/auto'
 import { Bar, Doughnut, Line } from 'react-chartjs-2'
-import { Grid } from '@mui/material'
-import Typography from '@mui/material/Typography'
+
+import {
+  Box,
+  Grid,
+  Typography,
+  Card,
+  CardContent,
+  CircularProgress,
+} from '@mui/material'
+
+import {
+  AttachMoney,
+  ShoppingCart,
+  BarChart,
+  TrendingUp,
+} from '@mui/icons-material'
 
 import './chartjs.css'
 
@@ -26,7 +40,10 @@ const SaleOrderReport = () => {
   let { orders } = useSelector((state) => state.saleOrder)
   let { products } = useSelector((state) => state.product)
   // console.log(orders)
-  // console.log(products)
+  console.log('Product :', products)
+
+  // สมมติว่าคุณจะรอการโหลดข้อมูลจริง
+  const isLoading = false // แทนด้วยสถานะจริงของการโหลด
 
   useEffect(() => {
     dispatch(getProducts())
@@ -47,19 +64,141 @@ const SaleOrderReport = () => {
   const statusCount = {
     completed: orders.filter((order) => order.complete).length,
     pending: orders.filter((order) => !order.complete).length,
+    inprogress: orders.filter((order) => order.isPayment).length,
     failed: orders.filter((order) => order.isDelete).length,
   }
 
   // ข้อมูลสำหรับแสดงกราฟ
   const sourceData = [
     { label: 'สำเร็จ', value: statusCount.completed },
-    { label: 'รอดำเนินการ', value: statusCount.pending },
-    { label: 'ไม่สำเร็จ', value: statusCount.failed },
+    { label: 'รอชำระเงิน', value: statusCount.pending },
+    { label: 'จ่ายแล้ว', value: statusCount.inprogress },
+    { label: 'ปฎิเสธ', value: statusCount.failed },
   ]
+
+  // สรุปยอดต่างๆ
+  // กรองเฉพาะบิลที่ complete: true
+  const completedOrders = orders.filter((order) => order.complete)
+
+  // คำนวณยอดรวมต่อบิล
+  const totalAmounts = completedOrders.map((order) => {
+    return order.orders.reduce(
+      (sum, item) => sum + item.quantity * item.price,
+      0
+    )
+  })
+
+  // คำนวณยอดรวมทั้งหมด
+  const totalSum = totalAmounts.reduce((sum, amount) => sum + amount, 0)
+
+  // หาค่าเฉลี่ยต่อบิล
+  const averagePerBill = totalSum / completedOrders.length
+
+  // console.log(`ค่าเฉลี่ยต่อบิล: ${averagePerBill}`)
+
+  // (2)
+  // คำนวณยอดขายจากสินค้าที่ชำระเงินแล้ว
+  const paidRevenue = products.reduce(
+    (sum, product) => sum + product.paid * product.price,
+    0
+  )
+
+  // คำนวณยอดขายรวมของสินค้าทั้งหมด
+  const totalRevenue = products.reduce(
+    (sum, product) => sum + product.stock_quantity * product.price,
+    0
+  )
+
+  // คำนวณอัตราการเติบโต
+  const growthRate = (paidRevenue / totalRevenue) * 100
+
+  // console.log(`ยอดขายที่ชำระเงินแล้ว: ${paidRevenue}`)
+  // console.log(`ยอดขายรวมของสินค้าทั้งหมด: ${totalRevenue}`)
+  // console.log(`อัตราการเติบโต: ${growthRate.toFixed(2)}%`)
 
   return (
     <>
-      <div className="bg-chartjs mt-3">
+      <Box sx={{ p: 3 }}>
+        <Grid container spacing={2}>
+          {/* Card 1: ยอดรวม */}
+          <Grid item xs={6} sm={3} md={3}>
+            <Card variant="outlined" sx={{ height: '100%' }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <AttachMoney sx={{ fontSize: 40, color: 'green' }} />
+                <Typography variant="h6" gutterBottom fontWeight="bold">
+                  ยอดรวม
+                </Typography>
+                <Typography variant="h5" fontWeight="bold">
+                  {isLoading ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    `${totalSum} บาท`
+                  )}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Card 2: จำนวนออเดอร์ */}
+          <Grid item xs={6} sm={3} md={3}>
+            <Card variant="outlined" sx={{ height: '100%' }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <ShoppingCart sx={{ fontSize: 40, color: 'blue' }} />
+                <Typography variant="h6" gutterBottom fontWeight="bold">
+                  จำนวนออเดอร์
+                </Typography>
+                <Typography variant="h5" fontWeight="bold">
+                  {isLoading ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    `${orders.length} ออเดอร์`
+                  )}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Card 3: ค่าเฉลี่ย/บิล */}
+          <Grid item xs={6} sm={3} md={3}>
+            <Card variant="outlined" sx={{ height: '100%' }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <BarChart sx={{ fontSize: 40, color: 'orange' }} />
+                <Typography variant="h6" gutterBottom fontWeight="bold">
+                  ค่าเฉลี่ย/บิล
+                </Typography>
+                <Typography variant="h5" fontWeight="bold">
+                  {isLoading ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    `${averagePerBill} บาท`
+                  )}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Card 4: รายได้เติบโต */}
+          <Grid item xs={6} sm={3} md={3}>
+            <Card variant="outlined" sx={{ height: '100%' }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <TrendingUp sx={{ fontSize: 40, color: 'purple' }} />
+                <Typography variant="h6" gutterBottom fontWeight="bold">
+                  รายได้เติบโต
+                </Typography>
+                <Typography variant="h5" fontWeight="bold">
+                  {isLoading ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    `${growthRate.toFixed(2)}%`
+                  )}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Box>
+
+      <div className="bg-chartjs">
         {/* กราฟแสดงรายได้ */}
         <div className="dataCard revenueCard">
           <Line
@@ -105,9 +244,10 @@ const SaleOrderReport = () => {
                   label: 'สำเร็จ',
                   data: sourceData.map((data) => data.value),
                   backgroundColor: [
-                    'rgba(43, 63, 229, 0.8)',
+                    'rgba(11, 156, 49, 0.8)',
                     'rgba(250, 192, 19, 0.8)',
-                    'rgba(253, 135, 135, 0.8)',
+                    'rgba(43, 63, 229, 0.8)',
+                    'rgba(255, 0, 0, 0.8)',
                   ],
                   borderRadius: 5,
                 },
@@ -133,14 +273,16 @@ const SaleOrderReport = () => {
                   label: 'จำนวนสินค้าในสต็อก',
                   data: sourceData.map((data) => data.value),
                   backgroundColor: [
-                    'rgba(43, 63, 229, 0.8)',
+                    'rgba(11, 156, 49, 0.8)',
                     'rgba(250, 192, 19, 0.8)',
-                    'rgba(253, 135, 135, 0.8)',
+                    'rgba(43, 63, 229, 0.8)',
+                    'rgba(255, 0, 0, 0.8)',
                   ],
                   borderColor: [
-                    'rgba(43, 63, 229, 0.8)',
+                    'rgba(11, 156, 49, 0.8)',
                     'rgba(250, 192, 19, 0.8)',
-                    'rgba(253, 135, 135, 0.8)',
+                    'rgba(43, 63, 229, 0.8)',
+                    'rgba(255, 0, 0, 0.8)',
                   ],
                 },
               ],
