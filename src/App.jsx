@@ -144,7 +144,7 @@ function App() {
     <React.Fragment>
       {loading && <LoadingFn />}
       <CssBaseline />
-      <ToastContainer position="top-center" autoClose={3000} />
+      <ToastContainer position="top-center" autoClose={2000} />
       {/* Public */}
       <Routes>
         <Route

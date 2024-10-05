@@ -2,15 +2,27 @@ import { baseURL } from '../../App'
 import React, { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-
-import Paper from '@mui/material/Paper'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import { styled } from '@mui/material/styles'
+import {
+  Box,
+  Select,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Avatar,
+  styled,
+  Tooltip,
+  Typography,
+  Button,
+  TextField,
+  IconButton,
+  Grid,
+  FormControl,
+} from '@mui/material'
 
 import {
   MdEdit,
@@ -83,25 +95,29 @@ const Stock = () => {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ width: '100px' }}>
-                    <strong>รายการที่</strong>
+                    <Typography sx={{ fontWeight: 'bold' }}>
+                      รายการที่
+                    </Typography>
                   </TableCell>
                   <TableCell>
-                    <strong>สินค้า</strong>
+                    <Typography sx={{ fontWeight: 'bold' }}>สินค้า</Typography>
                   </TableCell>
                   <TableCell>
-                    <strong>จำนวน</strong>
+                    <Typography sx={{ fontWeight: 'bold' }}>จำนวน</Typography>
                   </TableCell>
                   <TableCell>
-                    <strong>ต้นทุน</strong>
+                    <Typography sx={{ fontWeight: 'bold' }}>ต้นทุน</Typography>
                   </TableCell>
                   <TableCell>
-                    <strong>ราคา</strong>
+                    <Typography sx={{ fontWeight: 'bold' }}>ราคา</Typography>
                   </TableCell>
                   <TableCell>
-                    <strong>CF</strong>
+                    <Typography sx={{ fontWeight: 'bold' }}>CF</Typography>
                   </TableCell>
                   <TableCell>
-                    <strong>จ่ายแล้ว</strong>
+                    <Typography sx={{ fontWeight: 'bold' }}>
+                      จ่ายแล้ว
+                    </Typography>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -120,7 +136,7 @@ const Stock = () => {
                       </TableCell>
                       <TableCell>
                         <div
-                          className="btn btn-danger"
+                          className="btn btn-secondary"
                           style={{ fontSize: '20px' }}
                         >
                           {product.code}
@@ -145,69 +161,6 @@ const Stock = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          {/* <table className="table table-sm table-striped text-center table-bordered border-light table-hover">
-            <caption className="ms-3">
-              {numDocs === 0 ? (
-                <>ไม่พบข้อมูล</>
-              ) : (
-                <small>พบข้อมูลทั้งหมด {result.totalDocs} รายการ</small>
-              )}
-            </caption>
-            <thead className="table-light">
-              <tr style={numDocs === 0 ? hidden : null}>
-                <th>
-                  <MdGrid3X3 />
-                </th>
-                <th>รหัส</th>
-                <th>สินค้า</th>
-                <th>จำนวน</th>
-                <th>ราคา</th>
-                <th>ต้นทุน</th>
-                <th>วันที่</th>
-                <th>CF</th>
-                <th>Paid</th>
-                <th>เหลือ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.docs.map((doc) => {
-                let dt = new Date(Date.parse(doc.date_added))
-                let df = (
-                  <>
-                    {dt.getDate()}-{dt.getMonth() + 1}-{dt.getFullYear()}
-                  </>
-                )
-                let p = new Intl.NumberFormat().format(doc.price)
-                let c = new Intl.NumberFormat().format(doc.cost)
-
-                return (
-                  <tr key={doc._id}>
-                    <td>
-                      <input
-                        type="radio"
-                        name="_id"
-                        value={doc._id}
-                        className="form-check-input"
-                      />
-                    </td>
-                    <td>
-                      <Link to={`/order/${doc._id}`} state={{ _id: doc._id }}>
-                        {doc.code}
-                      </Link>
-                    </td>
-                    <td>{doc.name}</td>
-                    <td>{doc.stock_quantity}</td>
-                    <td>{p}</td>
-                    <td>{c}</td>
-                    <td>{df}</td>
-                    <td>{doc.cf}</td>
-                    <td>{doc.paid}</td>
-                    <td>{doc.remaining}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table> */}
         </div>
       </form>
     )
@@ -325,49 +278,52 @@ const Stock = () => {
             <span className="text-success">&nbsp; สินค้าทั้งหมด</span>
           </h3>
         </div>
+      </div>
 
-        <div className="col-lg-4 p-1">
+      {/* Search Params 'q' */}
+      <Grid container className="m-3">
+        <Grid item xs={6}>
           <form action="/stock" method="get">
             <div className="d-inline-block">
-              <input
+              <TextField
                 type="text"
                 name="q"
-                placeholder="พิมพ์ชื่อสินค้าที่จะค้นหา"
+                size="small"
+                label="พิมพ์ชื่อสินค้าที่จะค้นหา"
                 defaultValue={q}
                 className="form-control form-control-sm"
               />
             </div>
             &nbsp;&nbsp;
-            <button className="btn btn-sm btn-light border">
+            <IconButton
+              type="submit"
+              className="btn btn-sm btn-light border mt-2"
+            >
               <MdOutlineSearch />
-            </button>
+            </IconButton>
           </form>
-        </div>
+        </Grid>
 
-        <div className="col-lg-4 p-1">
-          <button
-            className="btn btn-sm btn-light border"
-            onClick={() => setOpenCreate(true)}
-          >
+        <Grid item xs={6} container alignItems="center" justifyContent="center">
+          <Button variant="contained" onClick={() => setOpenCreate(true)}>
             <FaPlus color="blue" />
             &nbsp;เพิ่ม
-          </button>
+          </Button>
           &nbsp;
-          <button onClick={onEditClick} className="btn btn-sm btn-light border">
+          <Button onClick={onEditClick} variant="contained" color="warning">
             <MdEdit color="orange" />
             &nbsp;แก้ไข
-          </button>
+          </Button>
           &nbsp;
-          <button
-            className="btn btn-sm btn-light border"
-            onClick={onSubmitForm}
-          >
-            <MdDeleteForever color="red" />
+          <Button variant="contained" color="error" onClick={onSubmitForm}>
+            <MdDeleteForever color="white" />
             &nbsp;ลบ
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Grid>
+      </Grid>
+
       <>{data}</>
+
       <div className="d-flex justify-content-center">
         <ul className="pagination pagination-sm">
           {page.map((p, i) => (
@@ -397,4 +353,5 @@ const Stock = () => {
     </>
   )
 }
+
 export default Stock

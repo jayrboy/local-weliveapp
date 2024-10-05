@@ -1,8 +1,19 @@
 import { baseURL } from '../../App'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+
+import {
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Button,
+  TextField,
+  Grid,
+  FormHelperText,
+} from '@mui/material'
 
 import CloseIcon from '@mui/icons-material/Close'
 
@@ -23,7 +34,18 @@ function ProductCreate(props) {
     color: 'red',
   }
 
-  const onSubmitForm = () => {
+  // เรียกฟังก์ชันเมื่อ component ถูก mount หรือหลัง DOM โหลดเสร็จ
+  useEffect(() => {
+    setCurrentDate()
+  }, [])
+
+  const setCurrentDate = () => {
+    const today = new Date()
+    const date = today.toISOString().split('T')[0] // ได้รูปแบบ YYYY-MM-DD
+    document.querySelector('input[name="date_added"]').value = date
+  }
+
+  const onSubmitForm = async () => {
     const formData = new FormData(form.current)
     const formEnt = Object.fromEntries(formData.entries())
 
@@ -34,28 +56,20 @@ function ProductCreate(props) {
 
     // console.log(formEnt)
 
-    fetch(`${baseURL}/api/product`, {
+    let response = await fetch(`${baseURL}/api/product`, {
       method: 'POST',
       body: JSON.stringify(formEnt),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + token,
-      },
+      headers: { 'Content-Type': 'application/json' },
     })
-      .then((res) => res.text())
-      .then((result) => {
-        if (result === 'true') {
-          form.current.reset()
-          toast.success('ข้อมูลถูกจัดเก็บแล้ว')
-          setOpenCreate(false)
-          navigate('/stock')
-        } else {
-          toast.warning(
-            'มีรหัสสินค้านี้อยู่ในสต็อกแล้ว กรุณาเปลี่ยนรหัสสินค้าใหม่'
-          )
-        }
-      })
-      .catch((e) => toast.error(e))
+
+    if (!response.ok) {
+      toast.warning('มีรหัสสินค้านี้อยู่ในสต็อกแล้ว กรุณาเปลี่ยนรหัสสินค้าใหม่')
+    } else {
+      toast.success('ข้อมูลถูกจัดเก็บแล้ว')
+      form.current.reset()
+      setOpenCreate(false)
+      navigate('/stock')
+    }
   }
 
   return (
@@ -75,84 +89,118 @@ function ProductCreate(props) {
         </span>
 
         <form onSubmit={handleSubmit(onSubmitForm)} ref={form} className="p-4">
-          <label className="form-label">รหัส CF</label>
-          <input
-            type="text"
-            name="code"
-            className="form-control form-control-sm"
-            {...register('code', {
-              required: 'กรุณาระบุรหัสสินค้า',
-              maxLength: {
-                value: 3,
-                message: 'รหัสสินค้าต้องไม่เกิน 3 ตัวอักษร',
-              },
-            })}
-          />
-          {errors.code && <div style={err}>{errors.code.message}</div>}
-          <label className="form-label mt-2">ชื่อสินค้า</label>
-          <input
-            type="text"
-            name="name"
-            className="form-control form-control-sm"
-            {...register('name', { required: true, maxLength: 30 })}
-          />
-          {errors.name && (
-            <div style={err}>
-              กรุณาระบุชื่อสินค้า ตัวอย่าง &quot;หนังสือ&quot;
-            </div>
-          )}
-          <label className="form-label mt-2">ราคา</label>
-          <input
-            type="number"
-            name="price"
-            min="0"
-            className="form-control form-control-sm"
-            {...register('price', {
-              validate: (value) => parseFloat(value) > 0,
-            })}
-          />
-          {errors.price && <div style={err}>กำหนดราคาสินค้า ตัวอย่าง: 400</div>}
-          <label className="form-label mt-2">ราคาต้นทุน</label>
-          <input
-            type="number"
-            name="cost"
-            min="0"
-            className="form-control form-control-sm"
-            {...register('cost', {
-              validate: (value) => parseFloat(value) > 0,
-            })}
-          />
-          {errors.price && <div style={err}>กำหนดราคาต้นทุน ตัวอย่าง: 200</div>}
-          <label className="form-label mt-2">จำนวนสินค้า</label>
-          <input
-            type="number"
-            name="stock_quantity"
-            min="0"
-            max="99"
-            className="form-control form-control-sm"
-            {...register('stock_quantity', {
-              validate: (value) => parseFloat(value) > 0,
-            })}
-          />
-          {errors.price && <div style={err}>กำหนดจำนวนสินค้า ตัวอย่าง: 10</div>}
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <TextField
+                label="รหัส CF"
+                type="text"
+                name="code"
+                className="form-control form-control-sm"
+                {...register('code', {
+                  required: 'กรุณาระบุรหัสสินค้า',
+                  maxLength: {
+                    value: 3,
+                    message: 'รหัสสินค้าต้องไม่เกิน 3 ตัวอักษร',
+                  },
+                })}
+              />
+              {errors.code && <div style={err}>{errors.code.message}</div>}
+            </Grid>
 
-          <label className="form-label mt-2">วันที่เพิ่มสินค้า</label>
-          <input
-            type="Date"
-            name="date_added"
-            className="form-control form-control-sm mb-3"
-            {...register('date_added', {
-              validate: (value) => parseFloat(value) > 0,
-            })}
-          />
-          {errors.price && <div style={err}>โปรดเพิ่มวันที่</div>}
+            <Grid item xs={6}>
+              <TextField
+                type="Date"
+                label="วันที่เพิ่มสินค้า"
+                name="date_added"
+                className="form-control form-control-sm"
+              />
+            </Grid>
 
-          <div className="d-flex justify-content-center ">
-            <button className="btn btn-light btn-sm border">เพิ่มสินค้า</button>
-            &nbsp;&nbsp;&nbsp;
-            <button className="btn btn-sm" onClick={() => setOpenCreate(false)}>
+            <Grid item xs={12}>
+              <TextField
+                label="ชื่อสินค้า"
+                type="text"
+                name="name"
+                className="form-control form-control-sm"
+                {...register('name', { required: true, maxLength: 30 })}
+              />
+              {errors.name && (
+                <div style={err}>
+                  กรุณาระบุชื่อสินค้า ตัวอย่าง &quot;หนังสือ&quot;
+                </div>
+              )}
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="ราคา"
+                type="number"
+                name="price"
+                min="0"
+                className="form-control form-control-sm"
+                {...register('price', {
+                  validate: (value) => parseFloat(value) > 0,
+                })}
+              />
+              {errors.price && (
+                <div style={err}>กำหนดราคาสินค้า ตัวอย่าง: 400</div>
+              )}
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="จำนวนสินค้า"
+                type="number"
+                name="stock_quantity"
+                min="0"
+                max="99"
+                className="form-control form-control-sm"
+                {...register('stock_quantity', {
+                  validate: (value) => parseFloat(value) > 0,
+                })}
+              />
+              {errors.price && (
+                <div style={err}>กำหนดจำนวนสินค้า ตัวอย่าง: 10</div>
+              )}
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="ราคาต้นทุน"
+                type="number"
+                name="cost"
+                min="0"
+                className="form-control form-control-sm"
+                {...register('cost', {
+                  validate: (value) => parseFloat(value) > 0,
+                })}
+              />
+              {errors.price && (
+                <div style={err}>กำหนดราคาต้นทุน ตัวอย่าง: 200</div>
+              )}
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="ขายเกินจำนวนได้ (limit)"
+                type="number"
+                name="limit"
+                className="form-control form-control-sm"
+              />
+            </Grid>
+          </Grid>
+
+          <div className="d-flex justify-content-between mt-2">
+            <Button
+              className="btn btn-sm text-secondary"
+              onClick={() => setOpenCreate(false)}
+            >
               ยกเลิก
-            </button>
+            </Button>
+            &nbsp;&nbsp;&nbsp;
+            <Button type="submit" variant="contained">
+              บันทึก
+            </Button>
           </div>
         </form>
       </div>

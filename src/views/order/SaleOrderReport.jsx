@@ -118,89 +118,95 @@ const SaleOrderReport = () => {
 
   return (
     <>
-      <Box sx={{ p: 3 }}>
-        <Grid container spacing={2}>
-          {/* Card 1: ยอดรวม */}
-          <Grid item xs={6} sm={3} md={3}>
-            <Card variant="outlined" sx={{ height: '100%' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <AttachMoney sx={{ fontSize: 40, color: 'green' }} />
-                <Typography variant="h6" gutterBottom fontWeight="bold">
-                  ยอดรวม
-                </Typography>
-                <Typography variant="h5" fontWeight="bold">
-                  {isLoading ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    `${totalSum
-                      .toFixed(0)
-                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')} บาท`
-                  )}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+      {growthRate && (
+        <Box sx={{ p: 3 }}>
+          <Grid container spacing={2}>
+            {/* Card 1: ยอดรวม */}
+            <Grid item xs={6} sm={3} md={3}>
+              <Card variant="outlined" sx={{ height: '100%' }}>
+                <CardContent sx={{ textAlign: 'center' }}>
+                  <AttachMoney sx={{ fontSize: 40, color: 'green' }} />
+                  <Typography variant="h6" gutterBottom fontWeight="bold">
+                    ยอดรวม
+                  </Typography>
+                  <Typography variant="h5" fontWeight="bold">
+                    {isLoading ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      `${
+                        totalSum
+                          .toFixed(0)
+                          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') || 0
+                      } บาท`
+                    )}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
 
-          {/* Card 2: จำนวนออเดอร์ */}
-          <Grid item xs={6} sm={3} md={3}>
-            <Card variant="outlined" sx={{ height: '100%' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <ShoppingCart sx={{ fontSize: 40, color: 'blue' }} />
-                <Typography variant="h6" gutterBottom fontWeight="bold">
-                  จำนวนออเดอร์
-                </Typography>
-                <Typography variant="h5" fontWeight="bold">
-                  {isLoading ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    `${orders.length} ออเดอร์`
-                  )}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+            {/* Card 2: จำนวนออเดอร์ */}
+            <Grid item xs={6} sm={3} md={3}>
+              <Card variant="outlined" sx={{ height: '100%' }}>
+                <CardContent sx={{ textAlign: 'center' }}>
+                  <ShoppingCart sx={{ fontSize: 40, color: 'blue' }} />
+                  <Typography variant="h6" gutterBottom fontWeight="bold">
+                    จำนวนออเดอร์
+                  </Typography>
+                  <Typography variant="h5" fontWeight="bold">
+                    {isLoading ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      `${orders.length || 0} ออเดอร์`
+                    )}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
 
-          {/* Card 3: ค่าเฉลี่ย/บิล */}
-          <Grid item xs={6} sm={3} md={3}>
-            <Card variant="outlined" sx={{ height: '100%' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <BarChart sx={{ fontSize: 40, color: 'orange' }} />
-                <Typography variant="h6" gutterBottom fontWeight="bold">
-                  ค่าเฉลี่ย/บิล
-                </Typography>
-                <Typography variant="h5" fontWeight="bold">
-                  {isLoading ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    `${averagePerBill
-                      .toFixed(0)
-                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')} บาท`
-                  )}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+            {/* Card 3: ค่าเฉลี่ย/บิล */}
+            <Grid item xs={6} sm={3} md={3}>
+              <Card variant="outlined" sx={{ height: '100%' }}>
+                <CardContent sx={{ textAlign: 'center' }}>
+                  <BarChart sx={{ fontSize: 40, color: 'orange' }} />
+                  <Typography variant="h6" gutterBottom fontWeight="bold">
+                    ค่าเฉลี่ย/บิล
+                  </Typography>
+                  <Typography variant="h5" fontWeight="bold">
+                    {isLoading ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      `${
+                        averagePerBill
+                          .toFixed(0)
+                          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') || 0
+                      } บาท`
+                    )}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
 
-          {/* Card 4: รายได้เติบโต */}
-          <Grid item xs={6} sm={3} md={3}>
-            <Card variant="outlined" sx={{ height: '100%' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <TrendingUp sx={{ fontSize: 40, color: 'purple' }} />
-                <Typography variant="h6" gutterBottom fontWeight="bold">
-                  รายได้เติบโต
-                </Typography>
-                <Typography variant="h5" fontWeight="bold">
-                  {isLoading ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    `${growthRate.toFixed(2)}%`
-                  )}
-                </Typography>
-              </CardContent>
-            </Card>
+            {/* Card 4: รายได้เติบโต */}
+            <Grid item xs={6} sm={3} md={3}>
+              <Card variant="outlined" sx={{ height: '100%' }}>
+                <CardContent sx={{ textAlign: 'center' }}>
+                  <TrendingUp sx={{ fontSize: 40, color: 'purple' }} />
+                  <Typography variant="h6" gutterBottom fontWeight="bold">
+                    รายได้เติบโต
+                  </Typography>
+                  <Typography variant="h5" fontWeight="bold">
+                    {isLoading ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      `${growthRate.toFixed(2) || 0}%`
+                    )}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      )}
 
       <div className="bg-chartjs">
         {/* กราฟแสดงรายได้ */}

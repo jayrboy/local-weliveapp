@@ -141,25 +141,33 @@ export default function SaleOrderSearch() {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <strong>วันที่</strong>
+                  <Typography sx={{ fontWeight: 'bold' }}>วันที่</Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>ชื่อ Facebook</strong>
+                  <Typography sx={{ fontWeight: 'bold' }}>
+                    ชื่อ Facebook
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>ชื่อลูกค้า</strong>
+                  <Typography sx={{ fontWeight: 'bold' }}>
+                    ชื่อลูกค้า
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>จำนวน</strong>
+                  <Typography sx={{ fontWeight: 'bold' }}>จำนวน</Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>ราคารวม (฿)</strong>
+                  <Typography noWrap sx={{ fontWeight: 'bold' }}>
+                    ยอดขำระ (฿)
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>สถานะ</strong>
+                  <Typography sx={{ fontWeight: 'bold' }}>สถานะ</Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>เลขพัสดุสินค้า</strong>
+                  <Typography sx={{ fontWeight: 'bold' }}>
+                    เลขพัสดุสินค้า
+                  </Typography>
                 </TableCell>
                 {/* <TableCell>
                   <strong>ขนส่ง</strong>

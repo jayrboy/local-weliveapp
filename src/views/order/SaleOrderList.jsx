@@ -103,26 +103,33 @@ export default function SaleOrderList() {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <strong>
+                  <Typography sx={{ fontWeight: 'bold' }}>
                     <MdGrid3X3 />
-                  </strong>
-                </TableCell>
-                <TableCell>
-                  <strong>ชื่อ Facebook</strong>
-                </TableCell>
-                <TableCell className="text-center">
-                  <strong>จำนวน</strong>
-                </TableCell>
-                <TableCell className="text-center">
-                  <Typography noWrap>
-                    <strong>ราคารวม (฿)</strong>
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>สถานะ</strong>
-                  <IconButton onClick={handleClick}>
-                    <FilterListIcon />
-                  </IconButton>
+                  <Typography sx={{ fontWeight: 'bold' }}>
+                    ชื่อ Facebook
+                  </Typography>
+                </TableCell>
+                <TableCell className="text-center">
+                  <Typography sx={{ fontWeight: 'bold' }}>จำนวน</Typography>
+                </TableCell>
+                <TableCell className="text-center">
+                  <Typography noWrap>
+                    <Typography sx={{ fontWeight: 'bold' }}>
+                      ราคารวม (฿)
+                    </Typography>
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography noWrap sx={{ fontWeight: 'bold' }}>
+                    สถานะ
+                    <IconButton size="small" onClick={handleClick}>
+                      <FilterListIcon color="secondary" />
+                    </IconButton>
+                  </Typography>
+
                   <Menu
                     anchorEl={anchorEl}
                     open={open}

@@ -169,25 +169,43 @@ export default function SaleOrderCheckout() {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <strong>Order ID</strong>
+                  <Typography noWrap sx={{ fontWeight: 'bold' }}>
+                    Order ID
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>วันที่สั่งซื้อ</strong>
+                  <Typography noWrap sx={{ fontWeight: 'bold' }}>
+                    วันที่สั่งซื้อ
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>ชื่อ Facebook</strong>
+                  <Typography noWrap sx={{ fontWeight: 'bold' }}>
+                    ชื่อ Facebook
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>เลขพัสดุ</strong>
+                  <Typography noWrap sx={{ fontWeight: 'bold' }}>
+                    เลขพัสดุ
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>วันที่เช็คเอ้าท์</strong>
+                  <Typography noWrap sx={{ fontWeight: 'bold' }}>
+                    วันที่เช็คเอ้าท์
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <strong className="text-success">อนุมัติโดย</strong>
+                  <Typography
+                    noWrap
+                    sx={{ fontWeight: 'bold' }}
+                    className="text-success"
+                  >
+                    อนุมัติโดย
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <strong>พิมพ์ใบเสร็จ/ใบปะหน้าพัสดุ</strong>
+                  <Typography noWrap sx={{ fontWeight: 'bold' }}>
+                    พิมพ์ใบเสร็จ/ใบปะหน้าพัสดุ
+                  </Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -205,20 +223,52 @@ export default function SaleOrderCheckout() {
 
                 return (
                   <StyledTableRow key={order._id}>
-                    <TableCell>{order._id}</TableCell>
-                    <TableCell>{df}</TableCell>
                     <TableCell>
-                      <Link
-                        to={`/order/${order._id}`}
-                        state={{ _id: order._id }}
-                        target="_blank"
+                      <Typography
+                        noWrap
+                        sx={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          maxWidth: '150px', // ปรับขนาดตามต้องการ
+                        }}
                       >
-                        {order.nameFb}
-                      </Link>
+                        {order._id}
+                      </Typography>
                     </TableCell>
-                    <TableCell>{order.express}</TableCell>
-                    <TableCell>{udf}</TableCell>
-                    <TableCell>{order.updateBy}</TableCell>
+                    <TableCell>
+                      <Typography noWrap>{df}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        <Link
+                          to={`/order/${order._id}`}
+                          state={{ _id: order._id }}
+                          target="_blank"
+                        >
+                          {order.nameFb}
+                        </Link>
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography noWrap>{order.express}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography noWrap>{udf}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography
+                        noWrap
+                        sx={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          maxWidth: '150px', // ปรับขนาดตามต้องการ
+                        }}
+                      >
+                        {order.updateBy}
+                      </Typography>
+                    </TableCell>
                     <TableCell>
                       <Button
                         type="button"
