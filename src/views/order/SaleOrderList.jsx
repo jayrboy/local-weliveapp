@@ -3,14 +3,21 @@ import { Link } from 'react-router-dom'
 
 import { useSelector } from 'react-redux'
 
-import Paper from '@mui/material/Paper'
-import TableContainer from '@mui/material/TableContainer'
-import Table from '@mui/material/Table'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import { styled } from '@mui/material/styles'
+import {
+  Paper,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableBody,
+  TableCell,
+  styled,
+  IconButton,
+  Menu,
+  MenuItem,
+} from '@mui/material'
+
+import FilterListIcon from '@mui/icons-material/FilterList'
 import ErrorIcon from '@mui/icons-material/Error'
 import { Tooltip, Typography } from '@mui/material'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
@@ -29,6 +36,22 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function SaleOrderList() {
   let { orders } = useSelector((store) => store.saleOrder)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [filterStatus, setFilterStatus] = useState(null) // สำหรับเก็บสถานะที่กรอง
+  const open = Boolean(anchorEl)
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const handleFilter = (filterValue) => {
+    setFilterStatus(filterValue) // เซ็ตค่าสถานะที่ต้องการกรอง
+    handleClose()
+  }
 
   // ฟังก์ชันคำนวณจำนวนสินค้าและราคารวมในแต่ละออเดอร์
   const calculateTotals = (orders) => {
@@ -50,9 +73,13 @@ export default function SaleOrderList() {
   }
 
   const ordersWithTotals = calculateTotals(orders)
-  const filteredOrders = ordersWithTotals.filter(
-    (order) => !order.complete && !order.isDelete
-  )
+
+  // ฟิลเตอร์คำสั่งซื้อตามสถานะที่กรอง
+  const filteredOrders = ordersWithTotals.filter((order) => {
+    if (filterStatus === 'Active') return order.isPayment && !order.isDelete
+    if (filterStatus === 'Inactive') return !order.isPayment && !order.isDelete
+    return !order.complete && !order.isDelete
+  })
 
   return (
     <>
@@ -71,14 +98,7 @@ export default function SaleOrderList() {
         <TableContainer component={Paper}>
           <Table>
             <caption className="ms-3">
-              <small>
-                พบข้อมูลทั้งหมด{' '}
-                {
-                  orders.filter((order) => !order.complete && !order.isDelete)
-                    .length
-                }{' '}
-                รายการ
-              </small>
+              <small>พบข้อมูลทั้งหมด {filteredOrders.length} รายการ</small>
             </caption>
             <TableHead>
               <TableRow>
@@ -98,6 +118,29 @@ export default function SaleOrderList() {
                 </TableCell>
                 <TableCell>
                   <strong>สถานะ</strong>
+                  <IconButton onClick={handleClick}>
+                    <FilterListIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'left',
+                    }}
+                  >
+                    <MenuItem onClick={() => handleFilter('Active')}>
+                      ชำระเงินแล้ว
+                    </MenuItem>
+                    <MenuItem onClick={() => handleFilter('Inactive')}>
+                      ยังไม่ชำระเงิน
+                    </MenuItem>
+                  </Menu>
                 </TableCell>
               </TableRow>
             </TableHead>
