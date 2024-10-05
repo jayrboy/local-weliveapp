@@ -76,7 +76,7 @@ export default function SaleOrderList() {
 
   // ฟิลเตอร์คำสั่งซื้อตามสถานะที่กรอง
   const filteredOrders = ordersWithTotals.filter((order) => {
-    if (filterStatus === 'Active') return order.isPayment && !order.isDelete
+    if (filterStatus === 'Active') return order.isPayment && !order.sended
     if (filterStatus === 'Inactive') return !order.isPayment && !order.isDelete
     return !order.complete && !order.isDelete
   })

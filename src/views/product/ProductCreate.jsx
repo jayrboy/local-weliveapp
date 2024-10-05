@@ -190,7 +190,7 @@ function ProductCreate(props) {
             </Grid>
           </Grid>
 
-          <div className="d-flex justify-content-between mt-2">
+          <div className="d-flex justify-content-between mt-5">
             <Button
               className="btn btn-sm text-secondary"
               onClick={() => setOpenCreate(false)}

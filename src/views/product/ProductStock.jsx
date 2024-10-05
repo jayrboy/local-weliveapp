@@ -35,6 +35,8 @@ import { FaPlus } from 'react-icons/fa'
 import ProductCreate from './ProductCreate'
 import ProductEdit from './ProductEdit'
 
+import TroubleshootIcon from '@mui/icons-material/Troubleshoot'
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
@@ -94,10 +96,8 @@ const Stock = () => {
               <caption>พบข้อมูลทั้งหมด {result.docs.length} รายการ</caption>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ width: '100px' }}>
-                    <Typography sx={{ fontWeight: 'bold' }}>
-                      รายการที่
-                    </Typography>
+                  <TableCell sx={{ width: '50px', textAlign: 'center' }}>
+                    <MdGrid3X3 />
                   </TableCell>
                   <TableCell>
                     <Typography sx={{ fontWeight: 'bold' }}>สินค้า</Typography>
@@ -132,27 +132,38 @@ const Stock = () => {
                           value={product._id}
                           className="ms-2 form-check-input"
                         />
-                        &nbsp;&nbsp;{index + 1}
                       </TableCell>
                       <TableCell>
-                        <div
-                          className="btn btn-secondary"
-                          style={{ fontSize: '20px' }}
-                        >
-                          {product.code}
-                        </div>
-                        &nbsp;&nbsp;&nbsp;
-                        <Link
-                          to={`/admin/product-graph/${product._id}`}
-                          state={{ _id: product._id }}
-                        >
-                          {product.name}
-                        </Link>
+                        <Typography noWrap>
+                          <div
+                            className="btn btn-secondary"
+                            style={{ fontSize: '20px' }}
+                          >
+                            {product.code}
+                          </div>
+                          &nbsp;&nbsp;&nbsp;
+                          <Link
+                            to={`/admin/product-graph/${product._id}`}
+                            state={{ _id: product._id }}
+                          >
+                            <Tooltip title="ดูผลรายงานสินค้า">
+                              {product.name}
+                            </Tooltip>
+                          </Link>
+                        </Typography>
                       </TableCell>
 
                       <TableCell>{product.stock_quantity}</TableCell>
-                      <TableCell>{product.cost}</TableCell>
-                      <TableCell>{product.price}</TableCell>
+                      <TableCell>
+                        {product.cost
+                          .toFixed(0)
+                          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                      </TableCell>
+                      <TableCell>
+                        {product.price
+                          .toFixed(0)
+                          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                      </TableCell>
                       <TableCell>{product.cf}</TableCell>
                       <TableCell>{product.paid}</TableCell>
                     </StyledTableRow>
@@ -269,20 +280,26 @@ const Stock = () => {
 
   return (
     <>
-      <div className="row m-3">
-        <div className="col-lg-4">
-          <h3 className="text-start">
-            <Link to="/dashboard" className="text-decoration-none">
-              WE LIVE |
-            </Link>
-            <span className="text-success">&nbsp; สินค้าทั้งหมด</span>
-          </h3>
-        </div>
+      <div className="m-3">
+        <h3 className="text-start">
+          <Link to="/dashboard" className="text-decoration-none">
+            WE LIVE |
+          </Link>
+          <span className="text-success">&nbsp; สต็อกสินค้า</span>
+        </h3>
       </div>
 
       {/* Search Params 'q' */}
-      <Grid container className="m-3">
-        <Grid item xs={6}>
+      <Grid container spacing={1}>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          lg={6}
+          container
+          alignItems="center"
+          justifyContent="center"
+        >
           <form action="/stock" method="get">
             <div className="d-inline-block">
               <TextField
@@ -304,7 +321,15 @@ const Stock = () => {
           </form>
         </Grid>
 
-        <Grid item xs={6} container alignItems="center" justifyContent="center">
+        <Grid
+          item
+          xs={12}
+          md={6}
+          lg={6}
+          container
+          alignItems="center"
+          justifyContent="center"
+        >
           <Button variant="contained" onClick={() => setOpenCreate(true)}>
             <FaPlus color="blue" />
             &nbsp;เพิ่ม
