@@ -13,7 +13,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import { styled } from '@mui/material/styles'
 
-import { Button, Checkbox, TextField, Radio } from '@mui/material'
+import { Button, Checkbox, TextField, Radio, Typography } from '@mui/material'
 import { toast } from 'react-toastify'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -216,23 +216,24 @@ export default function ExpressList() {
                       <TableCell>{doc.whenfprice}</TableCell>
                       <TableCell>{df}</TableCell> */}
                       <TableCell className="text-center">
-                        {doc.isSelectEx ? (
-                          <Button
-                            variant="contained"
-                            color="success"
-                            onClick={() => onClickStatus(doc)}
-                          >
-                            กำลังใช้งาน
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="outline"
-                            color="inherit"
-                            onClick={() => onClickStatus(doc)}
-                          >
-                            ไม่ได้ใช้งาน
-                          </Button>
-                        )}
+                        <Typography noWrap>
+                          {doc.isSelectEx ? (
+                            <Button
+                              variant="contained"
+                              color="success"
+                              onClick={() => onClickStatus(doc)}
+                            >
+                              กำลังใช้งาน
+                            </Button>
+                          ) : (
+                            <Button
+                              color="inherit"
+                              onClick={() => onClickStatus(doc)}
+                            >
+                              ไม่ได้ใช้งาน
+                            </Button>
+                          )}
+                        </Typography>
                       </TableCell>
                     </StyledTableRow>
                   )

@@ -1,22 +1,31 @@
-import React, { useState, useEffect } from 'react'
 import { baseURL } from '../../App'
-import { toast } from 'react-toastify'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
-import { MdGrid3X3 } from 'react-icons/md'
-import { MdOutlineSearch } from 'react-icons/md'
-import PrintIcon from '@mui/icons-material/Print'
 
-import Paper from '@mui/material/Paper'
-import TableContainer from '@mui/material/TableContainer'
-import Table from '@mui/material/Table'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import { styled } from '@mui/material/styles'
-import Button from '@mui/material/Button'
-import { IconButton } from '@mui/material'
+import {
+  Paper,
+  Grid,
+  TableContainer,
+  Table,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  styled,
+  Button,
+  IconButton,
+  Tooltip,
+  Typography,
+  TextField,
+  FormControl,
+  InputLabel,
+  Box,
+} from '@mui/material'
+
+import { MdGrid3X3, MdOutlineSearch } from 'react-icons/md'
+import PrintIcon from '@mui/icons-material/Print'
 import DownloadIcon from '@mui/icons-material/Download'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -105,37 +114,51 @@ export default function SaleOrderCheckout() {
       </div>
 
       <div className="position-relativ m-3">
-        <form>
-          <div className="d-flex mb-1 justify-content-end">
-            <input
-              className="form-control form-control-sm ms-1"
-              name="expressDate"
-              type="date"
-              style={{ width: '150px' }}
-              value={searchDate}
-              onChange={(e) => setSearchDate(e.target.value)}
-            />
-            <input
-              className="form-control form-control-sm ms-1"
-              type="text"
-              placeholder="เลขออเดอร์"
-              style={{ width: '150px' }}
-              value={searchOrderId}
-              onChange={(e) => setSearchOrderId(e.target.value)}
-            />
-            <input
-              className="form-control form-control-sm ms-1"
-              type="text"
-              placeholder="เลขพัสดุ"
-              style={{ width: '150px' }}
-              value={searchTracking}
-              onChange={(e) => setSearchTracking(e.target.value)}
-            />
-            &nbsp;
-            <Button variant="contained">
-              <MdOutlineSearch />
-            </Button>
-          </div>
+        <form className="mb-1">
+          <Grid container spacing={2}>
+            <Grid item>
+              <FormControl fullWidth>
+                <TextField
+                  type="date"
+                  label="วันที่สั่งซื้อ"
+                  value={searchDate}
+                  size="small"
+                  className="form-control form-control-sm"
+                  style={{ width: '150px' }}
+                  onChange={(e) => setSearchDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl fullWidth>
+                <TextField
+                  className="form-control form-control-sm "
+                  type="text"
+                  label="เลขออเดอร์"
+                  style={{ width: '150px' }}
+                  size="small"
+                  value={searchOrderId}
+                  onChange={(e) => setSearchOrderId(e.target.value)}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl fullWidth>
+                <TextField
+                  className="form-control form-control-sm "
+                  type="text"
+                  label="เลขพัสดุ"
+                  style={{ width: '150px' }}
+                  size="small"
+                  value={searchTracking}
+                  onChange={(e) => setSearchTracking(e.target.value)}
+                />
+              </FormControl>
+            </Grid>
+          </Grid>
         </form>
 
         <TableContainer component={Paper}>

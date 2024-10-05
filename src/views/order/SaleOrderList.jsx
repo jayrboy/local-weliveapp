@@ -114,7 +114,9 @@ export default function SaleOrderList() {
                   <strong>จำนวน</strong>
                 </TableCell>
                 <TableCell className="text-center">
-                  <strong>ราคารวม (฿)</strong>
+                  <Typography noWrap>
+                    <strong>ราคารวม (฿)</strong>
+                  </Typography>
                 </TableCell>
                 <TableCell>
                   <strong>สถานะ</strong>
@@ -155,7 +157,7 @@ export default function SaleOrderList() {
                         state={{ _id: order._id }}
                         target="_blank"
                       >
-                        <Typography>{order.nameFb}</Typography>
+                        <Typography noWrap>{order.nameFb}</Typography>
                       </Link>
                     </Tooltip>
                   </TableCell>
@@ -171,7 +173,7 @@ export default function SaleOrderList() {
                   </TableCell>
                   <TableCell>
                     {order.isPayment ? (
-                      <Typography>
+                      <Typography noWrap>
                         <span className="text-secondary">ชำระเงินแล้ว</span>
                         &nbsp;
                         <Tooltip title="กรุณายืนยันการชำระเงิน">
@@ -179,7 +181,7 @@ export default function SaleOrderList() {
                         </Tooltip>
                       </Typography>
                     ) : (
-                      <Typography className="text-warning">
+                      <Typography noWrap className="text-warning">
                         ยังไม่ชำระเงิน
                       </Typography>
                     )}

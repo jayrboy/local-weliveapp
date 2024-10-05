@@ -52,7 +52,9 @@ const AuthRoute = ({ children }) => {
     <React.Fragment>
       {user.token ? (
         <div className="app">
-          <SideBar />
+          <div className="sidebar">
+            <SideBar />
+          </div>
           <main className="content">
             {/* {isOpen && <LiveVideoModal />} */}
             {isOpen && <LiveVideoModalV2 />}

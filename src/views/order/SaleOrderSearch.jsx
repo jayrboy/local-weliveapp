@@ -1,20 +1,28 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { MdArrowDropDown } from 'react-icons/md'
-import { MdOutlineSearch } from 'react-icons/md'
 
-import Paper from '@mui/material/Paper'
-import TableContainer from '@mui/material/TableContainer'
-import Table from '@mui/material/Table'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import { styled } from '@mui/material/styles'
-import { Button, IconButton } from '@mui/material'
+import {
+  Paper,
+  Grid,
+  TableContainer,
+  Table,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  styled,
+  Button,
+  IconButton,
+  Tooltip,
+  Typography,
+  TextField,
+  FormControl,
+  InputLabel,
+} from '@mui/material'
+
 import ErrorIcon from '@mui/icons-material/Error'
-import { Tooltip, Typography } from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -32,6 +40,7 @@ export default function SaleOrderSearch() {
   // State for search criteria
   const [searchDate, setSearchDate] = useState('')
   const [customerName, setCustomerName] = useState('')
+  console.log(customerName)
 
   // Calculate totals for quantity and price
   const calculateTotals = (orders) => {
@@ -91,28 +100,38 @@ export default function SaleOrderSearch() {
       </div>
 
       <div className="position-relative m-3">
-        <form onSubmit={handleSearch}>
-          <div className="d-flex mb-1 justify-content-end">
-            <input
-              type="date"
-              className="form-control form-control-sm ms-1"
-              style={{ width: '150px' }}
-              value={searchDate}
-              onChange={(e) => setSearchDate(e.target.value)}
-            />
-            <input
-              type="text"
-              className="form-control form-control-sm ms-1"
-              style={{ width: '150px' }}
-              placeholder="ชื่อลูกค้า"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-            />
-            &nbsp;
-            <Button type="submit" variant="contained">
-              <MdOutlineSearch />
-            </Button>
-          </div>
+        <form onSubmit={handleSearch} className="mb-1">
+          <Grid container spacing={2}>
+            <Grid item>
+              <FormControl fullWidth>
+                <TextField
+                  type="date"
+                  label="วันที่สั่งซื้อ"
+                  size="small"
+                  value={searchDate}
+                  className="form-control form-control-sm"
+                  style={{ width: '150px' }}
+                  onChange={(e) => setSearchDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl fullWidth>
+                <TextField
+                  label="ค้นหาชื่อลูกค้า"
+                  size="small"
+                  type="text"
+                  value={customerName}
+                  className="form-control form-control-sm"
+                  style={{ width: '150px' }}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
+              </FormControl>
+            </Grid>
+          </Grid>
         </form>
         <TableContainer component={Paper}>
           <Table>
@@ -155,17 +174,23 @@ export default function SaleOrderSearch() {
                 }-${udt.getFullYear()}`
                 return (
                   <StyledTableRow key={order._id}>
-                    <TableCell>{udf}</TableCell>
                     <TableCell>
-                      <Link
-                        to={`/order/${order._id}`}
-                        state={{ _id: order._id }}
-                        target="_blank"
-                      >
-                        {order.nameFb}
-                      </Link>
+                      <Typography noWrap>{udf}</Typography>
                     </TableCell>
-                    <TableCell>{order.name}</TableCell>
+                    <TableCell>
+                      <Typography noWrap>
+                        <Link
+                          to={`/order/${order._id}`}
+                          state={{ _id: order._id }}
+                          target="_blank"
+                        >
+                          {order.nameFb}
+                        </Link>
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography noWrap>{order.name}</Typography>
+                    </TableCell>
                     <TableCell>
                       {order.totalQuantity
                         .toFixed(0)
@@ -178,17 +203,18 @@ export default function SaleOrderSearch() {
                     </TableCell>
                     <TableCell>
                       {order.sended ? (
-                        <Typography className="text-success">
+                        <Typography noWrap className="text-success">
                           ส่งสินค้าแล้ว
                         </Typography>
                       ) : order.isDelete ? (
-                        <Typography className="text-danger">
+                        <Typography noWrap className="text-danger">
                           ปฏิเสธ/หมดเวลา
                         </Typography>
                       ) : (
                         <>
                           {order.isPayment ? (
                             <Typography
+                              noWrap
                               sx={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -205,6 +231,7 @@ export default function SaleOrderSearch() {
                             </Typography>
                           ) : (
                             <Typography
+                              noWrap
                               sx={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -219,7 +246,9 @@ export default function SaleOrderSearch() {
                         </>
                       )}
                     </TableCell>
-                    <TableCell>{order.express}</TableCell>
+                    <TableCell>
+                      <Typography noWrap>{order.express}</Typography>
+                    </TableCell>
                     {/* <TableCell>
                       <select className="btn btn-sm btn-outline-secondary">
                         <option>เลือกขนส่ง</option>

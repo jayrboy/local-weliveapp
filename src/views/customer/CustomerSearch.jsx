@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { searchNameFacebook } from '../../redux/saleOrderSlice'
 
-import { Link } from 'react-router-dom'
-import { MdOutlineSearch } from 'react-icons/md'
+import {
+  Paper,
+  Grid,
+  TableContainer,
+  Table,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  styled,
+  Button,
+  IconButton,
+  Tooltip,
+  Typography,
+  TextField,
+  FormControl,
+  InputLabel,
+  Box,
+} from '@mui/material'
 
-import Paper from '@mui/material/Paper'
-import TableContainer from '@mui/material/TableContainer'
-import Table from '@mui/material/Table'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import { styled } from '@mui/material/styles'
-import { Button } from '@mui/material'
+import { MdOutlineSearch } from 'react-icons/md'
 import ErrorIcon from '@mui/icons-material/Error'
-import { Tooltip, Typography } from '@mui/material'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -58,38 +67,49 @@ export default function CustomerSearch() {
         </div>
       </div>
 
-      <div className="position-relativ m-3">
-        <form>
-          <div className="d-flex mb-1 justify-content-end">
-            <input
-              type="text"
-              className="form-control form-control-sm ms-1"
-              placeholder="ชื่อลูกค้า"
-              style={{ width: '150px' }}
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)} // อัปเดตค่าชื่อลูกค้า
-            />
-            <input
-              type="text"
-              className="form-control form-control-sm ms-1"
-              placeholder="ที่อยู่"
-              style={{ width: '150px' }}
-              value={searchAddress}
-              onChange={(e) => setSearchAddress(e.target.value)} // อัปเดตค่าที่อยู่
-            />
-            <input
-              type="text"
-              className="form-control form-control-sm ms-1"
-              placeholder=" เบอร์โทรศัพท์"
-              style={{ width: '150px' }}
-              value={searchTel}
-              onChange={(e) => setSearchTel(e.target.value)} // อัปเดตค่าเบอร์โทรศัพท์
-            />
-            &nbsp;
-            <Button variant="contained">
-              <MdOutlineSearch />
-            </Button>
-          </div>
+      <div className="position-relative m-3">
+        <form className="mb-1">
+          <Grid container spacing={2}>
+            <Grid item>
+              <FormControl fullWidth>
+                <TextField
+                  type="text"
+                  label="ชื่อลูกค้า"
+                  size="small"
+                  value={searchName}
+                  className="form-control form-control-sm"
+                  style={{ width: '150px' }}
+                  onChange={(e) => setSearchName(e.target.value)} // อัปเดตค่าชื่อลูกค้า
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl fullWidth>
+                <TextField
+                  type="text"
+                  className="form-control form-control-sm"
+                  label="ที่อยู่"
+                  size="small"
+                  style={{ width: '150px' }}
+                  value={searchAddress}
+                  onChange={(e) => setSearchAddress(e.target.value)} // อัปเดตค่าที่อยู่
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl fullWidth>
+                <TextField
+                  type="text"
+                  className="form-control form-control-sm"
+                  label="เบอร์โทรศัพท์"
+                  size="small"
+                  style={{ width: '150px' }}
+                  value={searchTel}
+                  onChange={(e) => setSearchTel(e.target.value)} // อัปเดตค่าเบอร์โทรศัพท์
+                />
+              </FormControl>
+            </Grid>
+          </Grid>
         </form>
         <TableContainer component={Paper}>
           <Table>
@@ -130,15 +150,19 @@ export default function CustomerSearch() {
                   return (
                     <StyledTableRow key={index}>
                       <TableCell>
-                        <Link
-                          to={`/order/${order._id}`}
-                          state={{ _id: order._id }}
-                          target="_blank"
-                        >
-                          {order.name}
-                        </Link>
+                        <Typography noWrap>
+                          <Link
+                            to={`/order/${order._id}`}
+                            state={{ _id: order._id }}
+                            target="_blank"
+                          >
+                            {order.name}
+                          </Link>
+                        </Typography>
                       </TableCell>
-                      <TableCell>{order.address}</TableCell>
+                      <TableCell>
+                        <Typography noWrap>{order.address}</Typography>
+                      </TableCell>
                       <TableCell>{order.district}</TableCell>
                       <TableCell>{order.amphure}</TableCell>
                       <TableCell>{order.province}</TableCell>
@@ -146,17 +170,18 @@ export default function CustomerSearch() {
                       <TableCell>{order.tel}</TableCell>
                       <TableCell>
                         {order.sended ? (
-                          <Typography className="text-success">
+                          <Typography noWrap className="text-success">
                             ส่งสินค้าแล้ว
                           </Typography>
                         ) : order.isDelete ? (
-                          <Typography className="text-danger">
+                          <Typography noWrap className="text-danger">
                             ปฏิเสธ/หมดเวลา
                           </Typography>
                         ) : (
                           <>
                             {order.isPayment ? (
                               <Typography
+                                noWrap
                                 sx={{
                                   display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
                                   alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง
@@ -173,6 +198,7 @@ export default function CustomerSearch() {
                               </Typography>
                             ) : (
                               <Typography
+                                noWrap
                                 sx={{
                                   display: 'flex', // ใช้ Flexbox เพื่อจัดเรียง
                                   alignItems: 'center', // จัดให้อยู่ตรงกลางในแนวตั้ง

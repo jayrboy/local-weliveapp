@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar'
-import { Box, IconButton, Typography } from '@mui/material'
+import { Avatar, Box, IconButton, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
@@ -89,14 +89,15 @@ const SideBar = () => {
                     justifyContent="center"
                     alignItems="center"
                   >
-                    <img
+                    <Avatar
                       alt="profile-picture"
                       width="50px"
                       src={user.picture[0].data.url}
-                      style={{
-                        cursor: 'pointer',
-                        borderRadius: '50%',
-                      }}
+                      sx={{ width: 56, height: 56 }}
+                      // style={{
+                      //   cursor: 'pointer',
+                      //   borderRadius: '50%',
+                      // }}
                     />
                   </Box>
                   <Box textAlign="center">

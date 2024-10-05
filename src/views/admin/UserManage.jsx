@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useSelector } from 'react-redux'
 
 import {
+  Box,
   Select,
   MenuItem,
   Table,
@@ -13,11 +14,15 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Avatar,
+  styled,
+  Tooltip,
+  Typography,
 } from '@mui/material'
-import { styled } from '@mui/material/styles'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import EditIcon from '@mui/icons-material/Edit'
+import StarsIcon from '@mui/icons-material/Stars'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -34,7 +39,7 @@ const UserManage = () => {
   let [data, setData] = useState([])
   const { user } = useSelector((state) => state.user)
   // const dispatch = useDispatch()
-  console.log(data)
+  // console.log(data)
 
   useEffect(() => {
     loadData(user.token)
@@ -81,11 +86,13 @@ const UserManage = () => {
   return (
     <div className="m-3">
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table aria-label="simple table">
           <caption>พบข้อมูลทั้งหมด {data.length} รายการ</caption>
           <TableHead>
             <TableRow>
-              {/* <TableCell>บัญชีผู้ใช้</TableCell> */}
+              <TableCell>
+                <strong>บัญชีผู้ใช้</strong>
+              </TableCell>
               <TableCell>
                 <strong>ชื่อ Facebook</strong>
               </TableCell>
@@ -120,21 +127,20 @@ const UserManage = () => {
                       key={index}
                       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     >
-                      {/* <TableCell>{item.username}</TableCell> */}
+                      <TableCell>{item.username}</TableCell>
                       <TableCell>
-                        <img
-                          src={
-                            item.picture[0].data.url ||
-                            'http://www.no-imagejpgasdfasd.com'
-                          }
-                          width={50}
-                          style={{
-                            cursor: 'pointer',
-                            borderRadius: '50%',
-                          }}
-                        />
-                        &nbsp;&nbsp;
-                        {item.name}
+                        <Box display="flex" alignItems="center">
+                          <Avatar src={item.picture[0].data.url} />
+                          <Typography noWrap ml={2}>
+                            {item.name}
+                            &nbsp;
+                            {item.role === 'admin' && (
+                              <Tooltip title="แอดมิน">
+                                <StarsIcon color="warning" fontSize="small" />
+                              </Tooltip>
+                            )}
+                          </Typography>
+                        </Box>
                       </TableCell>
                       <TableCell>
                         <Select

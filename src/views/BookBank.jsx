@@ -31,6 +31,7 @@ import {
   MenuItem,
   FormControl,
   Select,
+  Typography,
 } from '@mui/material'
 
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
@@ -259,9 +260,15 @@ const BookBank = () => {
                       />
                     </TableCell>
                     <TableCell>{doc.bank}</TableCell>
-                    <TableCell>{doc.bankName}</TableCell>
-                    <TableCell>{doc.bankID}</TableCell>
-                    <TableCell>{doc.promptPay}</TableCell>
+                    <TableCell>
+                      <Typography noWrap>{doc.bankName}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography noWrap>{doc.bankID}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography noWrap>{doc.promptPay}</Typography>
+                    </TableCell>
                     <TableCell>
                       <img
                         src={doc.qrCode}
