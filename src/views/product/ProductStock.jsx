@@ -38,6 +38,9 @@ import PublishIcon from '@mui/icons-material/Publish'
 import { read, utils, writeFile } from 'xlsx'
 import excelIcon from '../../assets/excelicon.png'
 
+import { useDispatch, useSelector } from 'react-redux'
+import { getProducts } from '../../redux/productSlice'
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
@@ -66,7 +69,10 @@ const Stock = () => {
 
   const token = localStorage.getItem('token')
 
-  let [products, setProducts] = useState([])
+  let [productsToExport, setProductsToExport] = useState([])
+  const { products } = useSelector((state) => state.product) // สำหรับ export: products get all
+  const dispatch = useDispatch()
+  // console.log('Products :', products)
 
   useEffect(() => {
     if (!isOpenEdit) {
@@ -79,10 +85,87 @@ const Stock = () => {
           showData(result)
           paginate(result)
           setTotalPages(result.totalPages) // Update the total number of pages
+          // setProductsToExport(result.docs) //? ถ้าต้องการ export ทีละหน้า
         })
         .catch((err) => toast.error(err))
     }
   }, [location, isOpenEdit])
+
+  useEffect(() => {
+    dispatch(getProducts())
+  }, [])
+
+  const importFileExcel = async (event) => {
+    const file = event.target.files[0]
+
+    if (file) {
+      const fileReader = new FileReader()
+      fileReader.onload = (event) => {
+        const wb = read(event.target.result)
+        const sheets = wb.SheetNames
+
+        if (sheets.length) {
+          const rows = utils.sheet_to_json(wb.Sheets[sheets[0]])
+          // console.table(rows)
+
+          //TODO: for fetch api cell if want to save this data in DB
+          setProductsToExport(rows)
+        }
+      }
+
+      fileReader.readAsArrayBuffer(file)
+      console.log('Import File Excel')
+    }
+  }
+
+  const exportFileExcel = async () => {
+    try {
+      const headings = [
+        [
+          'ไอดี',
+          'รหัสสินค้า',
+          'สินค้า',
+          'จำนวน',
+          'ต้นทุน',
+          'ราคา',
+          'CF',
+          'จ่ายแล้ว',
+        ],
+      ]
+
+      const wb = utils.book_new()
+      const ws = utils.json_to_sheet([])
+
+      // เพิ่ม headings ก่อนที่จะกำหนดสไตล์
+      utils.sheet_add_aoa(ws, headings)
+
+      // TODO: ดึงข้อมูลจาก api มาเพิ่มใน sheet
+      const productsData = products.map((p) => ({
+        ไอดี: p._id,
+        รหัสสินค้า: p.code,
+        สินค้า: p.name,
+        จำนวน: p.stock_quantity,
+        ต้นทุน: p.cost,
+        ราคา: p.price,
+        CF: p.cf,
+        จ่ายแล้ว: p.paid,
+      }))
+
+      // เพิ่มข้อมูลใน sheet
+      utils.sheet_add_json(ws, productsData, {
+        origin: 'A2',
+        skipHeader: true,
+      })
+
+      // เพิ่ม worksheet ใน workbook
+      utils.book_append_sheet(wb, ws, 'Products Report')
+
+      // เขียนไฟล์ Excel
+      writeFile(wb, 'Products_Report.xlsx')
+    } catch (error) {
+      toast.error('เกิดข้อผิดพลาดในการ export file')
+    }
+  }
 
   const showData = (result) => {
     const numDocs = result.totalDocs
@@ -244,6 +327,28 @@ const Stock = () => {
     setPage(links)
   }
 
+  const onEditClick = (e) => {
+    e.preventDefault()
+    const selectedInput = document.querySelector('input[name="_id"]:checked')
+    if (selectedInput) {
+      setOpenEdit(true)
+      const id = selectedInput.value
+      setIdEdit(id)
+    } else {
+      toast.warning('กรุณาเลือกรายการที่ต้องการแก้ไข')
+    }
+  }
+
+  // Handle page change
+  const handlePageChange = (event, value) => {
+    console.log('Selected Page:', value)
+    setPage(value) // อัปเดต page state ตามค่า value ที่เลือก
+    // อาจจะต้องการนำค่า page ไปปรับ URL ด้วย
+    const newParams = new URLSearchParams(params)
+    newParams.set('page', value)
+    navigate(`/stock?${newParams.toString()}`) // ปรับ URL ตามหน้าใหม่
+  }
+
   const onSubmitForm = (event) => {
     event.preventDefault()
 
@@ -272,72 +377,6 @@ const Stock = () => {
         navigate('/stock')
       })
       .catch((err) => toast.error(err))
-  }
-
-  const onEditClick = (e) => {
-    e.preventDefault()
-    const selectedInput = document.querySelector('input[name="_id"]:checked')
-    if (selectedInput) {
-      setOpenEdit(true)
-      const id = selectedInput.value
-      setIdEdit(id)
-    } else {
-      toast.warning('กรุณาเลือกรายการที่ต้องการแก้ไข')
-    }
-  }
-
-  // Handle page change
-  const handlePageChange = (event, value) => {
-    console.log('Selected Page:', value)
-    setPage(value) // อัปเดต page state ตามค่า value ที่เลือก
-    // อาจจะต้องการนำค่า page ไปปรับ URL ด้วย
-    const newParams = new URLSearchParams(params)
-    newParams.set('page', value)
-    navigate(`/stock?${newParams.toString()}`) // ปรับ URL ตามหน้าใหม่
-  }
-
-  const importFileExcel = async (event) => {
-    const file = event.target.files[0]
-
-    if (file) {
-      const fileReader = new FileReader()
-      fileReader.onload = (event) => {
-        const wb = read(event.target.result)
-        const sheets = wb.SheetNames
-
-        if (sheets.length) {
-          const rows = utils.sheet_to_json(wb.Sheets[sheets[0]])
-          // console.table(rows)
-
-          //TODO: for fetch api cell if want to save this data in DB
-          setProducts(rows)
-        }
-      }
-
-      fileReader.readAsArrayBuffer(file)
-      console.log('Import File Excel')
-    }
-  }
-
-  const exportFileExcel = async () => {
-    try {
-      const headings = [
-        ['สินค้า', 'จำนวน', 'ต้นทุน', 'ราคา', 'CF', 'จ่ายแล้ว', 'ยอด'],
-      ]
-
-      const wb = utils.book_new()
-      const ws = utils.json_to_sheet([])
-      utils.sheet_add_aoa(ws, headings)
-
-      //TODO: "products"
-      utils.sheet_add_json(ws, products, { origin: 'A1', skipHeader: false })
-      utils.book_append_sheet(wb, ws, 'Report')
-      writeFile(wb, 'Products Report.xlsx')
-
-      console.log('Export File Excel')
-    } catch (error) {
-      toast.error('Error exporting file')
-    }
   }
 
   return (
