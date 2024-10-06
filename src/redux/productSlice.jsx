@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 // const url = 'https://vercel-server-weliveapp.vercel.app/api/product'
-// const url = 'https://api-weliveapp.azurewebsites.net/api/product'
-const url = 'http://localhost:8000/api/product'
+const url = 'https://api-weliveapp.azurewebsites.net/api/product'
+// const url = 'http://localhost:8000/api/product'
 const token = localStorage.getItem('token')
 
 export const getProducts = createAsyncThunk(
@@ -25,6 +25,8 @@ const initialState = {
   stock_quantity: 0,
   total: 0,
   isLoading: false,
+  productsToImport: [],
+  isOpen: false,
 }
 
 const productSlice = createSlice({
@@ -65,6 +67,15 @@ const productSlice = createSlice({
         return p // ใช้ข้อมูลสินค้าเดิมสำหรับตำแหน่งที่ไม่ได้ถูกอัปเดต
       })
     },
+    handleOpen: (state) => {
+      state.isOpen = true
+    },
+    handleOpened: (state) => {
+      state.isOpen = false
+    },
+    onImport: (state, action) => {
+      state.productsToImport = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -82,5 +93,12 @@ const productSlice = createSlice({
   },
 })
 
-export const { calTotals, deletedProduct, updateProduct } = productSlice.actions
+export const {
+  calTotals,
+  deletedProduct,
+  updateProduct,
+  handleOpen,
+  handleOpened,
+  onImport,
+} = productSlice.actions
 export default productSlice.reducer

@@ -19,6 +19,8 @@ import {
   Grid,
   Pagination,
   Stack,
+  DialogTitle,
+  Dialog,
 } from '@mui/material'
 
 import {
@@ -39,7 +41,12 @@ import { read, utils, writeFile } from 'xlsx'
 import excelIcon from '../../assets/excelicon.png'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { getProducts } from '../../redux/productSlice'
+import {
+  getProducts,
+  onImport,
+  handleOpen,
+  handleOpened,
+} from '../../redux/productSlice'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -69,10 +76,19 @@ const Stock = () => {
 
   const token = localStorage.getItem('token')
 
-  let [productsToExport, setProductsToExport] = useState([])
-  const { products } = useSelector((state) => state.product) // สำหรับ export: products get all
+  // let [productsToExport, setProductsToExport] = useState([])
+  const { products, productsToImport, isOpen } = useSelector(
+    (state) => state.product
+  ) // สำหรับ export: products get all
   const dispatch = useDispatch()
-  // console.log('Products :', products)
+
+  const handleClickOpen = () => {
+    dispatch(handleOpen())
+  }
+
+  const handleClose = () => {
+    dispatch(handleOpened())
+  }
 
   useEffect(() => {
     if (!isOpenEdit) {
@@ -108,13 +124,13 @@ const Stock = () => {
           const rows = utils.sheet_to_json(wb.Sheets[sheets[0]])
           // console.table(rows)
 
-          //TODO: for fetch api cell if want to save this data in DB
-          setProductsToExport(rows)
+          // //TODO: for fetch api cell if want to save this data in DB
+          dispatch(onImport(rows))
+          handleClickOpen()
         }
       }
 
       fileReader.readAsArrayBuffer(file)
-      console.log('Import File Excel')
     }
   }
 
@@ -196,13 +212,13 @@ const Stock = () => {
                     <Typography sx={{ fontWeight: 'bold' }}>สินค้า</Typography>
                   </TableCell>
                   <TableCell>
+                    <Typography sx={{ fontWeight: 'bold' }}>ราคา</Typography>
+                  </TableCell>
+                  <TableCell>
                     <Typography sx={{ fontWeight: 'bold' }}>จำนวน</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography sx={{ fontWeight: 'bold' }}>ต้นทุน</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography sx={{ fontWeight: 'bold' }}>ราคา</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography sx={{ fontWeight: 'bold' }}>CF</Typography>
@@ -244,15 +260,15 @@ const Stock = () => {
                         </Tooltip>
                       </Typography>
                     </TableCell>
+                    <TableCell>
+                      {product.price
+                        .toFixed(0)
+                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                    </TableCell>
 
                     <TableCell>{product.stock_quantity}</TableCell>
                     <TableCell>
                       {product.cost
-                        .toFixed(0)
-                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                    </TableCell>
-                    <TableCell>
-                      {product.price
                         .toFixed(0)
                         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
                     </TableCell>
@@ -448,6 +464,63 @@ const Stock = () => {
             >
               Import
             </Button>
+            {/* Dialog Import Product */}
+            <Dialog onClose={handleClose} open={isOpen}>
+              <DialogTitle>Import Products</DialogTitle>
+              <TableContainer sx={{ pt: 0 }} component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        <strong>วันที่</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>รหัส</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>ชื่อ</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>ราคา</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>จำนวน</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>ต้นทุน</strong>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {productsToImport.map((p, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{p.date_added}</TableCell>
+                        <TableCell>{p.code}</TableCell>
+                        <TableCell>{p.name}</TableCell>
+                        <TableCell>{p.price}</TableCell>
+                        <TableCell>{p.stock_quantity}</TableCell>
+                        <TableCell>{p.cost}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Grid
+                container
+                spacing={2}
+                justifyContent="flex-end"
+                sx={{ mt: 2 }}
+              >
+                <Grid item>
+                  <Button type="button" onClick={handleClose}>
+                    ยกเลิก
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button type="button">บันทึก</Button>
+                </Grid>
+              </Grid>
+            </Dialog>
           </label>
           &nbsp;
           <Button
