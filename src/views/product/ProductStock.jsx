@@ -74,6 +74,7 @@ const Stock = () => {
   let [isOpenCreate, setOpenCreate] = useState(false)
   let [isOpenEdit, setOpenEdit] = useState(false)
   let [idEdit, setIdEdit] = useState('')
+  let [selectItem, setSelectItem] = useState(false)
 
   const token = localStorage.getItem('token')
 
@@ -297,6 +298,7 @@ const Stock = () => {
                         type="radio"
                         name="_id"
                         value={product._id}
+                        onChange={() => setSelectItem(true)}
                         className="ms-2 form-check-input"
                       />
                     </TableCell>
@@ -350,6 +352,8 @@ const Stock = () => {
       setPage([])
       return
     }
+
+    setSelectItem(false) // Toggle Radio
 
     let links = []
     let q = params.get('q') || ''
@@ -650,15 +654,19 @@ const Stock = () => {
             &nbsp;เพิ่ม
           </Button>
           &nbsp;
-          <Button onClick={onEditClick} variant="contained" color="warning">
-            <MdEdit color="orange" />
-            &nbsp;แก้ไข
-          </Button>
-          &nbsp;
-          <Button variant="contained" color="error" onClick={onSubmitForm}>
-            <MdDeleteForever color="white" />
-            &nbsp;ลบ
-          </Button>
+          {selectItem && (
+            <>
+              <Button onClick={onEditClick} variant="contained" color="warning">
+                <MdEdit color="orange" />
+                &nbsp;แก้ไข
+              </Button>
+              &nbsp;
+              <Button variant="contained" color="error" onClick={onSubmitForm}>
+                <MdDeleteForever color="white" />
+                &nbsp;ลบ
+              </Button>
+            </>
+          )}
         </Grid>
       </Grid>
 

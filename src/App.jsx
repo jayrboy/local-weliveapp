@@ -110,7 +110,6 @@ function App() {
           if (data.username) {
             dispatch(
               login({
-                _id: data._id,
                 username: data.username,
                 role: data.role,
                 name: data.name,
@@ -122,7 +121,6 @@ function App() {
                 pages: data.pages,
               })
             )
-            localStorage.setItem('vendorId', data._id)
             setLoading(false)
           } else {
             throw new Error('Invalid token')

@@ -75,15 +75,14 @@ const ResponsiveAppBar = () => {
   // console.log('profile_picture', user.picture[0].data.url)
 
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
-  useEffect(() => {}, [navigate, dispatch])
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (token) {
       navigate('/dashboard')
     }
-  }, [navigate])
+  }, [])
 
   const onClickLogout = () => {
     dispatch(logout())
