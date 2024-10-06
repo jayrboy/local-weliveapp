@@ -46,6 +46,7 @@ import {
   onImport,
   handleOpen,
   handleOpened,
+  clearImport,
 } from '../../redux/productSlice'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -111,6 +112,40 @@ const Stock = () => {
     dispatch(getProducts())
   }, [])
 
+  //TODO: Import file V1
+  // const importFileExcel = async (event) => {
+  //   const file = event.target.files[0]
+
+  //   if (file) {
+  //     const fileReader = new FileReader()
+  //     fileReader.onload = (event) => {
+  //       const wb = read(event.target.result)
+  //       const sheets = wb.SheetNames
+
+  //       if (sheets.length) {
+  //         const rows = utils.sheet_to_json(wb.Sheets[sheets[0]])
+  //         // console.table(rows)
+
+  //         // //TODO: for fetch api cell if want to save this data in DB
+  //         dispatch(onImport(rows))
+  //         handleClickOpen()
+  //       }
+  //     }
+
+  //     fileReader.readAsArrayBuffer(file)
+  //   }
+  // }
+
+  //TODO: Import file V2
+  const expectedHeaders = [
+    'date_added',
+    'code',
+    'name',
+    'price',
+    'stock_quantity',
+    'cost',
+  ]
+
   const importFileExcel = async (event) => {
     const file = event.target.files[0]
 
@@ -121,11 +156,35 @@ const Stock = () => {
         const sheets = wb.SheetNames
 
         if (sheets.length) {
-          const rows = utils.sheet_to_json(wb.Sheets[sheets[0]])
-          // console.table(rows)
+          // แปลง sheet เป็น json
+          const rows = utils.sheet_to_json(wb.Sheets[sheets[0]], { header: 1 })
+          const fileHeaders = rows[0] // header ของไฟล์
+          // console.log('File Headers:', fileHeaders)
 
-          // //TODO: for fetch api cell if want to save this data in DB
-          dispatch(onImport(rows))
+          // ตรวจสอบว่า header ในไฟล์ตรงกับที่เราคาดหวังหรือไม่
+          const isHeaderValid = expectedHeaders.every(
+            (header, index) => header === fileHeaders[index]
+          )
+
+          if (!isHeaderValid) {
+            toast.warning(`กรุณาตรวจสอบไฟล์ข้อมูลให้ตรง ${expectedHeaders}`)
+            toast(`เริ่มต้นกำหนด "A1" [date_added] ปี-เดือน-วัน`)
+            return
+          }
+
+          // ลบแถว header ก่อน dispatch ข้อมูล
+          const dataRows = rows.slice(1)
+          const formattedData = dataRows.map((row) => ({
+            date_added: row[0],
+            code: row[1],
+            name: row[2],
+            price: row[3],
+            stock_quantity: row[4],
+            cost: row[5],
+          }))
+
+          // dispatch ข้อมูลไปยัง store หรืออื่นๆ
+          dispatch(onImport(formattedData))
           handleClickOpen()
         }
       }
@@ -141,9 +200,9 @@ const Stock = () => {
           'ไอดี',
           'รหัสสินค้า',
           'สินค้า',
+          'ราคา',
           'จำนวน',
           'ต้นทุน',
-          'ราคา',
           'CF',
           'จ่ายแล้ว',
         ],
@@ -160,9 +219,9 @@ const Stock = () => {
         ไอดี: p._id,
         รหัสสินค้า: p.code,
         สินค้า: p.name,
+        ราคา: p.price,
         จำนวน: p.stock_quantity,
         ต้นทุน: p.cost,
-        ราคา: p.price,
         CF: p.cf,
         จ่ายแล้ว: p.paid,
       }))
@@ -357,12 +416,45 @@ const Stock = () => {
 
   // Handle page change
   const handlePageChange = (event, value) => {
-    console.log('Selected Page:', value)
+    // console.log('Selected Page:', value)
     setPage(value) // อัปเดต page state ตามค่า value ที่เลือก
     // อาจจะต้องการนำค่า page ไปปรับ URL ด้วย
     const newParams = new URLSearchParams(params)
     newParams.set('page', value)
     navigate(`/stock?${newParams.toString()}`) // ปรับ URL ตามหน้าใหม่
+  }
+
+  const saveProductsToImport = () => {
+    // ตรวจสอบข้อมูลก่อนส่ง
+    if (!productsToImport || productsToImport.length === 0) {
+      toast.error('ไม่มีข้อมูลสำหรับการนำเข้า')
+      return
+    }
+
+    // console.log(productsToImport)
+
+    fetch(`${baseURL}/api/product/excel/import`, {
+      method: 'POST',
+      body: JSON.stringify(productsToImport),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((res) => {
+        // ตรวจสอบสถานะ response ก่อนแปลงเป็น JSON
+        if (!res.ok) {
+          throw new Error('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์')
+        }
+        return res.json()
+      })
+      .then((data) => {
+        // console.log(data)
+        toast.success('บันทึกข้อมูลสำเร็จ')
+        handleClose()
+        dispatch(clearImport())
+        navigate('/stock')
+      })
+      .catch((err) => {
+        toast.warning(มีรหัสโค้ดสินค้าซ้ำกับสินค้าที่มีอยู่)
+      })
   }
 
   const onSubmitForm = (event) => {
@@ -426,6 +518,7 @@ const Stock = () => {
                 label="พิมพ์ชื่อสินค้าที่จะค้นหา"
                 defaultValue={q}
                 className="form-control form-control-sm"
+                sx={{ width: 190 }}
               />
             </div>
             &nbsp;&nbsp;
@@ -517,7 +610,9 @@ const Stock = () => {
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button type="button">บันทึก</Button>
+                  <Button type="button" onClick={saveProductsToImport}>
+                    บันทึก
+                  </Button>
                 </Grid>
               </Grid>
             </Dialog>

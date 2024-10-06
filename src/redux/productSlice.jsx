@@ -76,6 +76,9 @@ const productSlice = createSlice({
     onImport: (state, action) => {
       state.productsToImport = action.payload
     },
+    clearImport: (state) => {
+      state.productsToImport = []
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -100,5 +103,6 @@ export const {
   handleOpen,
   handleOpened,
   onImport,
+  clearImport,
 } = productSlice.actions
 export default productSlice.reducer
