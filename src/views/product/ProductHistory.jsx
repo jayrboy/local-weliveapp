@@ -1,3 +1,4 @@
+import { baseURL } from '../../App'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -14,13 +15,11 @@ import {
   Typography,
   Button,
   TextField,
-  IconButton,
   Grid,
-  Pagination,
-  Stack,
-  DialogTitle,
-  Dialog,
+  IconButton,
 } from '@mui/material'
+
+import InfoIcon from '@mui/icons-material/Info'
 
 import { MdArrowBack, MdGrid3X3 } from 'react-icons/md'
 
@@ -38,11 +37,11 @@ const ProductHistory = () => {
   let [historyData, setHistoryData] = useState([])
   const navigate = useNavigate()
 
-  //   useEffect(() => {
-  //     fetch('url')
-  //       .then((res) => res.json())
-  //       .then((data) => setHistoryData(data))
-  //   }, [historyData])
+  useEffect(() => {
+    fetch(`${baseURL}/api/product/history`)
+      .then((res) => res.json())
+      .then((data) => setHistoryData(data))
+  }, [])
 
   return (
     <>
@@ -88,38 +87,161 @@ const ProductHistory = () => {
       <div className="m-3">
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-            <caption>พบข้อมูล {historyData.length} รายการ</caption>
+            <caption>
+              <small>พบข้อมูล {historyData.length} รายการ</small>
+            </caption>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-                  #
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    backgroundColor: '#f5f5f5',
+                  }}
+                >
+                  <MdGrid3X3 />
                 </TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>วันที่</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>แก้ไขโดย</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>สินค้า</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>ราคาเดิม</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>ราคาใหม่</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>จำนวนเดิม</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>จำนวนใหม่</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>หมายเหตุ</TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  วันที่แก้ไข
+                </TableCell>
+
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    color: 'green',
+                    textAlign: 'center',
+                  }}
+                >
+                  ผู้แก้ไข
+                </TableCell>
+
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  ชื่อสินค้า
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  ราคาเดิม
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  ราคาใหม่
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  จำนวนเดิม
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  จำนวนใหม่
+                </TableCell>
+
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  หมายเหตุ
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {historyData.map((h, index) => (
-                <StyledTableRow key={h.id}>
-                  <TableCell sx={{ textAlign: 'center' }}>
-                    {index + 1}
-                  </TableCell>
-                  <TableCell>{new Date(h.createAt).toLocaleString()}</TableCell>
-                  <TableCell>{h.updateBy}</TableCell>
-                  <TableCell>{h.productName}</TableCell>
-                  <TableCell>{h.oldPrice.toLocaleString()}</TableCell>
-                  <TableCell>{h.newPrice.toLocaleString()}</TableCell>
-                  <TableCell>{h.oldQuantity}</TableCell>
-                  <TableCell>{h.newQuantity}</TableCell>
-                  <TableCell>{h.remarks}</TableCell>
-                </StyledTableRow>
-              ))}
+              {historyData.map((h, index) => {
+                const cdt = new Date(Date.parse(h.createdAt))
+                const cdf = (
+                  <>
+                    {cdt.getDate()}-{cdt.getMonth() + 1}-{cdt.getFullYear()}
+                  </>
+                )
+
+                return (
+                  <TableRow key={h._id}>
+                    <TableCell
+                      sx={{ textAlign: 'center', backgroundColor: '#f5f5f5' }}
+                    >
+                      {index + 1}
+                    </TableCell>
+                    <TableCell
+                      sx={{ backgroundColor: '#f0f0f0', textAlign: 'center' }}
+                    >
+                      {cdf}
+                    </TableCell>
+
+                    <TableCell sx={{ backgroundColor: '#e8f5e9' }}>
+                      <Typography noWrap>{h.updateBy}</Typography>
+                    </TableCell>
+
+                    <TableCell sx={{ backgroundColor: '#f0f0f0' }}>
+                      <Typography noWrap>{h.product_name}</Typography>
+                    </TableCell>
+                    <TableCell
+                      sx={{ backgroundColor: '#ffebee', textAlign: 'right' }}
+                    >
+                      {h.price_old.toLocaleString()} {/* Format as needed */}
+                    </TableCell>
+                    <TableCell
+                      sx={{ backgroundColor: '#e3f2fd', textAlign: 'right' }}
+                    >
+                      {h.price_new.toLocaleString()} {/* Format as needed */}
+                    </TableCell>
+                    <TableCell
+                      sx={{ backgroundColor: '#ffebee', textAlign: 'right' }}
+                    >
+                      {h.stock_quantity_old}
+                    </TableCell>
+                    <TableCell
+                      sx={{ backgroundColor: '#e3f2fd', textAlign: 'right' }}
+                    >
+                      {h.stock_quantity_new}
+                    </TableCell>
+
+                    <TableCell sx={{ backgroundColor: '#f0f0f0' }}>
+                      <Typography
+                        noWrap
+                        sx={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          maxWidth: '150px', // Adjust size as needed
+                        }}
+                      >
+                        {h.remarks}
+                        <IconButton size="small" sx={{ padding: '4px' }}>
+                          <Tooltip title={h.remarks} arrow>
+                            <InfoIcon />
+                          </Tooltip>
+                        </IconButton>
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
             </TableBody>
           </Table>
         </TableContainer>

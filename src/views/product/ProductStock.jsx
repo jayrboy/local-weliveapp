@@ -608,15 +608,6 @@ const Stock = () => {
             &nbsp;เพิ่ม
           </Button>
           &nbsp;
-          <Button
-            variant="contained"
-            color="inherit"
-            onClick={() => navigate('/stock/history')}
-          >
-            <MdHistory color="red" />
-            &nbsp;ประวัติการแก้ไข
-          </Button>
-          &nbsp;
           {selectItem && (
             <>
               <Button onClick={onEditClick} variant="contained" color="warning">
@@ -630,6 +621,15 @@ const Stock = () => {
               </Button>
             </>
           )}
+          &nbsp;
+          <Button
+            variant="contained"
+            color="inherit"
+            onClick={() => navigate('/stock/history')}
+          >
+            <MdHistory color="red" />
+            &nbsp;ประวัติการแก้ไข
+          </Button>
         </Grid>
       </Grid>
 
