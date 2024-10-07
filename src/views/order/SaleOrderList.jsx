@@ -100,6 +100,7 @@ export default function SaleOrderList() {
             <caption className="ms-3">
               <small>พบข้อมูลทั้งหมด {filteredOrders.length} รายการ</small>
             </caption>
+
             <TableHead>
               <TableRow>
                 <TableCell>
@@ -116,10 +117,8 @@ export default function SaleOrderList() {
                   <Typography sx={{ fontWeight: 'bold' }}>จำนวน</Typography>
                 </TableCell>
                 <TableCell className="text-center">
-                  <Typography noWrap>
-                    <Typography sx={{ fontWeight: 'bold' }}>
-                      ราคารวม (฿)
-                    </Typography>
+                  <Typography noWrap sx={{ fontWeight: 'bold' }}>
+                    ราคารวม (฿)
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -153,6 +152,7 @@ export default function SaleOrderList() {
                 </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {filteredOrders.map((order, index) => (
                 <StyledTableRow key={order._id}>

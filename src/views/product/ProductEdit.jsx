@@ -1,22 +1,30 @@
 import { baseURL } from '../../App'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import { Button, TextField, Grid } from '@mui/material'
 
 import CloseIcon from '@mui/icons-material/Close'
-import { MdEdit } from 'react-icons/md'
+import { useDispatch, useSelector } from 'react-redux'
 
-function ProductEdit(props) {
-  let { isOpenEdit, setOpenEdit, idEdit } = props
+const ProductEdit = (props) => {
+  let { isOpenEdit, setOpenEdit, idEdit, setSelectItem } = props
   const token = localStorage.getItem('token')
 
   const form = useRef()
-  let code = useRef()
-  let name = useRef()
-  let cost = useRef()
-  let price = useRef()
-  let stock_quantity = useRef()
-  let limit = useRef()
-  let date_added = useRef()
+  let [product, setProduct] = useState({
+    code: '',
+    name: '',
+    cost: 0,
+    price: 0,
+    stock_quantity: 0,
+    limit: 0,
+    cf: 0,
+    paid: 0,
+    remaining_cf: 0,
+    remaining: 0,
+    isDelete: false,
+    date_added: '',
+  })
 
   useEffect(() => {
     fetch(`${baseURL}/api/product/read/${idEdit}`, {
@@ -25,38 +33,44 @@ function ProductEdit(props) {
       .then((res) => res.json())
       .then((result) => {
         // console.log(result)
-        code.current.value = result.code
-        name.current.value = result.name
-        price.current.value = result.price
-        cost.current.value = result.cost
-        stock_quantity.current.value = result.stock_quantity
-        limit.current.value = result.limit
-
-        let dt = new Date(Date.parse(result.date_added))
-        let y = dt.getFullYear()
-        let m = dt.getMonth() + 1
-        //ค่าที่จะกำหนดให้แก่อินพุตชนิด date ต้องเป็นรูปแบบ yyyy-mm-dd
-        //สำหรับเดือนและวันที่ หากเป็นเลขตัวเดียวต้องเติม 0 ข้างหน้า
-        m = m >= 10 ? m : '0' + m
-        let d = dt.getDate()
-        d = d >= 10 ? d : '0' + d
-        date_added.current.value = `${y}-${m}-${d}`
+        setProduct({
+          code: result.code,
+          name: result.name,
+          price: result.price,
+          cost: result.cost,
+          stock_quantity: result.stock_quantity,
+          limit: result.limit,
+          cf: result.cf,
+          paid: result.paid,
+          remaining_cf: result.remaining_cf,
+          remaining: result.remaining,
+          date_added: result.date_added,
+        })
       })
       .catch((err) => toast.error(err))
   }, [])
 
+  let handleChange = (e) => {
+    setProduct({ ...product, [e.target.name]: e.target.value })
+  }
+
   const onSubmitForm = (event) => {
     event.preventDefault()
     const formData = new FormData(form.current)
+    formData.append('_id', idEdit)
+    formData.append('cf', product.cf)
+    formData.append('paid', product.paid)
+    formData.append('remaining_cf', product.remaining_cf)
+    formData.append('remaining', product.remaining)
+    formData.append('date_added', product.date_added)
+
     const formEnt = Object.fromEntries(formData.entries())
-    // formEnt._id = id
-    formEnt._id = idEdit
     formEnt.price = parseInt(formEnt.price)
     formEnt.cost = parseInt(formEnt.cost)
     formEnt.stock_quantity = parseInt(formEnt.stock_quantity)
     formEnt.limit = parseInt(formEnt.limit)
 
-    // console.log(formEnt)
+    console.log(formEnt)
 
     fetch(`${baseURL}/api/product`, {
       method: 'PUT',
@@ -73,6 +87,7 @@ function ProductEdit(props) {
           toast.error(result.error)
         } else {
           toast.success('ข้อมูลถูกแก้ไขแล้ว')
+          // setSelectItem(false)
           setOpenEdit(false)
         }
       })
@@ -94,92 +109,108 @@ function ProductEdit(props) {
             <CloseIcon sx={{ color: 'red' }} />
           </button>
         </span>
+
         <form onSubmit={onSubmitForm} ref={form} className="p-4">
-          <div className="row">
-            <div className="col-12 col-md-12 col-lg-12">
-              <label className="form-label">รหัส CF</label>
-              <input
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <TextField
+                label="รหัส CF"
                 type="text"
                 name="code"
                 className="form-control form-control-sm"
-                ref={code}
+                value={product.code}
+                onChange={(e) => handleChange(e)}
                 required
               />
-            </div>
-            <div className="col-12 col-md-12 col-lg-12">
-              <label className="form-label mt-2">ชื่อสินค้า</label>
-              <input
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="วันที่เพิ่มสินค้า"
+                type="date"
+                name="date_added"
+                className="form-control form-control-sm"
+                value={
+                  product.date_added &&
+                  new Date(product.date_added).toISOString().substring(0, 10)
+                }
+                disabled
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                label="ชื่อสินค้า"
                 type="text"
                 name="name"
                 className="form-control form-control-sm"
-                ref={name}
+                value={product.name}
+                onChange={(e) => handleChange(e)}
                 required
               />
-            </div>
-            <div className="col-6 col-md-6 col-lg-6">
-              <label className="form-label mt-2">ราคา</label>
-              <input
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="ราคา"
                 type="number"
                 name="price"
                 min="0"
                 className="form-control form-control-sm"
-                ref={price}
+                value={product.price}
+                onChange={(e) => handleChange(e)}
                 required
               />
-            </div>
+            </Grid>
 
-            <div className="col-6 col-md-6 col-lg-6">
-              <label className="form-label mt-2">ราคาต้นทุน</label>
-              <input
-                type="number"
-                name="cost"
-                min="0"
-                className="form-control form-control-sm"
-                ref={cost}
-                required
-              />
-            </div>
-
-            <div className="col-4 col-md-4 col-lg-4">
-              <label className="form-label mt-2">จำนวนสินค้า</label>
-              <input
+            <Grid item xs={6}>
+              <TextField
+                label="จำนวนสินค้า"
                 type="number"
                 name="stock_quantity"
                 min="0"
                 className="form-control form-control-sm"
-                ref={stock_quantity}
+                value={product.stock_quantity}
+                onChange={(e) => handleChange(e)}
                 required
               />
-            </div>
-            <div className="col-4 col-md-4 col-lg-4">
-              <label className="form-label mt-2">limit</label>
-              <input
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="ราคาต้นทุน"
+                type="number"
+                name="cost"
+                min="0"
+                className="form-control form-control-sm"
+                value={product.cost}
+                onChange={(e) => handleChange(e)}
+                required
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="limit"
                 type="number"
                 name="limit"
                 min="0"
                 className="form-control form-control-sm"
-                ref={limit}
+                value={product.limit}
+                onChange={(e) => handleChange(e)}
                 required
               />
-            </div>
-            <div className="col-4 col-md-4 col-lg-4">
-              <label className="form-label mt-2">วันที่เพิ่มสินค้า</label>
-              <input
-                type="date"
-                name="date_added"
-                className="form-control form-control-sm mb-3"
-                ref={date_added}
-              />
-            </div>
-            <div className="d-flex justify-content-center ">
-              <button className="btn btn-light btn-sm border">
-                <MdEdit color="orange" /> แก้ไข
-              </button>
-              &nbsp;&nbsp;&nbsp;
-              <button className="btn btn-sm" onClick={() => setOpenEdit(false)}>
-                ยกเลิก
-              </button>
-            </div>
+            </Grid>
+          </Grid>
+
+          <div className="d-flex justify-content-between mt-5">
+            <Button className="btn btn-sm" onClick={() => setOpenEdit(false)}>
+              ยกเลิก
+            </Button>
+            &nbsp;&nbsp;&nbsp;
+            <Button type="submit" variant="contained" color="warning">
+              บันทึก
+            </Button>
           </div>
         </form>
       </div>

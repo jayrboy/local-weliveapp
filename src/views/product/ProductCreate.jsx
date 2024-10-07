@@ -4,21 +4,12 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import {
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Button,
-  TextField,
-  Grid,
-  FormHelperText,
-} from '@mui/material'
+import { Button, TextField, Grid } from '@mui/material'
 
 import CloseIcon from '@mui/icons-material/Close'
 
 function ProductCreate(props) {
-  let { isOpenCreate, setOpenCreate } = props
+  let { isOpenCreate, setOpenCreate, page } = props
   const form = useRef()
   const navigate = useNavigate()
   const token = localStorage.getItem('token')
@@ -66,9 +57,9 @@ function ProductCreate(props) {
       toast.warning('มีรหัสสินค้านี้อยู่ในสต็อกแล้ว กรุณาเปลี่ยนรหัสสินค้าใหม่')
     } else {
       toast.success('ข้อมูลถูกจัดเก็บแล้ว')
-      form.current.reset()
       setOpenCreate(false)
-      navigate('/stock')
+      navigate(`/stock?page=${page}`)
+      form.current.reset()
     }
   }
 
@@ -78,7 +69,7 @@ function ProductCreate(props) {
         className="card shadow mx-auto rounded"
         style={{ width: '400px', background: '#fff' }}
       >
-        <span className="card-header d-flex justify-content-between align-items-center p-3">
+        <span className="card-header d-flex justify-content-between align-items-center">
           <h4>PRODUCT / เพิ่มสินค้า</h4>
           <button
             className="btn btn-sm border"
@@ -109,7 +100,7 @@ function ProductCreate(props) {
 
             <Grid item xs={6}>
               <TextField
-                type="Date"
+                type="date"
                 label="วันที่เพิ่มสินค้า"
                 name="date_added"
                 className="form-control form-control-sm"

@@ -61,7 +61,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const Stock = () => {
   let [data, setData] = useState('')
-  let [page, setPage] = useState([])
+  let [page, setPage] = useState(0)
   let [totalPages, setTotalPages] = useState(1) // Track the total number of pages
   const form = useRef()
 
@@ -93,21 +93,30 @@ const Stock = () => {
   }
 
   useEffect(() => {
-    if (!isOpenEdit) {
-      fetch(`${baseURL}/api/product/search?` + params, {
-        headers: { Authorization: 'Bearer ' + token },
+    // ดึงค่า page จาก query string
+    const params = new URLSearchParams(location.search)
+    const pageFromParams = params.get('page') ? parseInt(params.get('page')) : 1 // ถ้าไม่มี page จะตั้งค่าเป็น 1
+
+    fetch(`${baseURL}/api/product/search?` + params, {
+      headers: { Authorization: 'Bearer ' + token },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        // console.log('Result :', result)
+        showData(result)
+        setTotalPages(result.totalPages) // Update the total number of pages
+        // setProductsToExport(result.docs) //? ถ้าต้องการ export ทีละหน้า
+
+        // ตรวจสอบค่า page จาก URL
+        if (location.search) {
+          // console.log('Page from URL:', pageFromParams) // แสดงค่าของ page ที่แยกมาได้
+          setPage(pageFromParams)
+        } else {
+          setPage(result.page)
+        }
       })
-        .then((response) => response.json())
-        .then((result) => {
-          // console.log('Result :', result)
-          showData(result)
-          paginate(result)
-          setTotalPages(result.totalPages) // Update the total number of pages
-          // setProductsToExport(result.docs) //? ถ้าต้องการ export ทีละหน้า
-        })
-        .catch((err) => toast.error(err))
-    }
-  }, [location, isOpenEdit])
+      .catch((err) => toast.error(err))
+  }, [location, isOpenEdit, page])
 
   useEffect(() => {
     dispatch(getProducts())
@@ -288,6 +297,11 @@ const Stock = () => {
                       จ่ายแล้ว
                     </Typography>
                   </TableCell>
+                  <TableCell>
+                    <Typography sx={{ fontWeight: 'bold', color: 'green' }}>
+                      คงเหลือ
+                    </Typography>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -335,6 +349,7 @@ const Stock = () => {
                     </TableCell>
                     <TableCell>{product.cf}</TableCell>
                     <TableCell>{product.paid}</TableCell>
+                    <TableCell>{product.remaining_cf}</TableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
@@ -345,65 +360,6 @@ const Stock = () => {
     )
 
     setData(r)
-  }
-
-  const paginate = (result) => {
-    if (result.totalPages === 1) {
-      setPage([])
-      return
-    }
-
-    setSelectItem(false) // Toggle Radio
-
-    let links = []
-    let q = params.get('q') || ''
-    let url = `/stock?q=${q}&page=`
-
-    let start = result.page - 2
-    start = start < 1 ? 1 : start
-
-    let end = result.page + 2
-    end = end < result.totalPages ? end : result.totalPages
-
-    if (start > 1) {
-      links.push(
-        <li className="page-item" key="first-page">
-          <Link to={`${url}1`} className="page-link">
-            {'|<'}
-          </Link>
-        </li>
-      )
-    }
-
-    for (let i = start; i <= end; i++) {
-      if (i === result.page) {
-        links.push(
-          <li className="page-item" key={i}>
-            <span className="page-link active">{i}</span>
-          </li>
-        )
-      } else {
-        links.push(
-          <li className="page-item" key={i}>
-            <Link to={`${url}${i}`} className="page-link">
-              {i}
-            </Link>
-          </li>
-        )
-      }
-    }
-
-    if (end < result.totalPages) {
-      links.push(
-        <li className="page-item" key="last-page">
-          <Link to={`${url}${result.totalPages}`} className="page-link">
-            {'>|'}
-          </Link>
-        </li>
-      )
-    }
-
-    setPage(links)
   }
 
   const onEditClick = (e) => {
@@ -420,12 +376,8 @@ const Stock = () => {
 
   // Handle page change
   const handlePageChange = (event, value) => {
-    // console.log('Selected Page:', value)
-    setPage(value) // อัปเดต page state ตามค่า value ที่เลือก
-    // อาจจะต้องการนำค่า page ไปปรับ URL ด้วย
-    const newParams = new URLSearchParams(params)
-    newParams.set('page', value)
-    navigate(`/stock?${newParams.toString()}`) // ปรับ URL ตามหน้าใหม่
+    setPage(value) // อัปเดตหน้าปัจจุบัน
+    navigate(`?page=${value}`) // ปรับ URL ให้ตรงกับหน้าปัจจุบัน
   }
 
   const saveProductsToImport = () => {
@@ -469,6 +421,10 @@ const Stock = () => {
 
     if (Object.keys(fe).length === 0) {
       toast.warning('กรุณาเลือกรายการที่ต้องการลบ')
+      return
+    }
+
+    if (!window.confirm('ยืนยันการลบรายการนี้')) {
       return
     }
 
@@ -677,7 +633,7 @@ const Stock = () => {
         <Stack spacing={2}>
           <Pagination
             count={totalPages} // Total pages from API
-            // page={page} // Current page
+            page={page} // Current page
             onChange={handlePageChange} // Page change handler
             variant="outlined"
             color="primary"
@@ -694,6 +650,7 @@ const Stock = () => {
         <ProductCreate
           isOpenCreate={isOpenCreate}
           setOpenCreate={setOpenCreate}
+          page={page}
         />
       )}
       {isOpenEdit && (
@@ -701,6 +658,7 @@ const Stock = () => {
           isOpenEdit={isOpenEdit}
           setOpenEdit={setOpenEdit}
           idEdit={idEdit}
+          setSelectItem={setSelectItem}
         />
       )}
     </>
