@@ -56,6 +56,7 @@ import TermOfServices from './views/TermOfServices'
 import Profile from './views/Profile'
 import BookBank from './views/BookBank'
 import CustomerByOrderV3 from './views/customer/CustomerByOrderV3'
+import ProductHistory from './views/product/ProductHistory'
 
 // export const baseURL = 'https://vercel-server-weliveapp.vercel.app'
 export const baseURL = 'https://api-weliveapp.azurewebsites.net'
@@ -228,6 +229,14 @@ function App() {
           element={
             <AuthRoute>
               <ProductStock />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/stock/history"
+          element={
+            <AuthRoute>
+              <ProductHistory />
             </AuthRoute>
           }
         />

@@ -94,8 +94,10 @@ function ProductCreate(props) {
                     message: 'รหัสสินค้าต้องไม่เกิน 3 ตัวอักษร',
                   },
                 })}
+                error={!!errors.code}
+                helperText={errors.code?.message}
               />
-              {errors.code && <div style={err}>{errors.code.message}</div>}
+              {/* {errors.code && <div style={err}>{errors.code.message}</div>} */}
             </Grid>
 
             <Grid item xs={6}>
@@ -113,13 +115,16 @@ function ProductCreate(props) {
                 type="text"
                 name="name"
                 className="form-control form-control-sm"
-                {...register('name', { required: true, maxLength: 30 })}
+                {...register('name', {
+                  required: 'กรุณาระบุรหัสสินค้า',
+                  maxLength: {
+                    value: 30,
+                    message: 'ชื่อสินค้าต้องไม่เกิน 30 ตัวอักษร',
+                  },
+                })}
+                error={!!errors.name}
+                helperText={errors.name?.message}
               />
-              {errors.name && (
-                <div style={err}>
-                  กรุณาระบุชื่อสินค้า ตัวอย่าง &quot;หนังสือ&quot;
-                </div>
-              )}
             </Grid>
 
             <Grid item xs={6}>
@@ -127,15 +132,18 @@ function ProductCreate(props) {
                 label="ราคา"
                 type="number"
                 name="price"
-                min="0"
                 className="form-control form-control-sm"
+                inputProps={{
+                  min: 1, // กำหนดค่า min เป็น 1 เพราะต้องการให้กรอกมากกว่า 0
+                }}
                 {...register('price', {
-                  validate: (value) => parseFloat(value) > 0,
+                  required: 'กรุณาระบุราคาสินค้า',
+                  validate: (value) =>
+                    parseFloat(value) > 0 || 'ราคาต้องมากกว่า 0',
                 })}
+                error={!!errors.price}
+                helperText={errors.price?.message}
               />
-              {errors.price && (
-                <div style={err}>กำหนดราคาสินค้า ตัวอย่าง: 400</div>
-              )}
             </Grid>
 
             <Grid item xs={6}>
@@ -143,16 +151,20 @@ function ProductCreate(props) {
                 label="จำนวนสินค้า"
                 type="number"
                 name="stock_quantity"
-                min="0"
-                max="99"
                 className="form-control form-control-sm"
+                inputProps={{
+                  min: 1,
+                  max: 99,
+                }}
                 {...register('stock_quantity', {
-                  validate: (value) => parseFloat(value) > 0,
+                  required: 'กรุณาระบุจำนวนสินค้า',
+                  validate: (value) =>
+                    (value >= 0 && value <= 99) ||
+                    'จำนวนสินค้าต้องอยู่ระหว่าง 0-99',
                 })}
+                error={!!errors.stock_quantity}
+                helperText={errors.stock_quantity?.message}
               />
-              {errors.price && (
-                <div style={err}>กำหนดจำนวนสินค้า ตัวอย่าง: 10</div>
-              )}
             </Grid>
 
             <Grid item xs={6}>
@@ -162,13 +174,17 @@ function ProductCreate(props) {
                 name="cost"
                 min="0"
                 className="form-control form-control-sm"
+                inputProps={{
+                  min: 1, // กำหนดค่า min เป็น 1 เพราะต้องการให้กรอกมากกว่า 0
+                }}
                 {...register('cost', {
-                  validate: (value) => parseFloat(value) > 0,
+                  required: 'กรุณาระบุราคาต้นทุน',
+                  validate: (value) =>
+                    parseFloat(value) > 0 || 'ราคาต้องมากกว่า 0',
                 })}
+                error={!!errors.cost}
+                helperText={errors.cost?.message}
               />
-              {errors.price && (
-                <div style={err}>กำหนดราคาต้นทุน ตัวอย่าง: 200</div>
-              )}
             </Grid>
 
             <Grid item xs={6}>

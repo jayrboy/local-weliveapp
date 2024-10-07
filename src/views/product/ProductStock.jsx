@@ -28,6 +28,7 @@ import {
   MdDeleteForever,
   MdGrid3X3,
   MdOutlineSearch,
+  MdHistory,
 } from 'react-icons/md'
 import { FaPlus } from 'react-icons/fa'
 
@@ -442,7 +443,7 @@ const Stock = () => {
           setData('ไม่มีรายการข้อมูล')
         }
         toast.success('ข้อมูลถูกลบแล้ว')
-        navigate('/stock')
+        navigate(`/stock?page=${page}`)
       })
       .catch((err) => toast.error(err))
   }
@@ -558,23 +559,20 @@ const Stock = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-              <Grid
-                container
-                spacing={2}
-                justifyContent="flex-end"
-                sx={{ mt: 2 }}
-              >
-                <Grid item>
-                  <Button type="button" onClick={handleClose}>
-                    ยกเลิก
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button type="button" onClick={saveProductsToImport}>
-                    บันทึก
-                  </Button>
-                </Grid>
-              </Grid>
+
+              {/* Buttons */}
+              <div className="d-flex justify-content-between mt-5 m-3">
+                <Button type="button" onClick={handleClose}>
+                  ยกเลิก
+                </Button>
+                <Button
+                  type="button"
+                  variant="contained"
+                  onClick={saveProductsToImport}
+                >
+                  บันทึก
+                </Button>
+              </div>
             </Dialog>
           </label>
           &nbsp;
@@ -608,6 +606,15 @@ const Stock = () => {
           <Button variant="contained" onClick={() => setOpenCreate(true)}>
             <FaPlus color="blue" />
             &nbsp;เพิ่ม
+          </Button>
+          &nbsp;
+          <Button
+            variant="contained"
+            color="inherit"
+            onClick={() => navigate('/stock/history')}
+          >
+            <MdHistory color="red" />
+            &nbsp;ประวัติการแก้ไข
           </Button>
           &nbsp;
           {selectItem && (

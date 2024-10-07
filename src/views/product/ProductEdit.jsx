@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 const ProductEdit = (props) => {
   let { isOpenEdit, setOpenEdit, idEdit, setSelectItem } = props
   const token = localStorage.getItem('token')
+  const { user } = useSelector((state) => state.user)
 
   const form = useRef()
   let [product, setProduct] = useState({
@@ -16,7 +17,9 @@ const ProductEdit = (props) => {
     name: '',
     cost: 0,
     price: 0,
+    price_old: 0,
     stock_quantity: 0,
+    stock_quantity_old: 0,
     limit: 0,
     cf: 0,
     paid: 0,
@@ -24,30 +27,40 @@ const ProductEdit = (props) => {
     remaining: 0,
     isDelete: false,
     date_added: '',
+    remarks: '',
+    updateBy: '',
   })
 
   useEffect(() => {
-    fetch(`${baseURL}/api/product/read/${idEdit}`, {
-      headers: { Authorization: 'Bearer ' + token },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        // console.log(result)
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${baseURL}/api/product/read/${idEdit}`, {
+          headers: { Authorization: 'Bearer ' + token },
+        })
+        const result = await response.json()
+
         setProduct({
           code: result.code,
           name: result.name,
           price: result.price,
+          price_old: result.price,
           cost: result.cost,
           stock_quantity: result.stock_quantity,
+          stock_quantity_old: result.stock_quantity,
           limit: result.limit,
           cf: result.cf,
           paid: result.paid,
           remaining_cf: result.remaining_cf,
           remaining: result.remaining,
           date_added: result.date_added,
+          updateBy: user.name,
         })
-      })
-      .catch((err) => toast.error(err))
+      } catch (err) {
+        toast.error(err.message || 'An error occurred')
+      }
+    }
+
+    fetchData()
   }, [])
 
   let handleChange = (e) => {
@@ -63,14 +76,24 @@ const ProductEdit = (props) => {
     formData.append('remaining_cf', product.remaining_cf)
     formData.append('remaining', product.remaining)
     formData.append('date_added', product.date_added)
+    formData.append('price_old', product.price_old)
+    formData.append('stock_quantity_old', product.stock_quantity_old)
+    formData.append('remarks', product.remarks)
+    formData.append('updateBy', product.updateBy)
 
     const formEnt = Object.fromEntries(formData.entries())
     formEnt.price = parseInt(formEnt.price)
     formEnt.cost = parseInt(formEnt.cost)
     formEnt.stock_quantity = parseInt(formEnt.stock_quantity)
+    formEnt.stock_quantity_old = parseInt(formEnt.stock_quantity_old)
     formEnt.limit = parseInt(formEnt.limit)
+    formEnt.paid = parseInt(formEnt.paid)
+    formEnt.price_old = parseInt(formEnt.price_old)
+    formEnt.remaining = parseInt(formEnt.remaining)
+    formEnt.remaining_cf = parseInt(formEnt.remaining_cf)
+    formEnt.cf = parseInt(formEnt.cf)
 
-    console.log(formEnt)
+    // console.log(formEnt)
 
     fetch(`${baseURL}/api/product`, {
       method: 'PUT',
@@ -159,6 +182,9 @@ const ProductEdit = (props) => {
                 className="form-control form-control-sm"
                 value={product.price}
                 onChange={(e) => handleChange(e)}
+                inputProps={{
+                  min: 1, // กำหนดค่า min เป็น 1 เพราะต้องการให้กรอกมากกว่า 0
+                }}
                 required
               />
             </Grid>
@@ -168,7 +194,10 @@ const ProductEdit = (props) => {
                 label="จำนวนสินค้า"
                 type="number"
                 name="stock_quantity"
-                min="0"
+                inputProps={{
+                  min: 1,
+                  max: 99,
+                }}
                 className="form-control form-control-sm"
                 value={product.stock_quantity}
                 onChange={(e) => handleChange(e)}
@@ -199,6 +228,21 @@ const ProductEdit = (props) => {
                 value={product.limit}
                 onChange={(e) => handleChange(e)}
                 required
+              />
+            </Grid>
+
+            {/* ช่องสำหรับใส่ remarks */}
+            <Grid item xs={12}>
+              <TextField
+                label="หมายเหตุ"
+                type="text"
+                name="remarks"
+                className="form-control form-control-sm"
+                value={product.remarks}
+                onChange={(e) => handleChange(e)}
+                multiline
+                rows={4} // ให้มีหลายบรรทัด
+                placeholder="หมายเหตุเพิ่มเติมเกี่ยวกับสินค้า"
               />
             </Grid>
           </Grid>
