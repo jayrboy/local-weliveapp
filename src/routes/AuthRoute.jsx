@@ -1,14 +1,14 @@
 import { baseURL } from '../App'
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { onLoaded } from '../redux/liveSlice'
 
-import { Box } from '@mui/material'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { CssBaseline, Box } from '@mui/material'
+
 import SideBar from '../layout/SideBar'
 import HeaderBar from '../layout/HeaderBar'
-import { useEffect, useCallback } from 'react'
-import axios from 'axios'
-
 import NotFound from '../views/NotFound'
 import LiveVideoModal from '../components/LiveVideoModal'
 import LiveVideoModalV2 from '../components/LiveVideoModalV2'
@@ -17,6 +17,33 @@ const AuthRoute = ({ children }) => {
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.user)
   const { isOpen } = useSelector((state) => state.live)
+  const themeMode = useSelector((state) => state.theme.mode)
+  const darkTheme = createTheme({
+    palette: {
+      mode: themeMode, // ใช้ค่า 'light' หรือ 'dark' จาก Redux state
+      ...(themeMode === 'dark'
+        ? {
+            background: {
+              default: '#121212', // พื้นหลังหลักใน dark mode
+              paper: '#1d1d1d', // พื้นหลังของ component เช่น Card, Modal
+            },
+            text: {
+              primary: '#ffffff', // ข้อความหลักใน dark mode
+              secondary: '#bbbbbb', // ข้อความรอง
+            },
+          }
+        : {
+            background: {
+              default: '#f7fff7', // พื้นหลังหลักใน light mode
+              paper: '#ffffff', // พื้นหลังของ component เช่น Card, Modal
+            },
+            text: {
+              primary: '#000000', // ข้อความหลักใน light mode
+              secondary: '#333333', // ข้อความรอง
+            },
+          }),
+    },
+  })
 
   const axiosFetch = useCallback(
     (authToken) => {
@@ -48,8 +75,13 @@ const AuthRoute = ({ children }) => {
     }
   }, [user, axiosFetch])
 
+  useEffect(() => {
+    document.body.classList.toggle('dark-mode', themeMode === 'dark')
+  }, [themeMode])
+
   return (
-    <React.Fragment>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
       {user.token ? (
         <div className="app">
           <div className="sidebar">
@@ -67,7 +99,7 @@ const AuthRoute = ({ children }) => {
       ) : (
         <NotFound text="Admin Not Permission" />
       )}
-    </React.Fragment>
+    </ThemeProvider>
   )
 }
 

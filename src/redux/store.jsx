@@ -4,6 +4,7 @@ import liveReducer from './liveSlice'
 import productReducer from './productSlice'
 import dailyStockReducer from './dailyStockSlice'
 import saleOrderReducer from './saleOrderSlice'
+import themeReducer from './themeSlice'
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     product: productReducer,
     dailyStock: dailyStockReducer,
     saleOrder: saleOrderReducer,
+    theme: themeReducer,
   },
 })
 

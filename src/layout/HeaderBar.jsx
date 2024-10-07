@@ -3,6 +3,9 @@ import { useState, useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material'
+
+import LightModeIcon from '@mui/icons-material/LightMode'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import { RiLiveFill } from 'react-icons/ri'
 
@@ -12,10 +15,12 @@ import { logout } from '../redux/userSlice'
 import { openModal } from '../redux/liveSlice'
 
 import GetComments from '../components/GetComments'
+import { toggleTheme } from '../redux/themeSlice'
 
 export default function HeaderBar() {
   let { orders } = useSelector((store) => store.saleOrder)
   let { isLoading } = useSelector((store) => store.live)
+  let themeMode = useSelector((store) => store.theme.mode)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -61,6 +66,10 @@ export default function HeaderBar() {
 
       {/* icons */}
       <Box display="flex">
+        <IconButton onClick={() => dispatch(toggleTheme())}>
+          {themeMode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
+        </IconButton>
+
         <IconButton onClick={() => dispatch(openModal())}>
           {isLoading ? (
             <>
@@ -72,6 +81,7 @@ export default function HeaderBar() {
             <RiLiveFill color="grey" />
           )}
         </IconButton>
+
         <IconButton onClick={() => navigate('/order')}>
           <CartIcon />
           <div className="amount-container">
@@ -83,10 +93,10 @@ export default function HeaderBar() {
             </p>
           </div>
         </IconButton>
+
         <IconButton onClick={handleMenu}>
           <PersonOutlinedIcon />
         </IconButton>
-
         <Menu
           id="menu-appbar"
           anchorEl={anchorEl}
