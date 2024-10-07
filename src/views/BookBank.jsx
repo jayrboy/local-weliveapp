@@ -91,9 +91,9 @@ const BookBank = () => {
     if (isCreateAccount) {
       // console.log('Updated user :', user)
 
-      fetch(`${baseURL}/api/user`, {
-        method: 'PUT',
-        body: JSON.stringify(user),
+      fetch(`${baseURL}/api/user/bank-account?username=${user.username}`, {
+        method: 'POST',
+        body: JSON.stringify(bankData),
         headers: {
           Authorization: 'Bearer ' + token,
           'Content-Type': 'application/json',
@@ -115,22 +115,21 @@ const BookBank = () => {
 
   useEffect(() => {
     if (isEditAccount) {
-      // console.log('Updated user :', user)
+      console.log('Updated user :', user)
 
-      fetch(`${baseURL}/api/user`, {
+      let formData = {
+        bank_account: user.bank_account,
+      }
+
+      fetch(`${baseURL}/api/user/bank-account?username=${user.username}`, {
         method: 'PUT',
-        body: JSON.stringify(user),
+        body: JSON.stringify(formData),
         headers: {
           Authorization: 'Bearer ' + token,
           'Content-Type': 'application/json',
         },
       })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error('Network response was not ok')
-          }
-          return res.json()
-        })
+        .then((res) => res.json())
         .then((data) => {
           toast.success('แก้ไขข้อมูลสำเร็จ')
           dispatch(onEditedAccount())
@@ -204,6 +203,7 @@ const BookBank = () => {
           onClick={() => {
             setIsCreateBank(!isCreateBank)
             setSelectedId('')
+            setBankData({ qrCode: '' })
           }}
         >
           {isCreateBank ? 'ปิดฟอร์ม' : 'เพิ่มบัญชีใหม่'}
@@ -287,7 +287,7 @@ const BookBank = () => {
                           onClick={() => {
                             dispatch(removeBankAccount({ id: doc.id }))
                             setSelectedId('')
-                            dispatch(onCreateAccount())
+                            dispatch(onEditAccount())
                           }}
                         >
                           <DeleteIcon />
