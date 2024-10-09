@@ -1,8 +1,17 @@
 import logo from '../assets/logo-we.png'
-import { useState, useContext, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  Avatar,
+  Badge,
+  styled,
+} from '@mui/material'
 
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
@@ -19,6 +28,7 @@ import { toggleTheme } from '../redux/themeSlice'
 
 export default function HeaderBar() {
   let { orders } = useSelector((store) => store.saleOrder)
+  let { user } = useSelector((store) => store.user)
   let { isLoading } = useSelector((store) => store.live)
   let themeMode = useSelector((store) => store.theme.mode)
 
@@ -48,7 +58,18 @@ export default function HeaderBar() {
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
       {/* Logo */}
-      <Box display="flex" alignItems="center">
+      <Box
+        display="flex"
+        alignItems="center"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          '&:hover': {
+            transform: 'scale(0.95)', // ขยายโลโก้เมื่อวางเมาส์เหนือ
+            transition: 'transform 0.2s ease-in-out', // เพิ่มการเปลี่ยนแปลงที่นุ่มนวล
+          },
+        }}
+      >
         <img
           src={logo}
           alt="Logo"
@@ -57,31 +78,40 @@ export default function HeaderBar() {
         />
         <Typography
           component="h1"
-          variant="h6"
-          color="inherit"
+          variant="subtitle1" // ปรับให้ตัวอักษรขนาดเล็กลงเพื่อไม่ให้เด่นเกินไป
+          color="textSecondary" // ใช้สีเทาเพื่อให้ไม่เด่นมากเกินไป
           noWrap
-          sx={{ flexGrow: 1 }}
-        ></Typography>
+          sx={{
+            flexGrow: 1,
+            fontWeight: 500, // เพิ่มความหนาเล็กน้อย
+            marginLeft: 1, // เพิ่มช่องว่างระหว่างโลโก้และเวอร์ชัน
+            letterSpacing: '0.05em', // เพิ่มระยะห่างระหว่างตัวอักษรเพื่อความเรียบง่าย
+            color: 'rgba(0, 0, 0, 0.5)', // สีเทาจางแบบกำหนดเอง
+          }}
+        >
+          v1.0
+        </Typography>
       </Box>
 
-      {/* icons */}
       <Box display="flex">
-        <IconButton onClick={() => dispatch(toggleTheme())}>
-          {themeMode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
-        </IconButton>
-
+        {/* Live Video Icon */}
         <IconButton onClick={() => dispatch(openModal())}>
           {isLoading ? (
-            <>
+            <StyledBadge
+              overlap="circular"
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              variant="dot"
+            >
               <RiLiveFill color="red" />
               {/* Set Interval for Real-time  */}
-              <GetComments />
-            </>
+              {/* <GetComments /> */}
+            </StyledBadge>
           ) : (
-            <RiLiveFill color="grey" />
+            <RiLiveFill />
           )}
         </IconButton>
 
+        {/* Cart Icon */}
         <IconButton onClick={() => navigate('/order')}>
           <CartIcon />
           <div className="amount-container">
@@ -94,8 +124,18 @@ export default function HeaderBar() {
           </div>
         </IconButton>
 
+        {/* Theme Icon */}
+        <IconButton onClick={() => dispatch(toggleTheme())}>
+          {themeMode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
+        </IconButton>
+
+        {/* Person Icon */}
         <IconButton onClick={handleMenu}>
-          <PersonOutlinedIcon />
+          <Avatar
+            alt="User Profile"
+            src={user.picture[0].data.url}
+            sx={{ width: 34, height: 34 }}
+          />
         </IconButton>
         <Menu
           id="menu-appbar"
@@ -170,3 +210,32 @@ export const CartIcon = () => {
     </svg>
   )
 }
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: 'red',
+    color: 'red',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: 'ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}))

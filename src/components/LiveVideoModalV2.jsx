@@ -3,7 +3,18 @@ import { RiLiveFill } from 'react-icons/ri'
 import { toast } from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
 import { closeModal, onLoading, onLoaded } from '../redux/liveSlice'
-import { Button } from '@mui/material'
+import {
+  Box,
+  Card,
+  Typography,
+  Button,
+  CircularProgress,
+  Stepper,
+  Step,
+  StepLabel,
+} from '@mui/material'
+import VideocamIcon from '@mui/icons-material/Videocam'
+import VideocamOffIcon from '@mui/icons-material/VideocamOff'
 
 const LiveVideoModalV2 = () => {
   const dispatch = useDispatch()
@@ -33,27 +44,39 @@ const LiveVideoModalV2 = () => {
   return (
     <>
       <aside className="modal-container">
-        <div className="card d-flex justify-content-center p-4 rounded-3">
-          <h4>
+        <Card
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            padding: 4,
+            borderRadius: 3,
+            boxShadow: 3,
+            textAlign: 'center',
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
             สร้างออเดอร์อัตโนมัติจาก Comments - <strong>Live Facebook</strong>
-          </h4>
+          </Typography>
 
           {isLoading ? (
-            <div className="text-center bouncing-text-y p-3">
-              <RiLiveFill color="red" size={80} />
-            </div>
+            <Box className="text-center p-3">
+              <CircularProgress color="error" size={80} />
+            </Box>
           ) : (
-            <div className="text-center">
-              <RiLiveFill color="grey" size={80} />
-            </div>
+            <Box className="text-center">
+              <RiLiveFill color="gray" size={80} />
+            </Box>
           )}
 
           <form onSubmit={onSubmitForm}>
-            <p className="mt-3 text-center text-muted">
+            <Typography variant="body2" color="textSecondary" sx={{ mt: 3 }}>
               หมายเหตุ: เปิด Live Facebook ระบบจะดึง Comments ให้อัตโนมัติ
-            </p>
+            </Typography>
 
-            <div className="d-flex justify-content-between mt-4">
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}
+            >
               <Button
                 type="button"
                 color="inherit"
@@ -82,9 +105,9 @@ const LiveVideoModalV2 = () => {
                   ยืนยัน Live สด
                 </Button>
               )}
-            </div>
+            </Box>
           </form>
-        </div>
+        </Card>
       </aside>
       {/* {isLoading && <GetComments />} */}
     </>

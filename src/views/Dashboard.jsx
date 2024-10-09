@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { nanoid } from 'nanoid'
 
+import { Grid, Card, CardContent, Typography, Box } from '@mui/material'
+
 // icons
 import { MdOutlineTableView, MdManageSearch } from 'react-icons/md'
 import { FaListOl, FaSearch } from 'react-icons/fa'
@@ -15,25 +17,25 @@ function Dashboard() {
       id: nanoid(),
       title: 'สินค้า',
       link: '/stock',
-      icon: <MdOutlineTableView size={75} color="#555555" />,
+      icon: <MdOutlineTableView size={75} />,
     },
     {
       id: nanoid(),
       title: 'ขาย',
       link: '/sale-daily',
-      icon: <IoMdCart size={75} color="#555555 " />,
+      icon: <IoMdCart size={75} />,
     },
     {
       id: nanoid(),
       title: 'รายการสั่งซื้อ',
       link: '/order',
-      icon: <FaListOl size={75} color="#555555 " />,
+      icon: <FaListOl size={75} />,
     },
     {
       id: nanoid(),
       title: 'ค้นหารายการสั่งซื้อ',
       link: '/order/search',
-      icon: <MdManageSearch size={75} color="#555555 " />,
+      icon: <MdManageSearch size={75} />,
     },
     // {
     //   id: nanoid(),
@@ -50,27 +52,25 @@ function Dashboard() {
   ]
 
   return (
-    <>
-      <div className="container mt-3">
-        <div className="row mb-3">
-          {features.map((feature) => (
-            <div key={feature.id} className="col-6 col-md-6 col-lg-6 mb-3">
-              <div
-                className="card d-flex justify-content-center"
-                style={{ background: '#fff', height: '250px' }}
-              >
-                <Link to={feature.link} className="text-center nav-link">
-                  {feature.icon}
-                  <p className="text-center mt-4" style={{ color: '#555555' }}>
-                    {feature.title}
-                  </p>
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
+    <Box className="m-3 mt-3">
+      <Grid container spacing={3}>
+        {features.map((feature) => (
+          <Grid key={feature.id} item xs={6} sm={6} md={6} lg={6}>
+            <Card
+              className="card d-flex justify-content-center"
+              style={{ height: '250px' }}
+            >
+              <Link to={feature.link} className="text-center nav-link">
+                {feature.icon}
+                <p className="text-center mt-4" style={{ color: '#555555' }}>
+                  {feature.title}
+                </p>
+              </Link>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   )
 }
 export default Dashboard

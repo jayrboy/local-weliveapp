@@ -11,15 +11,31 @@ import { toast } from 'react-toastify'
 
 import { getAllDaily } from '../../redux/dailyStockSlice'
 
-import Paper from '@mui/material/Paper'
-import TableContainer from '@mui/material/TableContainer'
-import Table from '@mui/material/Table'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import { styled } from '@mui/material/styles'
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  styled,
+  Tooltip,
+  Typography,
+  Button,
+  TextField,
+  IconButton,
+  Grid,
+  Pagination,
+  Stack,
+  DialogTitle,
+  Dialog,
+  Card,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from '@mui/material'
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
@@ -37,6 +53,7 @@ export default function DailyStock() {
 
   const dispatch = useDispatch()
   let { dailyStock } = useSelector((state) => state.dailyStock)
+  let { isLoading } = useSelector((state) => state.live)
   // console.log(dailyStock)
 
   useEffect(() => {
@@ -77,32 +94,34 @@ export default function DailyStock() {
             <span className="text-success"> รายการขายสินค้า</span>
           </h3>
         </div>
-        <div className="col-lg-6 mt-1">
-          <button
-            className="btn btn-light btn-sm border"
+
+        <div className="col-lg-6 mt-1 text-center">
+          <Button
+            variant="contained"
             onClick={() => navigate('/sale-daily/create')}
           >
             <FaPlus color="blue" />
             &nbsp;เพิ่มสินค้าขายรายวัน
-          </button>
+          </Button>
           &nbsp;
-          <button
-            className="btn btn-light btn-sm border"
+          <Button
+            variant="contained"
+            color="inherit"
             onClick={() => navigate('/sale-daily/history')}
           >
             <FaHistory color="red" />
             &nbsp;ประวัติย้อนหลัง
-          </button>
+          </Button>
         </div>
       </div>
       <>
-        <span className="ms-5">
+        {/* <span className="ms-5">
           {dailyStock.length === 0 ? (
             <small>ไม่พบข้อมูล</small>
           ) : (
             <small>พบข้อมูลทั้งหมด {dailyStock.length} รายการ</small>
           )}
-        </span>
+        </span> */}
         <form ref={form} className="px-2">
           <div className="row">
             {dailyStock.map((doc) => {
@@ -119,41 +138,43 @@ export default function DailyStock() {
                   key={doc._id}
                   className="col-12 col-sm-12 col-md-12 col-lg-12 mt-3"
                 >
-                  <div className="card shadow">
+                  <Card>
                     <div className="d-flex justify-content-between align-items-center p-3">
-                      <div>
-                        วันที่:&nbsp;
-                        <strong className="text-primary">{df}</strong>
-                      </div>
+                      <Typography>
+                        วันที่&nbsp;
+                        <strong>{df}</strong>
+                      </Typography>
                       <Link to={`/sale-daily/edit/${doc._id}`}>
-                        <button className="btn btn-light btn-sm float-end border">
+                        <Button variant="contained" color="warning">
                           <MdEdit color="orange" />
                           &nbsp;แก้ไข
-                        </button>
+                        </Button>
                       </Link>
                     </div>
                     {/* Content */}
                     <div className="container">
                       <div className="row">
                         <div className="col-6 d-flex align-items-center">
-                          Status:&nbsp;
-                          <select
-                            className="btn btn-sm btn-light border text-capitalize"
+                          Status&nbsp;
+                          <Select
+                            className="text-capitalize"
                             name="status"
-                            defaultValue={doc.status}
-                            style={{ height: '30px' }}
+                            value={doc.status}
+                            style={{ height: '40px' }}
                             onChange={(event) => onChangeRole(doc._id, event)}
                           >
                             {status.map((item, i) => (
-                              <option key={i + 1} value={item}>
+                              <MenuItem key={i + 1} value={item}>
                                 {item}
-                              </option>
+                              </MenuItem>
                             ))}
-                          </select>
+                          </Select>
                         </div>
                         <div className="col-6 d-flex justify-content-end align-items-center">
                           Chanel:&nbsp;
-                          {doc.chanel && <SiFacebooklive size={45} />}
+                          {doc.chanel && (
+                            <SiFacebooklive size={45} color="#1877f2" />
+                          )}
                         </div>
                       </div>
                     </div>
@@ -198,15 +219,26 @@ export default function DailyStock() {
                         <TableBody>
                           {doc.products.map((p, index) => (
                             <TableRow key={index + 1}>
-                              <td>
-                                <div
-                                  className="btn btn-danger"
-                                  style={{ fontSize: '20px' }}
-                                >
-                                  {p.code}
-                                </div>
-                                &nbsp;&nbsp;&nbsp;{p.name}
-                              </td>
+                              <TableCell>
+                                <Typography noWrap>
+                                  {isLoading ? (
+                                    <div
+                                      className="btn btn-danger"
+                                      style={{ fontSize: '20px' }}
+                                    >
+                                      {p.code}
+                                    </div>
+                                  ) : (
+                                    <div
+                                      className="btn btn-secondary"
+                                      style={{ fontSize: '20px' }}
+                                    >
+                                      {p.code}
+                                    </div>
+                                  )}
+                                  &nbsp;&nbsp;&nbsp;{p.name}
+                                </Typography>
+                              </TableCell>
                               <td>
                                 {p.price
                                   .toFixed(0)
@@ -232,7 +264,7 @@ export default function DailyStock() {
                       <strong className="text-success">{total}</strong>
                       &nbsp;บาท
                     </div>
-                  </div>
+                  </Card>
                 </div>
               )
             })}

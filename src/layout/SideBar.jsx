@@ -26,6 +26,7 @@ import CommentIcon from '@mui/icons-material/Comment'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'
 
 import { login } from '../redux/userSlice'
 
@@ -234,10 +235,39 @@ const SideBar = () => {
                 วิธีการใช้งาน
               </MenuItem>
             </Menu>
+
+            {/* Update History */}
+            <div
+              style={{
+                padding: '0 24px',
+                marginBottom: '8px',
+                marginTop: '32px',
+              }}
+            >
+              <Typography
+                variant="body2"
+                fontWeight={600}
+                style={{
+                  opacity: isCollapsed ? 0 : 0.5,
+                  letterSpacing: '0.5px',
+                }}
+              >
+                มีอะไรใหม่ !
+              </Typography>
+            </div>
+
+            <Menu>
+              <MenuItem
+                icon={<AutoFixHighIcon />}
+                onClick={() => navigate('/news')}
+              >
+                ประวัติการอัปเดต
+              </MenuItem>
+            </Menu>
           </div>
         </div>
       </Sidebar>
-      <main>
+      {/* <main>
         <div style={{ padding: '16px 2px ', color: '#44596e' }}>
           <div style={{ marginBottom: '16px' }}>
             {broken && (
@@ -247,7 +277,7 @@ const SideBar = () => {
             )}
           </div>
         </div>
-      </main>
+      </main> */}
     </div>
   )
 }
