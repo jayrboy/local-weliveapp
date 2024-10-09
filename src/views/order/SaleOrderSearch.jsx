@@ -1,3 +1,4 @@
+import { baseURL } from '../../App'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -23,6 +24,9 @@ import {
 
 import ErrorIcon from '@mui/icons-material/Error'
 import SearchIcon from '@mui/icons-material/Search'
+import PrintIcon from '@mui/icons-material/Print'
+import DownloadIcon from '@mui/icons-material/Download'
+import RateReviewIcon from '@mui/icons-material/RateReview'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -41,6 +45,33 @@ export default function SaleOrderSearch() {
   const [searchDate, setSearchDate] = useState('')
   const [customerName, setCustomerName] = useState('')
   console.log(customerName)
+
+  const downloadPDF = (orderId) => {
+    try {
+      const url = `${baseURL}/api/sale-order/download-pdf/${orderId}`
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `order-${orderId}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+    } catch (error) {
+      toast.error('Error downloading PDF')
+    }
+  }
+
+  const printPDF = (orderId) => {
+    const url = `${baseURL}/api/sale-order/print-pdf/${orderId}`
+    const newWindow = window.open(url, '_blank')
+    if (newWindow) {
+      newWindow.onload = () => {
+        newWindow.focus()
+        newWindow.print()
+      }
+    } else {
+      toast.error('Error opening new window for printing')
+    }
+  }
 
   // Calculate totals for quantity and price
   const calculateTotals = (orders) => {
@@ -169,9 +200,11 @@ export default function SaleOrderSearch() {
                     เลขพัสดุสินค้า
                   </Typography>
                 </TableCell>
-                {/* <TableCell>
-                  <strong>ขนส่ง</strong>
-                </TableCell> */}
+                <TableCell>
+                  <Typography noWrap sx={{ fontWeight: 'bold' }}>
+                    จัดการ
+                  </Typography>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -257,15 +290,48 @@ export default function SaleOrderSearch() {
                     <TableCell>
                       <Typography noWrap>{order.express}</Typography>
                     </TableCell>
-                    {/* <TableCell>
-                      <select className="btn btn-sm btn-outline-secondary">
-                        <option>เลือกขนส่ง</option>
-                        <option>J&T</option>
-                        <option>Shoppee</option>
-                        <option>Flash</option>
-                        <option>EMS</option>
-                      </select>
-                    </TableCell> */}
+                    <TableCell>
+                      {order.complete ? (
+                        <>
+                          <Button
+                            type="button"
+                            variant="contained"
+                            color="primary"
+                            onClick={() => downloadPDF(order._id)}
+                            size="small"
+                          >
+                            <DownloadIcon />
+                          </Button>
+                          &nbsp;
+                          <Button
+                            type="button"
+                            variant="contained"
+                            color="inherit"
+                            onClick={() => printPDF(order._id)}
+                            size="small"
+                          >
+                            <PrintIcon />
+                          </Button>
+                        </>
+                      ) : order.isPayment ? (
+                        <Link
+                          to={`/order/${order._id}`}
+                          state={{ _id: order._id }}
+                          target="_blank"
+                        >
+                          <Button
+                            type="button"
+                            variant="contained"
+                            color="warning"
+                            size="small"
+                          >
+                            <RateReviewIcon />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <></>
+                      )}
+                    </TableCell>
                   </StyledTableRow>
                 )
               })}
