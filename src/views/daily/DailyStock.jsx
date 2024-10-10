@@ -20,22 +20,19 @@ import {
   TableRow,
   Paper,
   styled,
-  Tooltip,
   Typography,
   Button,
-  TextField,
-  IconButton,
   Grid,
-  Pagination,
-  Stack,
-  DialogTitle,
-  Dialog,
   Card,
+  CardContent,
   Select,
   MenuItem,
-  FormControl,
-  InputLabel,
+  Box,
 } from '@mui/material'
+
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
@@ -114,6 +111,57 @@ export default function DailyStock() {
           </Button>
         </div>
       </div>
+
+      {/* Summary */}
+      <Box className="m-3">
+        <Grid container spacing={2}>
+          {/* Card 1: จำนวนออเดอร์ */}
+          <Grid item xs={6} sm={6} md={6}>
+            <Card variant="outlined" sx={{ height: '100%' }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <ShoppingCartIcon sx={{ fontSize: 40, color: 'blue' }} />
+                <Typography variant="h6" gutterBottom fontWeight="bold">
+                  ยอดสั่งซื้อ CF
+                </Typography>
+                <Typography variant="h5" fontWeight="bold">
+                  {dailyStock.reduce(
+                    (acc, doc) =>
+                      acc + doc.products.reduce((pAcc, p) => pAcc + p.cf, 0),
+                    0
+                  )}{' '}
+                  ออเดอร์
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Card 2: สินค้า Pre-Order */}
+          <Grid item xs={6} sm={6} md={6}>
+            <Card variant="outlined" sx={{ height: '100%' }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <AddShoppingCartIcon sx={{ fontSize: 40, color: 'purple' }} />
+                <Typography variant="h6" gutterBottom fontWeight="bold">
+                  สินค้า Pre-Order
+                </Typography>
+                <Typography variant="h5" fontWeight="bold">
+                  {dailyStock.reduce(
+                    (acc, doc) =>
+                      acc +
+                      doc.products.reduce((pAcc, p) => {
+                        return p.remaining_cf < 0
+                          ? pAcc + Math.abs(p.remaining_cf)
+                          : pAcc
+                      }, 0),
+                    0
+                  )}{' '}
+                  จำนวน
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Box>
+
       <>
         {/* <span className="ms-5">
           {dailyStock.length === 0 ? (
@@ -178,9 +226,10 @@ export default function DailyStock() {
                         </div>
                       </div>
                     </div>
+
                     {/* Table */}
-                    <div className="table-responsive px-2">
-                      <table className="table table-sm table-striped table-bordered border-light table-hover">
+                    <TableContainer className="table-responsive">
+                      <Table className="table-sm">
                         <caption className="ms-3">
                           {doc.length === 0 ? (
                             <>ไม่พบข้อมูล</>
@@ -216,49 +265,53 @@ export default function DailyStock() {
                             </TableCell>
                           </TableRow>
                         </TableHead>
+
                         <TableBody>
                           {doc.products.map((p, index) => (
-                            <TableRow key={index + 1}>
+                            <StyledTableRow key={index + 1}>
                               <TableCell>
                                 <Typography noWrap>
                                   {isLoading ? (
-                                    <div
+                                    <Box
+                                      component="span"
                                       className="btn btn-danger"
-                                      style={{ fontSize: '20px' }}
+                                      sx={{ fontSize: '20px' }}
                                     >
                                       {p.code}
-                                    </div>
+                                    </Box>
                                   ) : (
-                                    <div
+                                    <Box
+                                      component="span"
                                       className="btn btn-secondary"
-                                      style={{ fontSize: '20px' }}
+                                      sx={{ fontSize: '20px' }}
                                     >
                                       {p.code}
-                                    </div>
+                                    </Box>
                                   )}
                                   &nbsp;&nbsp;&nbsp;{p.name}
                                 </Typography>
                               </TableCell>
-                              <td>
+                              <TableCell>
                                 {p.price
                                   .toFixed(0)
                                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                              </td>
-                              <td>{p.stock_quantity}</td>
-                              <td>{p.limit}</td>
-                              <td>{p.cf}</td>
+                              </TableCell>
+                              <TableCell>{p.stock_quantity}</TableCell>
+                              <TableCell>{p.limit}</TableCell>
+                              <TableCell>{p.cf}</TableCell>
                               {p.remaining_cf < 0 ? (
-                                <td className="text-danger">
+                                <TableCell className="text-danger">
                                   <strong>{p.remaining_cf}</strong>
-                                </td>
+                                </TableCell>
                               ) : (
-                                <td>{p.remaining_cf}</td>
+                                <TableCell>{p.remaining_cf}</TableCell>
                               )}
-                            </TableRow>
+                            </StyledTableRow>
                           ))}
                         </TableBody>
-                      </table>
-                    </div>
+                      </Table>
+                    </TableContainer>
+
                     <div className="text-end container">
                       <label className="form-label">ยอดรวม&nbsp;&nbsp;</label>
                       <strong className="text-success">{total}</strong>
