@@ -12,6 +12,7 @@ import {
   getPSID,
   sendMessageToPSID,
 } from '../services/fb'
+import { pushComment, setComments } from '../redux/commentSlice'
 
 //TODO: Main Component
 const GetComments = () => {
@@ -55,8 +56,13 @@ const GetComments = () => {
           liveVideoId,
           user.userAccessToken
         )
+
         if (firstRound) {
           console.log('Initial comments', newComment)
+
+          //TODO: (1) เอาข้อมูล Comments ทั้งหมดมา Set เข้า Redux
+          dispatch(setComments(newComment))
+
           tempComment = newComment
           tempComment.map((cm, index) => checkMessageCode(cm))
           firstRound = false
@@ -89,6 +95,10 @@ const GetComments = () => {
       newComment.forEach((comment) => {
         if (oldComment.find((cm) => cm.id === comment.id) === undefined) {
           console.log('New comment :', comment)
+
+          //TODO: (2) เพิ่มเฉพาะข้อความใหม่เข้า Redux
+          dispatch(pushComment(comment))
+
           // function check message code
           checkMessageCode(comment)
         }

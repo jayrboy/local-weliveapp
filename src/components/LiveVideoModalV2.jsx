@@ -20,13 +20,13 @@ const LiveVideoModalV2 = () => {
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.user)
   const { isLoading } = useSelector((state) => state.live)
-  const [isDisabled, setIsDisabled] = useState(true)
+  const [isDisabled, setIsDisabled] = useState(false)
 
-  useEffect(() => {
-    if (user.role === 'admin') {
-      setIsDisabled(false)
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (user.role === 'admin') {
+  //     setIsDisabled(false)
+  //   }
+  // }, [])
 
   const onSubmitForm = (e) => {
     e.preventDefault()
