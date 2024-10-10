@@ -2,22 +2,48 @@ import { baseURL } from '../../App'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
-import { MdEdit, MdDelete } from 'react-icons/md'
+import { MdEdit, MdDelete, MdArrowBack, MdGrid3X3 } from 'react-icons/md'
 import { FaPlus, FaHistory } from 'react-icons/fa'
 import { SiFacebooklive } from 'react-icons/si'
 
 import { toast } from 'react-toastify'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  styled,
+  Typography,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+  Select,
+  MenuItem,
+  Box,
+} from '@mui/material'
 
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}))
 
 export default function DailyStockHistory() {
   let [data, setData] = useState('')
   const [status, setStatus] = useState(['new', 'clear'])
   const navigate = useNavigate()
   const form = useRef()
+
+  let [isOpenHistory, setIsOpenHistory] = useState({})
+  console.log(isOpenHistory)
 
   useEffect(() => {
     // อัพเดทข้อมูลเมื่อ status เปลี่ยนแปลง
@@ -55,18 +81,25 @@ export default function DailyStockHistory() {
       .catch((err) => toast.error(err))
   }
 
+  const toggleHistory = (id) => {
+    setIsOpenHistory((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id], // เปลี่ยนสถานะเปิด/ปิดของรายการที่มี id นั้น
+    }))
+    setStatus((prevStatus) => [...prevStatus, 'new'])
+  }
+
   const showData = (result) => {
     let r = (
       <>
-        <span className="ms-3">
-          {result.length === 0 ? (
-            <>ไม่พบข้อมูล</>
-          ) : (
-            <small>พบข้อมูลทั้งหมด {result.length} รายการ</small>
-          )}
-        </span>
-        <form onSubmit={onSubmitForm} ref={form} className="px-2">
-          <div className="row">
+        <Typography className="text-center mb-3">
+          {result.length === 0
+            ? 'ไม่พบข้อมูล'
+            : `พบข้อมูลทั้งหมด ${result.length} รายการ`}
+        </Typography>
+
+        <form onSubmit={onSubmitForm} ref={form} className="m-1">
+          <Grid container spacing={3}>
             {result.map((doc) => {
               let total = new Intl.NumberFormat().format(doc.price_total)
               let dt = new Date(Date.parse(doc.date_added))
@@ -77,61 +110,68 @@ export default function DailyStockHistory() {
               )
 
               return (
-                <div
-                  key={doc._id}
-                  className="col-12 col-sm-12 col-md-6 col-lg-4 mt-3"
-                >
-                  <div className="card shadow">
-                    <div className="card-header">
-                      วันที่:&nbsp;
-                      <strong className="text-danger">{df}</strong>
-                      <div className="float-end">
-                        <FaHistory color="red" size={20} />
-                      </div>
+                <Grid item xs={12} sm={12} md={12} key={doc._id}>
+                  <Card>
+                    <div className="d-flex justify-content-between align-items-center p-3">
+                      <Typography>
+                        วันที่&nbsp;
+                        <strong>{df}</strong>
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        color={isOpenHistory[doc._id] ? 'error' : 'success'}
+                        onClick={() => toggleHistory(doc._id)}
+                      >
+                        {isOpenHistory[doc._id]
+                          ? 'ซ่อนรายละเอียด'
+                          : 'ดูรายละเอียด'}
+                      </Button>
                     </div>
+
                     {/* Content */}
-                    <div className="card-body">
+                    <div className="container">
                       <div className="row">
-                        <div className="col-md-6 d-flex align-items-center">
-                          Status:&nbsp;
-                          <select
-                            className="btn btn-sm btn-light border text-capitalize text-danger"
+                        <div className="col-6 d-flex align-items-center">
+                          Status&nbsp;
+                          <Select
+                            className="text-capitalize"
                             name="status"
-                            defaultValue={doc.status}
-                            style={{ height: '30px' }}
+                            value={doc.status}
+                            style={{ height: '40px' }}
                             onChange={(event) => onChangeRole(doc._id, event)}
-                            disabled
                           >
                             {status.map((item, i) => (
-                              <option key={i + 1} value={item}>
+                              <MenuItem key={i + 1} value={item}>
                                 {item}
-                              </option>
+                              </MenuItem>
                             ))}
-                          </select>
+                          </Select>
                         </div>
-                        <div className="col-md-6 d-flex justify-content-end align-items-center">
+                        <div className="col-6 d-flex justify-content-end align-items-center">
                           Chanel:&nbsp;
-                          {doc.chanel && <SiFacebooklive size={45} />}
+                          {doc.chanel && (
+                            <SiFacebooklive size={45} color="#1877f2" />
+                          )}
                         </div>
                       </div>
-                      {/* Table */}
-                      <div className="table-responsive">
-                        <table className="table table-sm table-striped table-bordered border-light table-hover">
+                    </div>
+
+                    {/* Table */}
+                    {isOpenHistory[doc._id] && (
+                      <TableContainer className="table-responsive">
+                        <Table className="table-sm">
                           <caption className="ms-3">
                             {doc.length === 0 ? (
-                              <>ไม่พบข้อมูล</>
+                              <small>ไม่พบข้อมูล</small>
                             ) : (
-                              <>
-                                <small>
-                                  พบข้อมูลทั้งหมด{' '}
-                                  {doc.products.length
-                                    ? doc.products.length
-                                    : 0}{' '}
-                                  รายการ
-                                </small>
-                              </>
+                              <small>
+                                พบข้อมูลทั้งหมด{' '}
+                                {doc.products.length ? doc.products.length : 0}{' '}
+                                รายการ
+                              </small>
                             )}
                           </caption>
+
                           <TableHead>
                             <TableRow>
                               <TableCell>
@@ -154,41 +194,46 @@ export default function DailyStockHistory() {
                               </TableCell>
                             </TableRow>
                           </TableHead>
+
                           <TableBody>
                             {doc.products.map((p, index) => (
-                              <TableRow key={index + 1}>
-                                <td>
-                                  <div
-                                    className="btn btn-danger"
-                                    style={{ fontSize: '20px' }}
-                                  >
-                                    {p.code}
-                                  </div>
-                                  &nbsp;&nbsp;&nbsp;{p.name}
-                                </td>
-                                <td>{p.price}</td>
-                                <td>{p.stock_quantity}</td>
-                                <td>{p.limit}</td>
-                                <td>{p.cf}</td>
-                                <td>
+                              <StyledTableRow key={index + 1}>
+                                <TableCell>
+                                  <Typography noWrap>
+                                    <Box
+                                      component="span"
+                                      className="btn btn-secondary"
+                                      sx={{ fontSize: '20px' }}
+                                    >
+                                      {p.code}
+                                    </Box>
+                                    &nbsp;&nbsp;&nbsp;{p.name}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>{p.price}</TableCell>
+                                <TableCell>{p.stock_quantity}</TableCell>
+                                <TableCell>{p.limit}</TableCell>
+                                <TableCell>{p.cf}</TableCell>
+                                <TableCell>
                                   {p.paid}/{p.remaining_cf}
-                                </td>
-                              </TableRow>
+                                </TableCell>
+                              </StyledTableRow>
                             ))}
                           </TableBody>
-                        </table>
-                      </div>
-                      <div className="text-end">
-                        ยอดรวม&nbsp;&nbsp;
-                        <strong className="text-danger">{total}</strong>
-                        &nbsp;บาท
-                      </div>
+                        </Table>
+                      </TableContainer>
+                    )}
+
+                    <div className="text-end container">
+                      <label className="form-label">ยอดรวม&nbsp;&nbsp;</label>
+                      <strong className="text-danger">{total}</strong>
+                      &nbsp;บาท
                     </div>
-                  </div>
-                </div>
+                  </Card>
+                </Grid>
               )
             })}
-          </div>
+          </Grid>
         </form>
       </>
     )
@@ -243,22 +288,16 @@ export default function DailyStockHistory() {
             <span className="text-success"> ประวัติรายการขายสินค้า</span>
           </h3>
         </div>
-        <div className="col-lg-6 mt-1">
-          <button
-            className="btn btn-light btn-sm border"
-            onClick={() => navigate('/sale-daily/create')}
+
+        <div className="col-lg-6 mt-1 text-center">
+          <Button
+            variant="contained"
+            color="inherit"
+            onClick={() => navigate('/sale-daily')}
           >
-            <FaPlus color="blue" />
-            &nbsp;เพิ่มสินค้าขายรายวัน
-          </button>
-          &nbsp;
-          <button
-            className="btn btn-light btn-sm border"
-            onClick={() => navigate('/sale-daily/history')}
-          >
-            <FaHistory color="red" />
-            &nbsp;ประวัติย้อนหลัง
-          </button>
+            <MdArrowBack style={{ color: 'black', fontSize: '1.5rem' }} />
+            &nbsp;กลับหน้ารายการขาย
+          </Button>
         </div>
       </div>
       <>{data}</>

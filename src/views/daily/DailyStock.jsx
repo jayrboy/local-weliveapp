@@ -199,6 +199,7 @@ export default function DailyStock() {
                         </Button>
                       </Link>
                     </div>
+
                     {/* Content */}
                     <div className="container">
                       <div className="row">
@@ -248,15 +249,9 @@ export default function DailyStock() {
                             <TableCell>
                               <strong>สินค้า</strong>
                             </TableCell>
-                            <TableCell>
-                              <strong>ราคา</strong>
-                            </TableCell>
-                            <TableCell>
-                              <strong className="text-success">จำนวน</strong>
-                            </TableCell>
-                            <TableCell>
-                              <strong>limit</strong>
-                            </TableCell>
+                            <TableCell>ราคา</TableCell>
+                            <TableCell>จำนวน</TableCell>
+                            <TableCell>limit</TableCell>
                             <TableCell>
                               <strong>CF</strong>
                             </TableCell>
