@@ -12,6 +12,7 @@ import HeaderBar from '../layout/HeaderBar'
 import NotFound from '../views/NotFound'
 import LiveVideoModal from '../components/LiveVideoModal'
 import LiveVideoModalV2 from '../components/LiveVideoModalV2'
+import CommentBox from '../components/CommentBox'
 
 const AuthRoute = ({ children }) => {
   const dispatch = useDispatch()
@@ -94,6 +95,7 @@ const AuthRoute = ({ children }) => {
             <div className="content_body">
               <Box>{children}</Box>
             </div>
+            <CommentBox /> {/* Add the CommentBox here */}
           </main>
         </div>
       ) : (

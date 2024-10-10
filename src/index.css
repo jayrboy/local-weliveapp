@@ -23,7 +23,8 @@ body,
 
 .content {
   flex: 1; /* ทำให้ Main Content ขยายเต็มที่ */
-  overflow: auto; /* ทำให้เนื้อหาสามารถเลื่อนดูได้ */
+  /* overflow: auto; ทำให้เนื้อหาสามารถเลื่อนดูได้ */
+  overflow: hidden; /* ป้องกันการเลื่อนถ้าไม่ต้องการ */
 }
 
 .content_body {
